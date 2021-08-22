@@ -1,29 +1,47 @@
-##########################################################################
-
 cmake_minimum_required(VERSION 3.10)
 
-project(SGE)
+project(SGE DESCRIPTION "Simple Game Engine")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++17" )
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fobjc-arc -ObjC++")
+include_directories(include)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+SET(RELEASE FALSE)
+SET(VERSION "0.1.0")
 
-file(GLOB SOURCES *.cpp )
+SET(SOURCE 	src/GameObject.cpp
+			src/Mesh.cpp
+			src/sge_utils.cpp
+			src/SGE.cpp)
 
-find_package(Vulkan REQUIRED)
+add_library(SGE_ST STATIC ${SOURCE})
+add_library(SGE SHARED ${SOURCE})
+
+
+# compiler options
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fobjc-arc -ObjC++")
+
+# include libraries
+set(GLM_INC_DIR modules/glm)
+
+# find additional dependecies
 find_package(glfw3 3.3 REQUIRED)
-set(SGR_DIR ~/Programming/Library/SGR/0.1.0)
+set(SGR_DIR ~/Programming/Library/SGR/0.4.0)
 
-find_library(SGR sgr ${SGR_DIR}/lib/shared)
+find_library(SGR_LIB SGR ${SGR_DIR}/lib/shared)
 
-set(GLM_INC_DIR modules/glm/)
-set(STB_INC_DIR modules/stb/)
+include_directories(${SGR_DIR}/include ${GLM_INC_DIR})
+target_link_libraries(SGE ${SGR_LIB} glfw)
+target_link_libraries(SGE_ST ${SGR_LIB} glfw)
 
-include_directories(${PROJECT_NAME} ${SGR_DIR}/include ${Vulkan_INCLUDE_DIRS} ${GLM_INC_DIR} ${STB_INC_DIR})
+if (RELEASE)
+	file(COPY include DESTINATION build/${VERSION})
+	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY build/${VERSION}/lib/shared)
+	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY build/${VERSION}/lib/static)
+else (RELEASE)
+	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY build/shared)
+	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY build/static)
+endif (RELEASE)
 
-add_executable(${PROJECT_NAME} main.cpp)
-
-target_link_libraries(${PROJECT_NAME} ${SGR} glfw ${Vulkan_LIBRARIES})
-
-###########################################################################
+include(ProcessorCount)
+ProcessorCount(N)
+message("Please build using: make -j"  ${N})

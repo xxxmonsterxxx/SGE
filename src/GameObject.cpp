@@ -1,0 +1,51 @@
+#include "GameObject.h"
+#include "SGE.h"
+
+GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture) :
+		_name(name),
+        _mesh(mesh),
+		_texturePath(texture) {}
+
+GameObject::GameObject(std::string name, Mesh& mesh, const std::vector<float>& colors) :
+		_name(name),
+        _mesh(mesh),
+        _colors(colors) {}
+
+bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
+{
+	SgrImage* _texture = nullptr;
+	SgrErrCode resultCreateTextureImage = TextureManager::createTextureImage(_texturePath, _texture);
+	if (resultCreateTextureImage != sgrOK)
+		return false;
+		
+	std::vector<void*> instanceData;
+	instanceData.push_back((void*)(viewProj));
+	instanceData.push_back((void*)(_texture));
+	instanceData.push_back((void*)(allInstancesBuffer));
+
+	if (SGE::renderer.writeDescriptorSets(_name, instanceData) != sgrOK)
+		return false;
+
+	if (SGE::renderer.drawObject(_name) != sgrOK)
+		return false;
+
+	return true;
+}
+
+void GameObject::setTexPosSize(glm::vec2 texPos, glm::vec2 texSize)
+{
+	_instanceData.texCoord = texPos;
+	_instanceData.texSize = texSize;
+}
+
+void GameObject::setPosition(SGEPosition newPosition)
+{
+	_position = newPosition;
+	_instanceData.model = glm::translate(_instanceData.model, glm::vec3(newPosition.x,newPosition.y,newPosition.z));
+}
+
+void GameObject::setScale(float newScale)
+{
+	_scale = newScale; 
+	_instanceData.model = glm::scale(_instanceData.model, glm::vec3(_scale,_scale,1));
+}
