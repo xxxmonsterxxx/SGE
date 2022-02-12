@@ -45,7 +45,7 @@ public:
 		return *instance;
 	}
 
-    bool init();
+    bool init(uint16_t width = 800, uint16_t height = 800, std::string windowName = "SGE");
 
     void addToRender(GameObject& gObj);
     void addToRender(std::vector<GameObject*> gObjects);

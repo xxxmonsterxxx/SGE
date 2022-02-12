@@ -10,12 +10,14 @@ class GameObject {
 friend class SGE;
 
 public:
-    GameObject(const std::string name, Mesh& mesh, const std::string& texture = "empty");
-    GameObject(const std::string name, Mesh& mesh, const std::vector<float>& colors);
+    GameObject(const std::string name, Mesh& mesh, const std::string& texture);
+    GameObject(const std::string name, Mesh& mesh);
 
     void setPosition(SGEPosition newPosition);
+	void setRotation(glm::vec3 axis, float angle);
 	void setTexPosSize(glm::vec2 texPos, glm::vec2 texSize);
     void setScale(float newScale);
+	void setColor(SgeColor newColor);
 
 private:
 	std::string _name;
@@ -24,9 +26,9 @@ private:
 
     float _scale = 1;
 
-	const std::string _texturePath;
+	std::string _texturePath = "Resources/Textures/empty.jpg";
 
-    const std::vector<float> _colors;
+    SgeColor _color;
 
     Mesh& _mesh;
 

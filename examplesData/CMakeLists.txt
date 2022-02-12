@@ -17,7 +17,7 @@ file(GLOB SOURCES ${SGE_FOLDER}/examplesData/test.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 set(GLM_INC_DIR ~/Programming/Library/glm)
-set(SGR_FOLDER ~/Programming/Library/SGR/0.4.0)
+set(SGR_FOLDER ~/Programming/Library/SGR/0.5.1)
 
 find_library(SGE_LIB SGE ${SGE_FOLDER}/build/shared/)
 

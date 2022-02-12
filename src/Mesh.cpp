@@ -1,27 +1,20 @@
 #include "Mesh.h"
 #include "SGE.h"
 
-Mesh::Mesh(std::string name, std::vector<SGEPosition> vertices, std::vector<uint16_t> indices) :
-			_name(name), _vertices(vertices), _indices(indices)
+Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, const std::vector<uint16_t> indices, const bool filled) :
+			_name(name), _vertices(vertices), _indices(indices), _filled(filled)
 {
     VkVertexInputAttributeDescription positionDescr;
 	positionDescr.binding = 0;
 	positionDescr.location = 0;
-	positionDescr.format = VK_FORMAT_R32G32_SFLOAT;
-	positionDescr.offset = offsetof(Sgr2DVertex, position);
-
-	VkVertexInputAttributeDescription colorDescr;
-	colorDescr.binding = 0;
-	colorDescr.location = 1;
-	colorDescr.format = VK_FORMAT_R32G32B32_SFLOAT;
-	colorDescr.offset = offsetof(Sgr2DVertex, color);
+	positionDescr.format = VK_FORMAT_R32G32B32_SFLOAT;
+	positionDescr.offset = 0;
 
 	_meshAttributeDescriptions.push_back(positionDescr);
-    _meshAttributeDescriptions.push_back(colorDescr);
 
 	VkVertexInputBindingDescription vertexBindingDescription;
 	vertexBindingDescription.binding = 0;
-	vertexBindingDescription.stride = sizeof(Sgr2DVertex);
+	vertexBindingDescription.stride = sizeof(SgrVertex);
 	vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	_meshBindingDescriptions.push_back(vertexBindingDescription);
@@ -56,7 +49,7 @@ bool Mesh::init()
 {
 	if (SGE::renderer.addNewObjectGeometry(_name,
 										pointsToSGRVertex(_vertices), _indices,
-										shaderVertex, shaderFragment,
+										shaderVertex, _textured?shaderFragmentTexture:shaderFragmentColor, _filled,
 										_meshBindingDescriptions, _meshAttributeDescriptions, _additionalDataLayouts) != sgrOK)
 		return false;
 

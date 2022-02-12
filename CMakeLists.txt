@@ -4,8 +4,9 @@ project(SGE DESCRIPTION "Simple Game Engine")
 
 include_directories(include)
 
-SET(RELEASE FALSE)
-SET(VERSION "0.1.0")
+SET(RELEASE TRUE)
+SET(VERSION 0.2.0)
+SET(SGR_VERSION 0.6.0)
 
 SET(SOURCE 	src/GameObject.cpp
 			src/Mesh.cpp
@@ -20,12 +21,11 @@ add_library(SGE SHARED ${SOURCE})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++17")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fobjc-arc -ObjC++")
 
-# include libraries
-set(GLM_INC_DIR modules/glm)
+set(GLM_INC_DIR modules/glm) # include libraries
 
 # find additional dependecies
 find_package(glfw3 3.3 REQUIRED)
-set(SGR_DIR ~/Programming/Library/SGR/0.4.0)
+set(SGR_DIR ~/Programming/Library/SGR/${SGR_VERSION})
 
 find_library(SGR_LIB SGR ${SGR_DIR}/lib/shared)
 

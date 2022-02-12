@@ -52,15 +52,18 @@ SgrBuffer* SGE::initInstancesData()
 	return instancesDataBuffer;
 }
 
-bool SGE::init()
+bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 {
-    SgrErrCode resultSGRInit = renderer.init();
+    SgrErrCode resultSGRInit = renderer.init(width, height, windowName.c_str());
 	if (resultSGRInit != sgrOK)
 		return false;
 
 	SgrBuffer* viewProjBuffer = initGlobalViewMatrix();
 	if (!viewProjBuffer)
 		return false;
+
+	viewProjection.view = glm::translate(viewProjection.view, glm::vec3(0, 0, -1));
+	viewProjection.proj = glm::perspective(45.f, 1.f/1.f, 0.1f, 100.f);
 
 	SgrBuffer* instancesDataBuffer = initInstancesData();
 	if (!instancesDataBuffer)
@@ -78,8 +81,6 @@ bool SGE::init()
 				return false;
 		}
 	}
-
-	printf("\nInitialized %d instances to draw.",objCounter);
 
 	renderer.setUpdateFunction(staticUpdateRenderData);
 
