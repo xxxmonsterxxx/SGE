@@ -53,6 +53,8 @@ public:
 	void setKeyCallback(void(*callback)(int,int)) {;}
 
     void updateViewProj(glm::mat4 newView, glm::mat4 newProj) {;}
+
+	void setViewTransition(glm::vec3 viewTranslate, float angle = 0, glm::vec3 axis = glm::vec3{0,0,1});
     
     bool drawNextFrame();
 };

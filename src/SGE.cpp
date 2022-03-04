@@ -20,7 +20,7 @@ void SGE::updateRenderData()
 			*currentObject = gObj->_instanceData;
 		}
 	}
-
+	
 	renderer.updateDynamicUniformBuffer(instancesData);
 	renderer.updateUniformBuffer(viewProjection);
 }
@@ -62,8 +62,8 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	if (!viewProjBuffer)
 		return false;
 
-	viewProjection.view = glm::translate(viewProjection.view, glm::vec3(0, 0, -1));
-	viewProjection.proj = glm::perspective(45.f, 1.f/1.f, 0.1f, 100.f);
+	viewProjection.view = glm::translate(viewProjection.view, glm::vec3(0, 0, -0.1));
+	viewProjection.proj = glm::perspective(45.f, 1.f/1.f, 0.1f, 100.f); // 0.1-min 100-max // axis is inverted
 
 	SgrBuffer* instancesDataBuffer = initInstancesData();
 	if (!instancesDataBuffer)
@@ -111,4 +111,10 @@ bool SGE::drawNextFrame()
 		return false;
 
     return true;
+}
+
+void SGE::setViewTransition(glm::vec3 viewTranslate, float angle, glm::vec3 axis)
+{
+	viewProjection.view = glm::translate(viewProjection.view, viewTranslate);
+	viewProjection.view = glm::rotate(viewProjection.view, glm::radians(angle), axis);
 }

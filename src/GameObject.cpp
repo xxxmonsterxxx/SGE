@@ -50,7 +50,7 @@ void GameObject::setPosition(SGEPosition newPosition)
 void GameObject::setScale(float newScale)
 {
 	_scale = newScale; 
-	_instanceData.model = glm::scale(_instanceData.model, glm::vec3(_scale,_scale,1));
+	_instanceData.model = glm::scale(_instanceData.model, glm::vec3(_scale,_scale,_scale));
 }
 
 void GameObject::setColor(SgeColor newColor)
