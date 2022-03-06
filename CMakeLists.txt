@@ -55,15 +55,15 @@ add_definitions(-DNDBUG=${RELEASE}) # set release or not status
 
 include_directories(include) # setup SGE includes
 
-set(SOURCE 	src/GameObject.cpp
-			src/Mesh.cpp
-			src/sge_utils.cpp
-			src/SGE.cpp)
+file (GLOB SOURCE src/*.cpp)
 
 #######################################
 
-add_library(SGE_ST STATIC ${SOURCE})
 add_library(SGE SHARED ${SOURCE})
+
+if (RELEASE)
+	add_library(SGE_ST STATIC ${SOURCE})
+endif (RELEASE)
 
 #######################################
 
@@ -75,7 +75,9 @@ if (NOT glfw3_DIR)
 	set(GLFW3_FOUND FALSE)
 else (NOT glfw3_DIR)
 	set(GLFW3_FOUND TRUE)
+	get_target_property(GLFW_INC_DIR glfw INTERFACE_INCLUDE_DIRECTORIES)
 endif (NOT glfw3_DIR)
+
 
 set(GLM_INC_DIR modules/glm) # include libraries
 
@@ -91,15 +93,17 @@ endif (NOT SGR_LIB)
 
 #######################################
 
-include_directories(${GLM_INC_DIR})
+include_directories(${GLM_INC_DIR} )
 
 # status info about external dependecies
 if (SGR_FOUND AND GLFW3_FOUND)
     message(STATUS "Found SGR, Including and Linking now")
 	message(STATUS "Found GLFW3, Including and Linking now")
-    include_directories(${SGR_DIR}/include)
+    include_directories(${SGR_DIR}/include ${GLFW_INC_DIR})
     target_link_libraries(SGE ${SGR_LIB} glfw)
-	target_link_libraries(SGE_ST ${SGR_LIB} glfw)
+	if (RELEASE)
+		target_link_libraries(SGE_ST ${SGR_LIB})
+	endif (RELEASE)
 else (SGR_FOUND AND GLFW3_FOUND)
 	if (NOT SGR_FOUND)
 		message(FATAL_ERROR "SGR not found, please install SGR_FOUND using library README")
@@ -119,7 +123,6 @@ if (RELEASE)
 	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/static)
 else (RELEASE)
 	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY build/shared)
-	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY build/static)
 endif (RELEASE)
 
 #######################################
