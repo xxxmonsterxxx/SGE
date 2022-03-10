@@ -16,7 +16,7 @@ public:
     void setPosition(SGEPosition newPosition);
 	void setRotation(glm::vec3 axis, float angle);
 	void setTexPosSize(glm::vec2 texPos, glm::vec2 texSize);
-    void setScale(float newScale);
+    void setScale(glm::vec3 newScale);
 	void setColor(SgeColor newColor);
 
 private:
@@ -24,7 +24,7 @@ private:
 
     SGEPosition _position;
 
-    float _scale = 1;
+    glm::vec3 _scale = glm::vec3(1);
 
 	std::string _texturePath = "Resources/Textures/empty.jpg";
 
