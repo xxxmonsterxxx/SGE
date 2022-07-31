@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SGR.h>
+#include <SGR/SGR.h>
 
 #include "GameObject.h"
 
@@ -24,10 +24,10 @@ private:
 
 	std::vector<MeshAndObjects> meshesAndObjects;
 
-    SgrUniformBufferObject viewProjection;
+    SgrGlobalUniformBufferObject viewProjection;
 
 	const uint16_t defaultInstanceNumber = 100;
-	SgrDynamicUniformBufferObject instancesData;
+	SgrInstancesUniformBufferObject instancesData;
 
     bool buffersInit();
 

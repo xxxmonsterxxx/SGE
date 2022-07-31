@@ -46,7 +46,7 @@ int main()
     // create new object
     std::string manTex = "Resources/Textures/manTex.png";
     GameObject man("man",rectMesh, manTex);
-    man.setPosition(SGEPosition{0.6,0.5,0});
+    man.setPosition(SGEPosition{0.6,0.5,-2});
 	man.setTexPosSize(glm::vec2(0.055,0.125),glm::vec2(0.222,0.5));
 	man.setRotation(glm::vec3(0,0,1),90);
 
@@ -60,8 +60,8 @@ int main()
 
     // sgeObject.setKeyCallback(handleKeys); // ????
 
-    // sgeObject.addToRender(man);
-    // sgeObject.addToRender(man2);
+    sgeObject.addToRender(man);
+    sgeObject.addToRender(man2);
 	sgeObject.addToRender(man3);
 
     if (!sgeObject.init())

@@ -13,7 +13,7 @@ endif (RELEASE AND NOT VERSION)
 if (NOT VERSION)
 	message("Build Simple Game Engine in debug mode")
 else (NOT VERSION)
-	message("Build Simple Game Engine v"${VERSION})
+	message("Build Simple Game Engine v${VERSION}")
 endif (NOT VERSION)
 
 if (NOT RELEASE)
@@ -82,8 +82,7 @@ endif (NOT glfw3_DIR)
 set(GLM_INC_DIR modules/glm) # include libraries
 
 set(SGR_VERSION 0.6.0)
-set(SGR_DIR ~/Programming/Library/SGR/${SGR_VERSION})
-find_library(SGR_LIB SGR ${SGR_DIR}/lib/shared)
+find_library(SGR_LIB SGR)
 # define if SGR found
 if (NOT SGR_LIB)
 	set(SGR_FOUND FALSE)
@@ -93,13 +92,13 @@ endif (NOT SGR_LIB)
 
 #######################################
 
-include_directories(${GLM_INC_DIR} )
+include_directories(${GLM_INC_DIR})
 
 # status info about external dependecies
 if (SGR_FOUND AND GLFW3_FOUND)
     message(STATUS "Found SGR, Including and Linking now")
 	message(STATUS "Found GLFW3, Including and Linking now")
-    include_directories(${SGR_DIR}/include ${GLFW_INC_DIR})
+    include_directories(${GLFW_INC_DIR})
     target_link_libraries(SGE ${SGR_LIB} glfw)
 	if (RELEASE)
 		target_link_libraries(SGE_ST ${SGR_LIB})
@@ -129,7 +128,7 @@ endif (RELEASE)
 
 include(ProcessorCount)
 ProcessorCount(N)
-message("Ready to build on "${PLATFORM_NAME})
-message("Please build using: make -j"  ${N})
+message("Ready to build on ${PLATFORM_NAME}")
+message("Please build using: make -j${N}")
 
 ##########################################################################

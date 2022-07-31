@@ -21,16 +21,16 @@ void SGE::updateRenderData()
 		}
 	}
 	
-	renderer.updateDynamicUniformBuffer(instancesData);
-	renderer.updateUniformBuffer(viewProjection);
+	renderer.updateInstancesUniformBufferObject(instancesData);
+	renderer.updateGlobalUniformBufferObject(viewProjection);
 }
 
 SgrBuffer* SGE::initGlobalViewMatrix()
 {
 	SgrBuffer* viewProjBuffer = nullptr;
-	if (MemoryManager::get()->createUniformBuffer(viewProjBuffer, sizeof(SgrUniformBufferObject)) != sgrOK)
+	if (MemoryManager::get()->createUniformBuffer(viewProjBuffer, sizeof(SgrGlobalUniformBufferObject)) != sgrOK)
 		return nullptr;
-	renderer.setupUniformBuffer(viewProjBuffer);
+	renderer.setupGlobalUniformBufferObject(viewProjBuffer);
 
 	return viewProjBuffer;
 }
@@ -47,7 +47,7 @@ SgrBuffer* SGE::initInstancesData()
 	if (resultCreateBuffer != sgrOK)
 		return nullptr;
 
-	renderer.setupDynamicUniformBuffer(instancesDataBuffer);
+	renderer.setupInstancesUniformBufferObject(instancesDataBuffer);
 
 	return instancesDataBuffer;
 }
