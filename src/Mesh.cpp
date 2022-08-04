@@ -1,6 +1,32 @@
 #include "Mesh.h"
 #include "SGE.h"
 
+const std::vector <SGEPosition> Mesh::defaultRectangleVertices = {
+		{-0.5f,-0.5f,0.f},
+		{0.5f,-0.5f,0.f},
+		{0.5f,0.5f,0.f},
+		{-0.5f,0.5f,0.f}
+	};
+const std::vector<uint16_t> Mesh::defaultRectangleIndices = { 0,1,2,2,3,0 };
+
+const std::vector <SGEPosition> Mesh::defaultTriangleVertices = {
+		{-0.5f,-0.5f,0.f},
+		{0.5f,-0.5f,0.f},
+		{0.5f,0.5f,0.f}
+	};
+const std::vector<uint16_t> Mesh::defaultTriangleIndices = { 0,1,2 };
+
+Mesh Mesh::getDefaultRectangleMesh(const std::string name, const bool filled)
+{
+	return Mesh(name, defaultRectangleVertices, defaultRectangleIndices, filled);
+}
+
+Mesh Mesh::getDefaultTriangleMesh(const std::string name, const bool filled)
+{
+	return Mesh(name, defaultTriangleVertices, defaultTriangleIndices, filled);
+}
+
+
 Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, const std::vector<uint16_t> indices, const bool filled) :
 			_name(name), _vertices(vertices), _indices(indices), _filled(filled)
 {
