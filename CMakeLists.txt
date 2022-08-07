@@ -1,24 +1,23 @@
 ##########################################################################
 
-cmake_minimum_required(VERSION 3.10)
-
 project(SGE DESCRIPTION "Simple Game Engine")
 
-#######################################
+cmake_minimum_required(VERSION 3.10)
 
-if (RELEASE AND NOT VERSION)
-	message(FATAL_ERROR "Release version was not setted! Use -DVERSION=X.Y.Z")
-endif (RELEASE AND NOT VERSION)
+##########################################################################
 
-if (NOT VERSION)
-	message("Build Simple Game Engine in debug mode")
-else (NOT VERSION)
-	message("Build Simple Game Engine v${VERSION}")
-endif (NOT VERSION)
+file(STRINGS "./include/version.h" ver)
 
-if (NOT RELEASE)
-	set(RELEASE false)
-endif (NOT RELEASE)
+string(REGEX MATCH "SGR_VERSION_MAJOR ([0-9]*)" _ ${ver})
+set(VMAJOR ${CMAKE_MATCH_1})
+
+string(REGEX MATCH "SGR_VERSION_MINOR ([0-9]*)" _ ${ver})
+set(VMINOR ${CMAKE_MATCH_1})
+
+string(REGEX MATCH "SGR_VERSION_PATCH ([0-9]*)" _ ${ver})
+set(VPATCH ${CMAKE_MATCH_1})
+
+set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
 #######################################
 
@@ -41,13 +40,22 @@ endif (WIN32)
 
 #######################################
 
+if (RELEASE)
+	message("Build Simple Game Engine v${VERSION}")
+else (RELEASE)
+	message("Build Simple Game Engine in debug mode")
+	set(DEBUG TRUE)
+endif (RELEASE)
+
+#######################################
+
 # compiler options
 set (CMAKE_CXX_STANDARD 17) #standard version is 17 - minimum for "optional" use
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3") #optimization
 
-if (NOT RELEASE)
+if (DEBUG)
 	set(CMAKE_BUILD_TYPE RelWithDebInfo)
-endif (NOT RELEASE)
+endif (DEBUG)
 
 add_definitions(-DNDBUG=${RELEASE}) # set release or not status
 
@@ -81,7 +89,6 @@ endif (NOT glfw3_DIR)
 
 set(GLM_INC_DIR modules/glm) # include libraries
 
-set(SGR_VERSION 0.6.0)
 find_library(SGR_LIB SGR)
 # define if SGR found
 if (NOT SGR_LIB)
@@ -116,12 +123,12 @@ endif (SGR_FOUND AND GLFW3_FOUND)
 #######################################
 
 if (RELEASE)
-	set(RELEASE_BUILD_DEST build/SGE-v${VERSION}-${PLATFORM_NAME}) # set release build destination
+	set(RELEASE_BUILD_DEST SGE-v${VERSION}-${PLATFORM_NAME}) # set release build destination
 	file(COPY include DESTINATION ${RELEASE_BUILD_DEST})
 	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/shared)
 	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/static)
 else (RELEASE)
-	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY build/shared)
+	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY debug/shared)
 endif (RELEASE)
 
 #######################################
