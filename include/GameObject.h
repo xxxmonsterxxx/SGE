@@ -26,7 +26,7 @@ private:
 
     glm::vec3 _scale = glm::vec3(1);
 
-	std::string _texturePath = "Resources/Textures/empty.jpg";
+	std::string _texturePath = "/Resources/Textures/empty.jpg";
 
     SgeColor _color;
 

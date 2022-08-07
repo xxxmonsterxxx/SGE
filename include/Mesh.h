@@ -19,9 +19,9 @@ private:
 
 
 	// default shaders
-    const std::string shaderVertex = "Resources/DefaultShaders/vertInstanceSh.spv";
-    const std::string shaderFragmentTexture = "Resources/DefaultShaders/fragTextureSh.spv";
-	const std::string shaderFragmentColor = "Resources/DefaultShaders/fragColorSh.spv";
+    const std::string shaderVertex = "/Resources/DefaultShaders/vertInstanceSh.spv";
+    const std::string shaderFragmentTexture = "/Resources/DefaultShaders/fragTextureSh.spv";
+	const std::string shaderFragmentColor = "/Resources/DefaultShaders/fragColorSh.spv";
 
 
 	// default meshes (vertices with indices)

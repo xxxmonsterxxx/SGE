@@ -17,7 +17,7 @@ GameObject::GameObject(const std::string name, Mesh& mesh) :
 bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 {
 	SgrImage* _texture = nullptr;
-	SgrErrCode resultCreateTextureImage = TextureManager::createTextureImage(_texturePath, _texture);
+	SgrErrCode resultCreateTextureImage = TextureManager::createTextureImage(SGE::execPath + _texturePath, _texture);
 	if (resultCreateTextureImage != sgrOK)
 		return false;
 		

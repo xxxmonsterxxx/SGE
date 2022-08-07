@@ -29,6 +29,8 @@ private:
 	const uint16_t defaultInstanceNumber = 100;
 	SgrInstancesUniformBufferObject instancesData;
 
+	static std::string execPath;
+
     bool buffersInit();
 
 	void updateRenderData();

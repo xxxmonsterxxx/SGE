@@ -2,6 +2,7 @@
 
 SGR SGE::renderer = SGR();
 SGE* SGE::instance = nullptr;
+std::string SGE::execPath = getExecutablePath();
 
 SGE::SGE(){ }
 

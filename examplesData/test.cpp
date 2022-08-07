@@ -37,7 +37,7 @@ int main()
 	Mesh rectMesh("rectangle", rectVertices, rectIndices);
 
     // create new object
-    std::string manTex = "Resources/Textures/manTex.png";
+    std::string manTex = "/Resources/Textures/manTex.png";
     GameObject man("man",rectMesh, manTex);
 	// change gameobject parameters
     man.setPosition(SGEPosition{0.6,0.5,-2});

@@ -75,7 +75,7 @@ bool Mesh::init()
 {
 	if (SGE::renderer.addNewObjectGeometry(_name,
 										pointsToSGRVertex(_vertices), _indices,
-										shaderVertex, _textured?shaderFragmentTexture:shaderFragmentColor, _filled,
+										SGE::execPath+shaderVertex, _textured?SGE::execPath+shaderFragmentTexture:SGE::execPath+shaderFragmentColor, _filled,
 										_meshBindingDescriptions, _meshAttributeDescriptions, _additionalDataLayouts) != sgrOK)
 		return false;
 
