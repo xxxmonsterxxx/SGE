@@ -3,11 +3,13 @@
 #include <SGR/SGR.h>
 
 #include "GameObject.h"
+#include "TextObject.h"
 
 class SGE {
 
 friend class Mesh;
 friend class GameObject;
+friend class TextObject;
 
 private:
 
@@ -51,6 +53,7 @@ public:
 
     void addToRender(GameObject& gObj);
     void addToRender(std::vector<GameObject*> gObjects);
+	void addToRender(TextObject& tObj);
 
 	void setKeyCallback(void(*callback)(int,int)) {;}
 

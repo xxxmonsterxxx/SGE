@@ -119,3 +119,14 @@ void SGE::setViewTransition(glm::vec3 viewTranslate, float angle, glm::vec3 axis
 	viewProjection.view = glm::translate(viewProjection.view, viewTranslate);
 	viewProjection.view = glm::rotate(viewProjection.view, glm::radians(angle), axis);
 }
+
+void SGE::addToRender(std::vector<GameObject*> gObjects)
+{
+	for (auto newGObj : gObjects)
+		addToRender(*newGObj);
+}
+
+void SGE::addToRender(TextObject& tObj)
+{
+	addToRender(tObj.getGameObjectsData());
+}

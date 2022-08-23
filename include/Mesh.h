@@ -41,9 +41,10 @@ public:
 
 	struct MeshInstanceData {
 		glm::mat4 model = glm::mat4(1);
-		glm::vec2 texCoord = glm::vec2(0.5);
-		glm::vec2 texSize = glm::vec2(2);
-		glm::vec3 color = glm::vec3(0, 1, 0);
+		glm::vec4 color = glm::vec4(1, 0, 0, 0);
+		glm::vec2 meshToTextureDelta;
+		glm::vec2 meshStart;
+		glm::vec2 textureStart = glm::vec2(0);
 	};
 
 	void setTextured(bool isTextured) { _textured = isTextured; }

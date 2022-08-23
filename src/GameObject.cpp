@@ -14,10 +14,25 @@ GameObject::GameObject(const std::string name, Mesh& mesh) :
 			_mesh.setTextured(false);
 		}
 
+GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight) :
+		_name(name),
+        _mesh(mesh),
+		_texturePixels(texture),
+		_textureWidth(textureWidth),
+		_textureHeight(textureHeight)
+{
+	_mesh.setTextured(true);
+}
+
 bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 {
 	SgrImage* _texture = nullptr;
-	SgrErrCode resultCreateTextureImage = TextureManager::createTextureImage(SGE::execPath + _texturePath, _texture);
+	SgrErrCode resultCreateTextureImage;
+	if (_texturePixels)
+		resultCreateTextureImage = TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight , _texture);
+	else
+		resultCreateTextureImage = TextureManager::createTextureImage(SGE::execPath + _texturePath, _texture);
+
 	if (resultCreateTextureImage != sgrOK)
 		return false;
 		
@@ -35,10 +50,11 @@ bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 	return true;
 }
 
-void GameObject::setTexPosSize(glm::vec2 texPos, glm::vec2 texSize)
+void GameObject::setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart)
 {
-	_instanceData.texCoord = texPos;
-	_instanceData.texSize = texSize;
+	_instanceData.meshToTextureDelta = deltaTexture;
+	_instanceData.meshStart = meshStart;
+	_instanceData.textureStart = textureStart;
 }
 
 void GameObject::setPosition(SGEPosition newPosition)
@@ -56,7 +72,9 @@ void GameObject::setScale(glm::vec3 newScale)
 void GameObject::setColor(SgeColor newColor)
 {
 	_color = newColor;
-	_instanceData.color = _color;
+	_instanceData.color.x = _color.x;
+	_instanceData.color.y = _color.y;
+	_instanceData.color.z = _color.z;
 }
 
 void GameObject::setRotation(glm::vec3 axis, float angle)
