@@ -26,6 +26,3 @@ cmake_install.cmake
 
 # MakeFile
 Makefile
-
-#Default shaders
-DefaultShaders/
