@@ -85,6 +85,13 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 
 	renderer.setUpdateFunction(staticUpdateRenderData);
 
+	GLFWwindow* window;
+	if (renderer.getWindow(window) != sgrOK) {
+		return false;
+	}
+
+	eventManager.init(window);
+
     return true;
 }
 
@@ -129,4 +136,14 @@ void SGE::addToRender(std::vector<GameObject*> gObjects)
 void SGE::addToRender(TextObject& tObj)
 {
 	addToRender(tObj.getGameObjectsData());
+}
+
+glm::vec2 SGE::getCursorPos()
+{
+	GLFWwindow* window;
+	renderer.getWindow(window);
+	double x,y;
+	glfwGetCursorPos(window, &x, &y);
+
+	return glm::vec2(x,y);
 }

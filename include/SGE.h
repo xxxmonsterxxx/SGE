@@ -4,6 +4,7 @@
 
 #include "GameObject.h"
 #include "TextObject.h"
+#include "EventManager.h"
 
 class SGE {
 
@@ -41,6 +42,8 @@ private:
 	SgrBuffer* initGlobalViewMatrix();
 	SgrBuffer* initInstancesData();
 
+	EventManager& eventManager = EventManager::get();
+
 public:
 	static SGE& get() { 
 		if (!instance)
@@ -55,11 +58,14 @@ public:
     void addToRender(std::vector<GameObject*> gObjects);
 	void addToRender(TextObject& tObj);
 
-	void setKeyCallback(void(*callback)(int,int)) {;}
-
     void updateViewProj(glm::mat4 newView, glm::mat4 newProj) {;}
 
 	void setViewTransition(glm::vec3 viewTranslate, float angle = 0, glm::vec3 axis = glm::vec3{0,0,1});
     
     bool drawNextFrame();
+
+	bool keyEventSubscribe(int key, int action, sgeKeyEventFunction func) { return eventManager.addKeySubscriber(key, action, func); }
+	bool mouseEventSubscribe(int key, int action, sgeMouseEventFunction func) { return eventManager.addMouseSubscriber(key, action, func); }
+
+	glm::vec2 getCursorPos();
 };

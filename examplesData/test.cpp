@@ -1,19 +1,76 @@
 #include "SGE.h"
 #include <unistd.h>
 
-enum SGEKeys {
-	up,
-	down,
-	left,
-	right
-};
+bool EXIT = false;
 
-void handleKeys(int key, int type)
+// right now simple realisation - later to-do event-subscription mechanism
+void terminate(int key, int scancode, int action, int mods)
 {
-    switch(key) {
-        case up:
+	glfwTerminate();
+	EXIT = true;
+}
+
+int moveDirection = 1;
+
+void changeDirection(int key, int scancode, int action, int mods)
+{
+	switch (key)
+	{
+		case GLFW_KEY_UP:
+			moveDirection = 1;
 			break;
-    }
+
+		case GLFW_KEY_RIGHT:
+			moveDirection = 4;
+			break;
+
+		case GLFW_KEY_DOWN:
+			moveDirection = 3;
+			break;
+
+		case GLFW_KEY_LEFT:
+			moveDirection = 2;
+			break;
+
+		default:
+			break;
+	}
+}
+
+glm::vec2 cameraPos;
+bool cameraMove = false;
+
+void moveCamera(int button, int action, int mods)
+{
+	switch (action) {
+		case GLFW_PRESS:
+			cameraPos = SGE::get().getCursorPos();
+			cameraMove = true;
+			break;
+		case GLFW_RELEASE:
+			cameraMove = false;
+			break;
+	}
+}
+
+bool moveoutcamera = false;
+bool moveincamera = false;
+void changeCamera(int key, int scancode, int action, int mods)
+{
+	switch (key) {
+		case GLFW_KEY_SPACE:
+			if (action == GLFW_PRESS)
+				moveoutcamera = true;
+			else
+				moveoutcamera = false;
+			break;
+		case GLFW_KEY_LEFT_SHIFT:
+			if (action == GLFW_PRESS)
+				moveincamera = true;
+			else
+				moveincamera = false;
+			break;
+	}
 }
 
 int main()
@@ -63,7 +120,18 @@ int main()
 	helloSGE.setPosition(SGEPosition{-0.75,0,0});
 	helloSGE.setScale(glm::vec3{1,1,1});
 
-    // sgeObject.setKeyCallback(handlesKeys); // ????
+	// subscribe to events binded with keys pressing/release
+	sgeObject.keyEventSubscribe(GLFW_KEY_ESCAPE, GLFW_RELEASE, terminate);
+	sgeObject.keyEventSubscribe(GLFW_KEY_UP, GLFW_PRESS, changeDirection);
+	sgeObject.keyEventSubscribe(GLFW_KEY_LEFT, GLFW_PRESS, changeDirection);
+	sgeObject.keyEventSubscribe(GLFW_KEY_RIGHT, GLFW_PRESS, changeDirection);
+	sgeObject.keyEventSubscribe(GLFW_KEY_DOWN, GLFW_PRESS, changeDirection);
+	sgeObject.keyEventSubscribe(GLFW_KEY_SPACE, GLFW_PRESS, changeCamera);
+	sgeObject.keyEventSubscribe(GLFW_KEY_SPACE, GLFW_RELEASE, changeCamera);
+	sgeObject.keyEventSubscribe(GLFW_KEY_LEFT_SHIFT, GLFW_PRESS, changeCamera);
+	sgeObject.keyEventSubscribe(GLFW_KEY_LEFT_SHIFT, GLFW_RELEASE, changeCamera);
+	sgeObject.mouseEventSubscribe(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, moveCamera);
+	sgeObject.mouseEventSubscribe(GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE, moveCamera);
 
 	// render objects
     sgeObject.addToRender(man);
@@ -77,13 +145,29 @@ int main()
 	sgeObject.setViewTransition({0,0,-5});
     
 	float mancoordanimation = 0;
-	float animationfire = 0.024;
     while(sgeObject.drawNextFrame()) {
+		if (EXIT)
+			return 1;
+
+		if (cameraMove) {
+			glm::vec2 deltaCamera = sgeObject.getCursorPos() - cameraPos;
+			sgeObject.setViewTransition({0,0,0},deltaCamera.x,glm::vec3(0,1,0));
+			sgeObject.setViewTransition({0,0,0},-deltaCamera.y,glm::vec3(1,0,0));
+			cameraPos = sgeObject.getCursorPos();
+		}
+
+		if (moveoutcamera)
+			sgeObject.setViewTransition({0,0,-0.05});
+		
+		if (moveincamera)
+			sgeObject.setViewTransition({0,0,0.05});
+
+
 		helloSGE.setRotation(glm::vec3{0,1,0}, 0.3); // move text
 
 		deltaTextureMan.x = (0.111 - 0) / (0.5 - -0.5);
 		deltaTextureMan.y = (0.250 - 0) / (0.5 - -0.5);
-		man.setTextureMapping(deltaTextureMan, glm::vec2(-0.5, -0.5), glm::vec2(mancoordanimation,0));
+		man.setTextureMapping(deltaTextureMan, glm::vec2(-0.5, -0.5), glm::vec2(mancoordanimation,(moveDirection - 1)*0.25));
 		mancoordanimation += 0.111;
 		if (mancoordanimation > 1)
 			mancoordanimation = 0;
