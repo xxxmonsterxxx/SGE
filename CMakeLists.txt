@@ -8,13 +8,13 @@ cmake_minimum_required(VERSION 3.10)
 
 file(STRINGS "./include/version.h" ver)
 
-string(REGEX MATCH "SGR_VERSION_MAJOR ([0-9]*)" _ ${ver})
+string(REGEX MATCH "SGE_VERSION_MAJOR ([0-9]*)" _ ${ver})
 set(VMAJOR ${CMAKE_MATCH_1})
 
-string(REGEX MATCH "SGR_VERSION_MINOR ([0-9]*)" _ ${ver})
+string(REGEX MATCH "SGE_VERSION_MINOR ([0-9]*)" _ ${ver})
 set(VMINOR ${CMAKE_MATCH_1})
 
-string(REGEX MATCH "SGR_VERSION_PATCH ([0-9]*)" _ ${ver})
+string(REGEX MATCH "SGE_VERSION_PATCH ([0-9]*)" _ ${ver})
 set(VPATCH ${CMAKE_MATCH_1})
 
 set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
@@ -122,8 +122,11 @@ endif (SGR_FOUND AND GLFW3_FOUND)
 
 #######################################
 
+# library prefix based on paltform
+set(RELEASE_BUILD_DEST release/SGE-v${VERSION}-${PLATFORM_NAME}) # set release build destination
+set(DEBUG_BUILD_DEST debug) # set release build destination
+
 if (RELEASE)
-	set(RELEASE_BUILD_DEST SGE-v${VERSION}-${PLATFORM_NAME}) # set release build destination
 	file(COPY include DESTINATION ${RELEASE_BUILD_DEST})
 	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/shared)
 	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/static)
