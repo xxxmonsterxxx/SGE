@@ -1,6 +1,8 @@
 #include "TextObject.h"
 #include "SGE.h"
 
+#include <filesystem>
+
 #define STB_TRUETYPE_IMPLEMENTATION
 	#include "../modules/stb/stb_truetype.h"
 
