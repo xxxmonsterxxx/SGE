@@ -68,4 +68,6 @@ public:
 	bool mouseEventSubscribe(int key, int action, sgeMouseEventFunction func) { return eventManager.addMouseSubscriber(key, action, func); }
 
 	glm::vec2 getCursorPos();
+
+	std::string getExecPath();
 };

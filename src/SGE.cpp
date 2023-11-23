@@ -147,3 +147,8 @@ glm::vec2 SGE::getCursorPos()
 
 	return glm::vec2(x,y);
 }
+
+std::string SGE::getExecPath()
+{
+	return execPath;
+}

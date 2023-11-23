@@ -140,6 +140,11 @@ then
 	exit
 fi
 
+if [ $BUILD_TYPE == release ]
+then
+	rm -rf build
+fi
+
 mkdir build
 cd build
 
