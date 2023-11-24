@@ -19,7 +19,7 @@ public:
 	void setRotation(glm::vec3 axis, float angle) override;
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart) override;
     void setScale(glm::vec3 newScale) override;
-	void setColor(SgeColor newColor) override;
+	void setColor(SGEColor newColor) override;
 
 private:
 	std::string _name;
@@ -34,7 +34,7 @@ private:
 	const uint32_t _textureWidth = 0;
 	const uint32_t _textureHeight = 0;
 
-    SgeColor _color;
+    SGEColor _color;
 
     Mesh& _mesh;
 

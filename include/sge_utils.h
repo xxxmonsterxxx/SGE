@@ -4,10 +4,7 @@
 
 #include <string>
 
-struct SGEPosition {
-    float x,y,z;
-};
-
-using SgeColor = glm::vec3;
+using SGEPosition = glm::vec3;
+using SGEColor = glm::vec3;
 
 const std::vector<SgrVertex> pointsToSGRVertex(const std::vector<SGEPosition> points);

@@ -84,7 +84,7 @@ int main()
 	// 4. Render GameObject
 
     // we can create own geometry mesh
-    const std::vector<SGEPosition> rectVertices{
+    const std::vector<glm::vec3> rectVertices{
 		{-0.5f,-0.5f,0.f},
 		{0.5f,-0.5f,0.f},
 		{0.5f,0.5f,0.f},
@@ -114,7 +114,7 @@ int main()
 	Mesh rectangleFromDefault = Mesh::getDefaultRectangleMesh("defaultRect", false);
 	GameObject man3("man3",rectangleFromDefault);
     man3.setPosition(SGEPosition{2,-2,-1});
-	man3.setColor(SgeColor{0,0,1});
+	man3.setColor(SGEColor{0,0,1});
 
 	TextObject helloSGE("Simple Game Engine");
 	helloSGE.setPosition(SGEPosition{-0.75,0,0});

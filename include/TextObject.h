@@ -47,6 +47,6 @@ public:
 	void setPosition(SGEPosition newPosition) override;
 	void setRotation(glm::vec3 axis, float angle) override;
     void setScale(glm::vec3 newScale) override;
-	// void setColor(SgeColor newColor) { ; }
+	// void setColor(SGEColor newColor) { ; }
 
 };

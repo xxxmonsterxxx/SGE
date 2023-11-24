@@ -69,7 +69,7 @@ void GameObject::setScale(glm::vec3 newScale)
 	_instanceData.model = glm::scale(_instanceData.model, _scale);
 }
 
-void GameObject::setColor(SgeColor newColor)
+void GameObject::setColor(SGEColor newColor)
 {
 	_color = newColor;
 	_instanceData.color.x = _color.x;
