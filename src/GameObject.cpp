@@ -57,16 +57,32 @@ void GameObject::setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, 
 	_instanceData.textureStart = textureStart;
 }
 
+SGEPosition GameObject::getPosition()
+{
+	return _position;
+}
+
 void GameObject::setPosition(SGEPosition newPosition)
 {
 	_position = newPosition;
-	_instanceData.model = glm::translate(_instanceData.model, glm::vec3(_position.x,_position.y,_position.z));
+	updateModel();
+}
+
+void GameObject::move(SGEPosition dPos)
+{
+	_position += dPos;
+	setPosition(_position);
 }
 
 void GameObject::setScale(glm::vec3 newScale)
 {
-	_scale = newScale; 
-	_instanceData.model = glm::scale(_instanceData.model, _scale);
+	_scale = newScale;
+	updateModel();
+}
+
+void GameObject::setScale(float newScale)
+{
+	setScale(glm::vec3(newScale));
 }
 
 void GameObject::setColor(SGEColor newColor)
@@ -77,7 +93,35 @@ void GameObject::setColor(SGEColor newColor)
 	_instanceData.color.z = _color.z;
 }
 
-void GameObject::setRotation(glm::vec3 axis, float angle)
+void GameObject::setRotation(glm::vec3 angle)
 {
-	_instanceData.model = glm::rotate(_instanceData.model, glm::radians(angle), axis);
+	_rotation = angle;
+
+	updateModel();
+}
+
+void GameObject::rotate(glm::vec3 dAngle, bool global)
+{
+	_rotation += dAngle;
+
+	if (global) {
+		_position = rotateVector(_position, dAngle);
+	}
+
+	setRotation(_rotation);
+}
+
+void GameObject::updateModel()
+{
+	glm::mat4 model(1.f);
+
+	model = glm::translate(model, _position);
+
+	model = glm::rotate(model, glm::radians(_rotation.x), {1,0,0});
+	model = glm::rotate(model, glm::radians(_rotation.y), {0,1,0});
+	model = glm::rotate(model, glm::radians(_rotation.z), {0,0,1});
+
+	model = glm::scale(model, _scale);
+
+	_instanceData.model = model;
 }

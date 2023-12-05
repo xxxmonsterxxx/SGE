@@ -36,35 +36,36 @@ TextObject::LetterData TextObject::getLetterData(glm::vec2& nextLetter, char let
 {
 	LetterData ret;
 
-	// all data for font is in pixels but we need pure coordinates [-1 ; 1]
+	// convert from [-1 ; 1] to coord system of stbtt
 	float pixelToCoordW = 2.f / _fontBitmapWidth;
 	float pixelToCoordH = 2.f / _fontBitmapHeight;
-
-	ret.position.x = nextLetter.x;
-	ret.position.y = nextLetter.y;
-
-	nextLetter.x = (nextLetter.x + 1.f) / pixelToCoordW;
-	nextLetter.y = (nextLetter.y + 1.f) / pixelToCoordH;
 
 	stbtt_aligned_quad charData;
 	stbtt_GetBakedQuad((stbtt_bakedchar*)_charsData, _fontBitmapWidth, _fontBitmapHeight, letter - _startChar, &nextLetter.x, &nextLetter.y, &charData, 1);
 
-	nextLetter.x = nextLetter.x * pixelToCoordW - 1.f;
-	nextLetter.y = nextLetter.y * pixelToCoordH - 1.f;
-
-	ret.startTexture = glm::vec2(charData.s0,charData.t0);
-	ret.startMesh = glm::vec2(charData.x0*pixelToCoordW, charData.y0*pixelToCoordH);
-	ret.deltaTexture.x = (charData.s1 - charData.s0) / ((charData.x1 - charData.x0)*pixelToCoordW);
-	ret.deltaTexture.y = (charData.t1 - charData.t0) / ((charData.y1 - charData.y0)*pixelToCoordH);
-
+	// got letter rectangle Mesh coordinates
 	SGEPosition tL{charData.x0*pixelToCoordW,charData.y0*pixelToCoordH,0};
 	SGEPosition tR{charData.x1*pixelToCoordW,charData.y0*pixelToCoordH,0};
 	SGEPosition bR{charData.x1*pixelToCoordW,charData.y1*pixelToCoordH,0};
 	SGEPosition bL{charData.x0*pixelToCoordW,charData.y1*pixelToCoordH,0};
+
+	// offset to move mesh left bot in zero
+	ret.position = bL;
+	tL = tL - bL;
+	tR = tR - bL;
+	bR = bR - bL;
+	bL = bL - bL;
+
 	ret.mesh.push_back(tL);
 	ret.mesh.push_back(tR);
 	ret.mesh.push_back(bR);
 	ret.mesh.push_back(bL);
+
+	// calculate texture mapping data
+	ret.startTexture = glm::vec2(charData.s0,charData.t0);
+	ret.startMesh = tL;
+	ret.deltaTexture.x = (charData.s1 - charData.s0) / ((charData.x1 - charData.x0)*pixelToCoordW);
+	ret.deltaTexture.y = (charData.t1 - charData.t0) / ((charData.y1 - charData.y0)*pixelToCoordH);
 
 	return ret;
 }
@@ -76,27 +77,37 @@ TextObject::TextObject(std::string text) :
 	if (!loadFontData())
 		return;
 
-	glm::vec2 nextLetter(-1,0);
-	SGEPosition firstOffset;
-	bool offsetSetted = false;
+	glm::vec2 nextLetter(0,0);
+
+	SGEPosition leftBot;
+	SGEPosition rightTop;
+
 	for (uint8_t i = 0; i < text.length(); i++) {
 		char letter = text[i];
 		std::string GOLetterName = "letter_" + std::to_string(_textId)+std::string("_")+std::to_string(i);
 		LetterData LD = getLetterData(nextLetter, letter);
 		Mesh* _letterMesh = new Mesh(GOLetterName, LD.mesh, std::vector<uint16_t>{ 0,1,2,2,3,0 });
-
-		if (!offsetSetted) {
-			firstOffset.x = -LD.mesh[0].x;
-			firstOffset.y = -LD.mesh[0].y;
-			firstOffset.z = 0;
-			offsetSetted = true;
-		}
 		
 		GameObject* letterGO = new GameObject(GOLetterName, *_letterMesh, _fontPixels, _fontBitmapWidth, _fontBitmapHeight);
-		letterGO->setPosition(firstOffset);
+		letterGO->setPosition(LD.position);
 		letterGO->setTextureMapping(LD.deltaTexture, LD.startMesh, LD.startTexture);
 		_gameObjectsData.push_back(letterGO);
+
+		if (i == 0) {
+			leftBot = LD.mesh[0] + LD.position;
+		}
+
+		if (i == text.length() - 1) {
+			rightTop = LD.mesh[1] + LD.position;
+		}
 	}
+
+	// calculate coordinate of text center
+	_centerPos.x = leftBot.x + (rightTop.x - leftBot.x) / 2;
+	_centerPos.y = leftBot.y + (rightTop.y - leftBot.y) / 2;
+	_centerPos.z = 0.f;
+
+	setPosition({0,0,0});
 
 	_textReady = true;
 	_textId++;
@@ -107,20 +118,39 @@ std::vector<GameObject*> TextObject::getGameObjectsData()
 	return _gameObjectsData; 
 }
 
+void TextObject::move(glm::vec3 dPos)
+{
+	setPosition(_centerPos + dPos);
+}
+
 void TextObject::setPosition(SGEPosition newPosition)
 {
+	SGEPosition delta = newPosition - _centerPos;
 	for (size_t i = 0; i < _gameObjectsData.size(); i++)
-		_gameObjectsData[i]->setPosition(newPosition);
+		_gameObjectsData[i]->move(delta);
+	_centerPos = newPosition;
 }
 
-void TextObject::setScale(glm::vec3 newScale)
+void TextObject::setRotation(glm::vec3 angle)
 {
-	for (size_t i = 0; i < _gameObjectsData.size(); i++)
-		_gameObjectsData[i]->setScale(newScale);
+	SGEPosition prevCenter = _centerPos;
+	setPosition({0,0,0});
+
+	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
+		_gameObjectsData[i]->rotate(angle - _rotation, true);
+	}
+
+	_rotation = angle;
+
+	setPosition(prevCenter);
 }
 
-void TextObject::setRotation(glm::vec3 axis, float angle)
+void TextObject::rotate(glm::vec3 dAngle, bool global)
 {
-	for (size_t i = 0; i < _gameObjectsData.size(); i++)
-		_gameObjectsData[i]->setRotation(axis, angle);
+	if (global) {
+		SGEPosition newCenter = rotateVector(_centerPos, dAngle);
+		setPosition(newCenter);
+	}
+
+	setRotation(_rotation + dAngle);
 }

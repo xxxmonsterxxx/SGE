@@ -19,7 +19,7 @@ private:
 	bool loadFontData();
 
 	struct LetterData {
-		glm::vec2 position;
+		glm::vec3 position;
 		glm::vec2 deltaTexture; // multiplier conversion from mesh to texture
 		glm::vec2 startMesh; // left top mesh coords
 		glm::vec2 startTexture; // left top texture coords
@@ -35,6 +35,9 @@ private:
 
 	bool _textReady = false;
 
+	// text center (left bot is coords of 0th character)
+	SGEPosition _centerPos;
+
 	static int _textId;
 
 public:
@@ -45,8 +48,8 @@ public:
 	std::vector<GameObject*> getGameObjectsData();
 
 	void setPosition(SGEPosition newPosition) override;
-	void setRotation(glm::vec3 axis, float angle) override;
-    void setScale(glm::vec3 newScale) override;
-	// void setColor(SGEColor newColor) { ; }
+	void setRotation(glm::vec3 angle) override;
+	void rotate(glm::vec3 dAngle, bool global = false) override;
+	void move(glm::vec3 dPos) override;
 
 };

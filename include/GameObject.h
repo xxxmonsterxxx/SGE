@@ -1,6 +1,5 @@
 #pragma once
 
-#include "sge_utils.h"
 #include "Mesh.h"
 #include "iGameObject.h"
 
@@ -16,15 +15,19 @@ public:
     GameObject(const std::string name, Mesh& mesh);
 
     void setPosition(SGEPosition newPosition) override;
-	void setRotation(glm::vec3 axis, float angle) override;
+	void move(SGEPosition dPos) override;
+	SGEPosition getPosition();
+
+	void setRotation(glm::vec3 angle) override;
+	void rotate(glm::vec3 dAngle, bool global = false) override;
+
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart) override;
     void setScale(glm::vec3 newScale) override;
+	void setScale(float newScale);
 	void setColor(SGEColor newColor) override;
 
 private:
 	std::string _name;
-
-    SGEPosition _position;
 
     glm::vec3 _scale = glm::vec3(1);
 
@@ -42,4 +45,5 @@ private:
 
     bool init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer);
 
+	void updateModel();
 };
