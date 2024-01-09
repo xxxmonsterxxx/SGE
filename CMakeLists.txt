@@ -76,6 +76,7 @@ endif (RELEASE)
 #######################################
 
 # find additional dependecies
+find_package(Vulkan REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 
 # define if glfw3 found
@@ -100,6 +101,8 @@ endif (NOT SGR_LIB)
 #######################################
 
 include_directories(${GLM_INC_DIR})
+
+include_directories(${Vulkan_INCLUDE_DIRS})
 
 # status info about external dependecies
 if (SGR_FOUND AND GLFW3_FOUND)
