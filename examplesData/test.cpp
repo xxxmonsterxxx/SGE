@@ -98,12 +98,13 @@ int main()
     GameObject man("man",rectMesh, manTex);
 	// change gameobject parameters
 	man.setScale(2);
-	man.setPosition({-2,0,0});
-	man.move({1,0,0});
+	man.setPosition({0,-1,0});
 	man.setRotation({0,0,90});
+	man.setPosition({2,0,0});
 	man.rotate({0,0,90},true);
-	man.rotate({0,0,90});
-	man.move({-2,-1,0});
+	man.rotate({0,0,90},true);
+	man.move({0,-1,0});
+	man.rotate({0,-1,0},{0,-1,1},90);
 
 	glm::vec2 deltaTextureMan;
 	deltaTextureMan.x = (0.111 - 0) / (0.5 - -0.5);

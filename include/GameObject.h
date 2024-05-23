@@ -20,6 +20,7 @@ public:
 
 	void setRotation(glm::vec3 angle) override;
 	void rotate(glm::vec3 dAngle, bool global = false) override;
+	void rotate(glm::vec3 begin, glm::vec3 end, float angle);
 
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart) override;
     void setScale(glm::vec3 newScale) override;

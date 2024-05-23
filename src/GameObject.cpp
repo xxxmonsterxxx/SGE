@@ -111,6 +111,34 @@ void GameObject::rotate(glm::vec3 dAngle, bool global)
 	setRotation(_rotation);
 }
 
+void GameObject::rotate(glm::vec3 begin, glm::vec3 end, float angle)
+{
+	// move axis to origin
+	move(-begin);
+
+	// calculate axis vector
+	glm::vec3 axis = end - begin;
+
+	// rotate axis projection on XY around Z to connect with X axis then we got axis on XZ.
+	float alpha = atan2f(axis.y,axis.x);
+	rotate({0,0,-alpha},true);
+
+	// rotate axis in XZ arround Y to connect with Z
+	glm::vec2 axisxy(axis.x,axis.y);
+	float beta = atan2f(axisxy.length(),axis.z);
+	rotate({0,beta,0},true);
+
+	// now we can rotate around Z
+	rotate({0,0,angle},true);
+
+	// backward rotating
+	rotate({0,-beta,0},true);
+	rotate({0,0,-alpha},true);
+
+	// move axis back to begin
+	move(begin);
+}
+
 void GameObject::updateModel()
 {
 	glm::mat4 model(1.f);
