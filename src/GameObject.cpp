@@ -76,7 +76,7 @@ void GameObject::move(SGEPosition dPos)
 
 void GameObject::setScale(glm::vec3 newScale)
 {
-	_scale = newScale;
+	_scale *= newScale;
 	updateModel();
 }
 
