@@ -97,14 +97,10 @@ int main()
     std::string manTex = "/Resources/Textures/manTex.png";
     GameObject man("man",rectMesh, manTex);
 	// change gameobject parameters
-	man.setScale(2);
-	man.setPosition({0,-1,0});
-	man.setRotation({0,0,90});
-	man.setPosition({2,0,0});
-	man.rotate({0,0,90},true);
-	man.rotate({0,0,90},true);
-	man.move({0,-1,0});
-	man.rotate({0,-1,0},{0,-1,1},90);
+	man.scale(2);
+	man.setPosition({-1,0,0});
+	man.rotate({0,0,0},{0,0,1},90);
+	
 
 	glm::vec2 deltaTextureMan;
 	deltaTextureMan.x = (0.111 - 0) / (0.5 - -0.5);
@@ -126,10 +122,12 @@ int main()
 	TextObject helloSGE("Simple Game Engine");
 	// move text
 	helloSGE.setPosition({-1,0,0});
-	helloSGE.rotate({0,0,90},true);
+	helloSGE.rotate({0,0,90});
+	helloSGE.rotate({0,30,0});
+	helloSGE.rotate({0,-30,0});
+	helloSGE.setRotation({0,0,90});
 	helloSGE.move({0,1,0});
-	helloSGE.setRotation({0,0,180});
-	helloSGE.rotate({0,0,-90},true);
+	helloSGE.rotate({0,0,-90});
 	helloSGE.setRotation({0,0,0});
 
 	// subscribe to events binded with keys pressing/release

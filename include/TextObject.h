@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 
-class TextObject : iGameObject {
+class TextObject : public GameObjectBase {
 
 private:
 
@@ -47,9 +47,9 @@ public:
 
 	std::vector<GameObject*> getGameObjectsData();
 
-	void setPosition(SGEPosition newPosition) override;
-	void setRotation(glm::vec3 angle) override;
-	void rotate(glm::vec3 dAngle, bool global = false) override;
-	void move(glm::vec3 dPos) override;
+	void setPosition(SGEPosition newPosition);
+	void setRotation(glm::vec3 angle);
+	void rotate(glm::vec3 dAngle);
+	void move(glm::vec3 dPos);
 
 };

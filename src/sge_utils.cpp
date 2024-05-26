@@ -15,18 +15,17 @@ const std::vector<SgrVertex> pointsToSGRVertex(const std::vector<SGEPosition> po
     return ret;
 }
 
-glm::vec3 rotateVector(glm::vec3 v, glm::vec3 angle)
+glm::vec3 getAnglesFromRotationMatrx(glm::mat4 R)
 {
-	glm::mat4 rot(1.f);
-	rot = glm::rotate(rot,glm::radians(angle.x),{1,0,0});
-	rot = glm::rotate(rot,glm::radians(angle.y),{0,1,0});
-	rot = glm::rotate(rot,glm::radians(angle.z),{0,0,1});
+	glm::vec3 ret;
 
-	glm::vec4 pos = {v.x,v.y,v.z,1.f};
-	pos = rot*pos;
-	v.x = pos.x;
-	v.y = pos.y;
-	v.z = pos.z;
+	ret.y = asinf(-R[0][2]);
+	ret.x = atan2f(R[1][2], R[2][2]);
+	ret.z = atan2f(R[0][1], R[0][0]);
 
-	return v;
+	ret.x = glm::degrees(ret.x);
+	ret.y = glm::degrees(ret.y);
+	ret.z = glm::degrees(ret.z);
+
+	return ret;
 }

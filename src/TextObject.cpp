@@ -131,26 +131,45 @@ void TextObject::setPosition(SGEPosition newPosition)
 	_centerPos = newPosition;
 }
 
-void TextObject::setRotation(glm::vec3 angle)
-{
-	SGEPosition prevCenter = _centerPos;
-	setPosition({0,0,0});
-
+void TextObject::rotate(glm::vec3 dAngle)
+{	
+	glm::vec3 axis = _centerPos;
+	axis.x += 1;
 	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
-		_gameObjectsData[i]->rotate(angle - _rotation, true);
+		_gameObjectsData[i]->rotate(_centerPos, axis, dAngle.x);
 	}
 
-	_rotation = angle;
+	axis = _centerPos;
+	axis.y += 1;
+	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
+		_gameObjectsData[i]->rotate(_centerPos, axis, dAngle.y);
+	}
 
-	setPosition(prevCenter);
+	axis = _centerPos;
+	axis.z += 1;
+	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
+		_gameObjectsData[i]->rotate(_centerPos, axis, dAngle.z);
+	}
+
+	glm::mat4 newR(1);
+	newR = glm::rotate(newR, glm::radians(dAngle.z), {0,0,1});
+	newR = glm::rotate(newR, glm::radians(dAngle.y), {0,1,0});
+	newR = glm::rotate(newR, glm::radians(dAngle.x), {1,0,0});
+	_rotationM = newR * _rotationM;
 }
 
-void TextObject::rotate(glm::vec3 dAngle, bool global)
+void TextObject::setRotation(glm::vec3 angle)
 {
-	if (global) {
-		SGEPosition newCenter = rotateVector(_centerPos, dAngle);
-		setPosition(newCenter);
-	}
+	glm::vec3 backRot = -getRotation();
+	glm::vec3 tempRot = backRot;
+	tempRot.x = 0; tempRot.y = 0;
+	rotate(tempRot);
+	tempRot = backRot;
+	tempRot.x = 0; tempRot.z = 0;
+	rotate(tempRot);
+	tempRot = backRot;
+	tempRot.y = 0; tempRot.z = 0;
+	rotate(tempRot);
 
-	setRotation(_rotation + dAngle);
+	rotate(angle);
 }
