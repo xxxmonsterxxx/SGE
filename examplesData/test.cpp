@@ -100,6 +100,7 @@ int main()
 	man.scale(2);
 	man.setPosition({-1,0,0});
 	man.rotate({0,0,0},{0,0,1},90);
+	man.rotate({0,0,90});
 	
 
 	glm::vec2 deltaTextureMan;
@@ -129,6 +130,11 @@ int main()
 	helloSGE.move({0,1,0});
 	helloSGE.rotate({0,0,-90});
 	helloSGE.setRotation({0,0,0});
+	helloSGE.rotate({0,0,0},{0,0,1},90);
+	helloSGE.rotate({0,90,0});
+	helloSGE.rotate({0,0,0},{0,0,1},90);
+	helloSGE.move({-1,0,0});
+
 
 	// subscribe to events binded with keys pressing/release
 	sgeObject.keyEventSubscribe(GLFW_KEY_ESCAPE, GLFW_RELEASE, terminate);

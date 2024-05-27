@@ -71,14 +71,17 @@ void GameObjectBase::rotate(glm::vec3 begin, glm::vec3 end, float angle)
 
 void GameObjectBase::rotate(glm::vec3 dAngle)
 {
-	// reverse rotation for X -> Y -> Z
-	glm::mat4 newR(1);
-	newR = glm::rotate(newR, glm::radians(dAngle.z), {0,0,1});
-	newR = glm::rotate(newR, glm::radians(dAngle.y), {0,1,0});
-	newR = glm::rotate(newR, glm::radians(dAngle.x), {1,0,0});
-	_rotationM = newR * _rotationM;
+	glm::vec3 axis = getPosition();
+	axis.x += 1;
+	rotate(getPosition(), axis, dAngle.x);
 
-	updateModel();
+	axis = getPosition();
+	axis.y += 1;
+	rotate(getPosition(), axis, dAngle.y);
+
+	axis = getPosition();
+	axis.z += 1;
+	rotate(getPosition(), axis, dAngle.z);
 }
 
 void GameObjectBase::setRotation(glm::vec3 angle)

@@ -135,27 +135,15 @@ void TextObject::rotate(glm::vec3 dAngle)
 {	
 	glm::vec3 axis = _centerPos;
 	axis.x += 1;
-	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
-		_gameObjectsData[i]->rotate(_centerPos, axis, dAngle.x);
-	}
+	rotate(_centerPos, axis, dAngle.x);
 
 	axis = _centerPos;
 	axis.y += 1;
-	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
-		_gameObjectsData[i]->rotate(_centerPos, axis, dAngle.y);
-	}
-
+	rotate(_centerPos, axis, dAngle.y);
+	
 	axis = _centerPos;
 	axis.z += 1;
-	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
-		_gameObjectsData[i]->rotate(_centerPos, axis, dAngle.z);
-	}
-
-	glm::mat4 newR(1);
-	newR = glm::rotate(newR, glm::radians(dAngle.z), {0,0,1});
-	newR = glm::rotate(newR, glm::radians(dAngle.y), {0,1,0});
-	newR = glm::rotate(newR, glm::radians(dAngle.x), {1,0,0});
-	_rotationM = newR * _rotationM;
+	rotate(_centerPos, axis, dAngle.z);
 }
 
 void TextObject::setRotation(glm::vec3 angle)
@@ -172,4 +160,39 @@ void TextObject::setRotation(glm::vec3 angle)
 	rotate(tempRot);
 
 	rotate(angle);
+}
+
+void TextObject::rotate(glm::vec3 begin, glm::vec3 end, float angle)
+{
+	for (size_t i = 0; i < _gameObjectsData.size(); i++) {
+		_gameObjectsData[i]->rotate(begin, end, angle);
+	}
+
+	glm::vec4 trans(_centerPos.x-begin.x,_centerPos.y-begin.y,_centerPos.z-begin.z,1);
+	glm::mat4 newP(1);
+	newP = glm::rotate(newP, glm::radians(angle), end-begin);
+	trans = newP * trans;
+	_centerPos = {trans.x,trans.y,trans.z};
+	_centerPos += begin;
+
+	glm::vec3 axis = end - begin;
+	// rotate axis projection on XY around Z to connect with X axis then we got axis on XZ.
+	float alpha = -glm::degrees(atan2f(axis.y,axis.x));
+	// rotate axis in XZ arround Y to connect with Z
+	glm::vec2 axisxy{axis.x,axis.y};
+	float beta = glm::degrees(atan2f(glm::length(axisxy),axis.z));
+
+	glm::mat4 newR(1);
+	newR = glm::rotate(newR, glm::radians(-alpha),{0,0,1});
+	newR = glm::rotate(newR, glm::radians(beta),  {0,1,0});
+	newR = glm::rotate(newR, glm::radians(angle), {0,0,1});
+	newR = glm::rotate(newR, glm::radians(-beta), {0,1,0});
+	newR = glm::rotate(newR, glm::radians(alpha), {0,0,1});
+	_rotationM = newR * _rotationM;
+}
+
+glm::vec3 TextObject::getPosition()
+{
+	printf("\npos = %f %f %f",_centerPos.x,_centerPos.y,_centerPos.z);
+	return _centerPos;
 }

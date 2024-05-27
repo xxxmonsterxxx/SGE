@@ -50,6 +50,8 @@ public:
 	void setPosition(SGEPosition newPosition);
 	void setRotation(glm::vec3 angle);
 	void rotate(glm::vec3 dAngle);
+	void rotate(glm::vec3 begin, glm::vec3 end, float angle);
 	void move(glm::vec3 dPos);
+	glm::vec3 getPosition();
 
 };
