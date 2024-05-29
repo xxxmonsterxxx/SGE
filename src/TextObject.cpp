@@ -193,6 +193,5 @@ void TextObject::rotate(glm::vec3 begin, glm::vec3 end, float angle)
 
 glm::vec3 TextObject::getPosition()
 {
-	printf("\npos = %f %f %f",_centerPos.x,_centerPos.y,_centerPos.z);
 	return _centerPos;
 }

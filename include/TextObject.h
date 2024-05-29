@@ -54,4 +54,6 @@ public:
 	void move(glm::vec3 dPos);
 	glm::vec3 getPosition();
 
+	std::string getText() { return _text; }
+
 };

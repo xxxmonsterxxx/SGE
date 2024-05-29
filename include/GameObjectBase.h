@@ -15,6 +15,8 @@ protected:
 	void updateModel();
 
 public:
+	std::string getName() { return _name; }
+
 	// default interface
     void setPosition(SGEPosition newPosition);
 	void setRotation(SGEPosition newRotation);
