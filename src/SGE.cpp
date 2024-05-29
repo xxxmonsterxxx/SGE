@@ -40,7 +40,7 @@ SgrBuffer* SGE::initGlobalViewMatrix()
 
 SgrBuffer* SGE::initInstancesData()
 {
-	instancesData.instnaceCount = defaultInstanceNumber;
+	instancesData.instnaceCount = requiredInstanceNumber;
 	instancesData.instanceSize = sizeof(Mesh::MeshInstanceData);
 	if (MemoryManager::createDynamicUniformMemory(instancesData) != sgrOK)
 		return nullptr;
