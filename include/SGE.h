@@ -30,6 +30,8 @@ private:
     SgrGlobalUniformBufferObject viewProjection;
 
 	const uint16_t defaultInstanceNumber = 100;
+	size_t requiredInstanceNumber = defaultInstanceNumber;
+	size_t totalInstanceNumber = 0;
 	SgrInstancesUniformBufferObject instancesData;
 
 	static std::string execPath;
@@ -54,9 +56,12 @@ public:
 
     bool init(uint16_t width = 800, uint16_t height = 800, std::string windowName = "SGE");
 
-    void addToRender(GameObject& gObj);
-    void addToRender(std::vector<GameObject*> gObjects);
-	void addToRender(TextObject& tObj);
+	bool setMaxInstanceNumber(uint16_t number);
+
+    bool addToRender(GameObject& gObj);
+    bool addToRender(std::vector<GameObject*> gObjects);
+	bool addToRender(TextObject& tObj);
+	size_t getRenderInstanceNumber() { return totalInstanceNumber; }
 
     void updateViewProj(glm::mat4 newView, glm::mat4 newProj) {;}
 

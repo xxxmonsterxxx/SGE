@@ -132,7 +132,6 @@ int main()
 	helloSGE.setRotation({0,0,0});
 	helloSGE.rotate({0,0,0},{0,0,1},90);
 	helloSGE.rotate({0,90,0});
-	helloSGE.rotate({0,0,0},{0,0,1},90);
 	helloSGE.move({-1,0,0});
 
 
@@ -150,9 +149,17 @@ int main()
 	sgeObject.mouseEventSubscribe(GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE, moveCamera);
 
 	// render objects
-    sgeObject.addToRender(man);
-    sgeObject.addToRender(man2);
-	sgeObject.addToRender(man3);
+	// sgeObject.setMaxInstanceNumber(4);
+	bool ret = false;
+    ret = sgeObject.addToRender(man);
+	if (!ret)
+		return 111;
+    ret = sgeObject.addToRender(man2);
+	if (!ret)
+		return 222;
+	ret = sgeObject.addToRender(man3);
+	if (!ret)
+		return 333;
 	sgeObject.addToRender(helloSGE);
 
     if (!sgeObject.init())
