@@ -1,8 +1,8 @@
 ##########################################################################
 
-project(SGE DESCRIPTION "Simple Game Engine")
-
 cmake_minimum_required(VERSION 3.10)
+
+project(SGE DESCRIPTION "Simple Game Engine")
 
 ##########################################################################
 
@@ -19,7 +19,25 @@ set(VPATCH ${CMAKE_MATCH_1})
 
 set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
+# Config version file generate 
+set(SGE_CONFIG_VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/SGEConfigVersion.cmake")
+set(SGE_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/SGEConfig.cmake")
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/SGEConfigVersion.cmake.in"
+  "${SGE_CONFIG_VERSION_FILE}"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/SGEConfig.cmake.in"
+  "${SGE_CONFIG_FILE}"
+  @ONLY
+)
+
 #######################################
+
+list(APPEND CMAKE_MODULE_PATH "/usr/local/include/SGR/")
 
 # platform detection
 if (UNIX AND NOT APPLE)
@@ -76,52 +94,25 @@ endif (RELEASE)
 #######################################
 
 # find additional dependecies
-find_package(Vulkan REQUIRED)
+find_package(Vulkan 1.3.283 REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
+find_package(SGR 0.7.4 REQUIRED)
 
-# define if glfw3 found
-if (NOT glfw3_DIR)
-	set(GLFW3_FOUND FALSE)
-else (NOT glfw3_DIR)
-	set(GLFW3_FOUND TRUE)
-	get_target_property(GLFW_INC_DIR glfw INTERFACE_INCLUDE_DIRECTORIES)
-endif (NOT glfw3_DIR)
-
-
-set(GLM_INC_DIR modules/glm) # include libraries
-
-find_library(SGR_LIB SGR)
-# define if SGR found
-if (NOT SGR_LIB)
-	set(SGR_FOUND FALSE)
-else (NOT SGR_LIB)
-	set(SGR_FOUND TRUE)
-endif (NOT SGR_LIB)
+set(GLM_INCLUDE_DIRS modules/glm) # include libraries
+get_target_property(GLFW_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
 
 #######################################
 
-include_directories(${GLM_INC_DIR})
-
+include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
+include_directories(${SGR_INCLUDE_DIRS})
+include_directories(${GLFW_INCLUDE_DIRS})
 
-# status info about external dependecies
-if (SGR_FOUND AND GLFW3_FOUND)
-    message(STATUS "Found SGR, Including and Linking now")
-	message(STATUS "Found GLFW3, Including and Linking now")
-    include_directories(${GLFW_INC_DIR})
-    target_link_libraries(SGE ${SGR_LIB} glfw)
-	if (RELEASE)
-		target_link_libraries(SGE_ST ${SGR_LIB})
-	endif (RELEASE)
-else (SGR_FOUND AND GLFW3_FOUND)
-	if (NOT SGR_FOUND)
-		message(FATAL_ERROR "SGR not found, please install SGR_FOUND using library README")
-	endif (NOT SGR_FOUND)
+target_link_libraries (SGE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES} glfw)
 
-	if (NOT GLFW3_FOUND)
-		message(FATAL_ERROR "GLFW3 not found, please install GLFW3 using library README")
-	endif (NOT GLFW3_FOUND)
-endif (SGR_FOUND AND GLFW3_FOUND)
+if (RELEASE)
+	target_link_libraries (SGE_ST ${SGR_LIBRARIES} ${Vulkan_LIBRARIES} glfw)
+endif (RELEASE)
 
 #######################################
 

@@ -111,8 +111,8 @@ fi
 # Remove library from /usr/**
 if [ $REMOVE_LIBRARY == true ]
 then
-	sudo rm -rf $PATH_INC/SGE
-	sudo rm -f $PATH_LIB/libSGE.*
+	rm -rf $PATH_INC/SGE
+	rm -f $PATH_LIB/libSGE.*
 	echo
 	echo "Library was removed succesfull"
 	echo
@@ -176,10 +176,10 @@ then
 	for entry in `ls $search_dir`; do
 		if [ $INSTALL == true ]
 		then
-			sudo rm -rf $PATH_INC/SGE
-			sudo mkdir $PATH_INC/SGE
-			sudo cp -rf $entry/include/*.h $PATH_INC/SGE
-			sudo cp -f $entry/lib/shared/* $PATH_LIB
+			rm -rf $PATH_INC/SGE
+			mkdir $PATH_INC/SGE
+			cp -rf $entry/include/* $PATH_INC/SGE
+			cp -f $entry/lib/shared/* $PATH_LIB
 			echo
 			echo "Installed in $PATH_INC and $PATH_LIB"
 			echo

@@ -26,3 +26,6 @@ cmake_install.cmake
 
 # MakeFile
 Makefile
+
+# Generated cmake templates
+include/*.cmake
