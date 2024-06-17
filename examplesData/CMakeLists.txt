@@ -22,7 +22,7 @@ else (WIN32)
 endif (WIN32)
 
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.8.0 EXACT)
+find_package(SGR 0.8.1 EXACT)
 
 set(GLM_INC_DIR ${SGE_FOLDER}/modules/glm)
 
