@@ -4,7 +4,7 @@
 #include <filesystem>
 
 #define STB_TRUETYPE_IMPLEMENTATION
-	#include "../modules/stb/stb_truetype.h"
+#include "stb_truetype.h"
 
 Mesh TextObject::_letterMesh = Mesh::getDefaultRectangleMesh("letterMesh");
 int  TextObject::_textId = 0;

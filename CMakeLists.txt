@@ -19,6 +19,12 @@ set(VPATCH ${CMAKE_MATCH_1})
 
 set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
+
+if (BUILD_EXAMPLE)
+	add_subdirectory(examplesData)
+	return()
+endif()
+
 # Config version file generate 
 set(SGE_CONFIG_VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/SGEConfigVersion.cmake")
 set(SGE_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/SGEConfig.cmake")
@@ -37,43 +43,23 @@ configure_file(
 
 #######################################
 
-list(APPEND CMAKE_MODULE_PATH "/usr/local/include/SGR/")
-
-# platform detection
-if (UNIX AND NOT APPLE)
-	set(LINUX TRUE)
-endif (UNIX AND NOT APPLE)
-
-if (APPLE)
-	set(PLATFORM_NAME MacOS)
-endif (APPLE)
-
-if (LINUX)
-	set(PLATFORM_NAME Linux)
-endif (LINUX)
-
-if (WIN32)
-	set(PLATFORM_NAME Windows)
-endif (WIN32)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	message("Build Simple Graphics Renderer v${VERSION}")
+else ()
+	message("Build Simple Graphics Renderer v${VERSION} in debug mode")
+endif()
 
 #######################################
 
-if (RELEASE)
-	message("Build Simple Game Engine v${VERSION}")
-else (RELEASE)
-	message("Build Simple Game Engine in debug mode")
-	set(DEBUG TRUE)
-endif (RELEASE)
-
-#######################################
 
 # compiler options
 set (CMAKE_CXX_STANDARD 17) #standard version is 17 - minimum for "optional" use
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3") #optimization
 
-if (DEBUG)
-	set(CMAKE_BUILD_TYPE RelWithDebInfo)
-endif (DEBUG)
+if (WIN32)
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2") #optimization
+else ()
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") #optimization
+endif ()
 
 add_definitions(-DNDBUG=${RELEASE}) # set release or not status
 
@@ -83,56 +69,62 @@ include_directories(include) # setup SGE includes
 
 file (GLOB SOURCE src/*.cpp)
 
-#######################################
-
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(SGE SHARED ${SOURCE})
-
-if (RELEASE)
-	add_library(SGE_ST STATIC ${SOURCE})
-endif (RELEASE)
 
 #######################################
 
 # find additional dependecies
-find_package(Vulkan 1.3.283 REQUIRED)
-find_package(glfw3 3.3 REQUIRED)
-find_package(SGR 0.7.4 REQUIRED)
+find_package(Vulkan 1.3.283.0 REQUIRED)
+find_package(SGR 0.8.0 EXACT)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
-get_target_property(GLFW_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
+set(STB_INC_DIR modules/stb)
 
 #######################################
 
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
-include_directories(${SGR_INCLUDE_DIRS})
-include_directories(${GLFW_INCLUDE_DIRS})
+include_directories(${STB_INC_DIR})
 
-target_link_libraries (SGE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES} glfw)
+target_link_libraries (SGE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES})
 
-if (RELEASE)
-	target_link_libraries (SGE_ST ${SGR_LIBRARIES} ${Vulkan_LIBRARIES} glfw)
-endif (RELEASE)
+if (WIN32)
+	find_library(glfw glfw3 $ENV{GLFW3_LIBRARIES} NO_DEFAULT_PATH)
+	include_directories($ENV{GLFW3_INCLUDE_DIRS})
+	target_link_libraries (SGE ${glfw})
+else (WIN32)
+	find_package(glfw3 3.3 REQUIRED)
+	target_link_libraries (SGE glfw)
+endif (WIN32)
+
+# linking MacOSX framework libraries
+if (APPLE)
+	target_link_libraries(SGE "-framework CoreFoundation")
+endif (APPLE)
 
 #######################################
 
-# library prefix based on paltform
-set(RELEASE_BUILD_DEST release/SGE-v${VERSION}-${PLATFORM_NAME}) # set release build destination
-set(DEBUG_BUILD_DEST debug) # set release build destination
+set(BUILD_DEST ${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}) # set build destination
+set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${BUILD_DEST}/lib OUTPUT_NAME "SGE")
 
-if (RELEASE)
-	file(COPY include DESTINATION ${RELEASE_BUILD_DEST})
-	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/shared)
-	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/static)
-else (RELEASE)
-	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY debug/shared)
-endif (RELEASE)
+# install process
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/SGE-v${VERSION})
+endif ()
 
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/SGE)
+install(TARGETS SGE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
+
+if (NOT WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_custom_command(TARGET SGE
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} --install .
+	)
+endif ()
 #######################################
 
 include(ProcessorCount)
 ProcessorCount(N)
-message("Ready to build on ${PLATFORM_NAME}")
-message("Please build using: make -j${N}")
 
 ##########################################################################
