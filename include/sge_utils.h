@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SGR/SGR.h>
+#include <SGR.h>
 
 #include <string>
 

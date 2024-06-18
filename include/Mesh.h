@@ -1,7 +1,6 @@
 #pragma once
 
 #include "sge_utils.h"
-#include <SGR/SGR.h>
 
 class SGE;
 

@@ -86,6 +86,7 @@ set(STB_INC_DIR modules/stb)
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${STB_INC_DIR})
+include_directories(${SGR_INCLUDE_DIRS})
 
 target_link_libraries (SGE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES})
 
@@ -96,6 +97,8 @@ if (WIN32)
 else (WIN32)
 	find_package(glfw3 3.3 REQUIRED)
 	target_link_libraries (SGE glfw)
+	get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
+	include_directories(${GLFW3_INCLUDE_DIRS}/GLFW)
 endif (WIN32)
 
 # linking MacOSX framework libraries
