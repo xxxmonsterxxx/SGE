@@ -7,10 +7,12 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\build",
       "installRoot": "${projectDir}\\build",
-      "cmakeCommandArgs": "",
-      "buildCommandArgs": "",
-      "ctestCommandArgs": "",
       "variables": [
+        {
+          "name": "BUILD_EXAMPLE",
+          "value": "FALSE",
+          "type": "STRING"
+        }
       ]
     },
     {
@@ -19,7 +21,7 @@
       "configurationType": "Release",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\build",
-      "installRoot": "C:\\Libs\\SGR",
+      "installRoot": "C:\\Libs\\SGE",
       "variables": [
         {
           "name": "BUILD_EXAMPLE",

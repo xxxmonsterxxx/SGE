@@ -44,9 +44,9 @@ configure_file(
 #######################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-	message("Build Simple Graphics Renderer v${VERSION}")
+	message("Build Simple Game Engine v${VERSION}")
 else ()
-	message("Build Simple Graphics Renderer v${VERSION} in debug mode")
+	message("Build Simple Game Engine v${VERSION} in debug mode")
 endif()
 
 #######################################

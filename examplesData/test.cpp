@@ -107,8 +107,8 @@ int main()
 	
 
 	glm::vec2 deltaTextureMan;
-	deltaTextureMan.x = (0.111 - 0) / (0.5 - -0.5);
-	deltaTextureMan.y = (0.250 - 0) / (0.5 - -0.5);
+	deltaTextureMan.x = (0.111f - 0) / (0.5f - -0.5);
+	deltaTextureMan.y = (0.250f - 0) / (0.5f - -0.5);
 	man.setTextureMapping(deltaTextureMan, glm::vec2(-0.5, -0.5), glm::vec2(0,0));
 
 	// default geometry mesh
@@ -188,10 +188,10 @@ int main()
 		if (moveincamera)
 			sgeObject.setViewTransition({0,0,0.05});
 
-		deltaTextureMan.x = (0.111 - 0) / (0.5 - -0.5);
-		deltaTextureMan.y = (0.250 - 0) / (0.5 - -0.5);
+		deltaTextureMan.x = (0.111f - 0) / (0.5f - -0.5);
+		deltaTextureMan.y = (0.250f - 0) / (0.5f - -0.5);
 		man.setTextureMapping(deltaTextureMan, glm::vec2(-0.5, -0.5), glm::vec2(mancoordanimation,(moveDirection - 1)*0.25));
-		mancoordanimation += 0.111;
+		mancoordanimation += 0.111f;
 		if (mancoordanimation > 1)
 			mancoordanimation = 0;
 
