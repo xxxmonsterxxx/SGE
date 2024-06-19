@@ -30,6 +30,7 @@ else (WIN32)
     find_package(glfw3 3.3 REQUIRED)
     get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
     include_directories(${GLFW3_INCLUDE_DIRS}/GLFW)
+    target_link_libraries (${PROJECT_NAME} glfw)
 endif (WIN32)
 
 include_directories(${Vulkan_INCLUDE_DIRS} ${GLM_INC_DIR} ${STB_INC_DIR} ${SGE_FOLDER}/include/SGE ${SGR_INCLUDE_DIRS})
