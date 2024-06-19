@@ -1,5 +1,8 @@
 #include "SGE.h"
+
+#if __linux__
 #include <unistd.h>
+#endif
 
 bool EXIT = false;
 

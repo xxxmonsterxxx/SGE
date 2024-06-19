@@ -76,7 +76,7 @@ add_library(SGE SHARED ${SOURCE})
 
 # find additional dependecies
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.8.1 EXACT)
+find_package(SGR 0.8.2 EXACT)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)
@@ -91,8 +91,8 @@ include_directories(${SGR_INCLUDE_DIRS})
 target_link_libraries (SGE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES})
 
 if (WIN32)
-	find_library(glfw glfw3 $ENV{GLFW3_LIBRARIES} NO_DEFAULT_PATH)
-	include_directories($ENV{GLFW3_INCLUDE_DIRS})
+	find_library(glfw glfw3 $ENV{GLFW3_LIB}/lib NO_DEFAULT_PATH)
+	include_directories($ENV{GLFW3_LIB}/include/GLFW)
 	target_link_libraries (SGE ${glfw})
 else (WIN32)
 	find_package(glfw3 3.3 REQUIRED)

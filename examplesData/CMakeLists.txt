@@ -14,17 +14,15 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 if (WIN32)
 	SET(glfw $ENV{GLFW3_LIBRARIES})
-	include_directories($ENV{GLFW3_INCLUDE_DIRS})
-	target_link_libraries (${PROJECT_NAME} ${glfw})
+	include_directories($ENV{GLFW3_LIB}/include/GLFW)
 else (WIN32)
     find_package(glfw3 3.3 REQUIRED)
-    target_link_libraries (${PROJECT_NAME} glfw)
     get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
     include_directories(${GLFW3_INCLUDE_DIRS}/GLFW)
 endif (WIN32)
 
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.8.1 EXACT)
+find_package(SGR 0.8.2 EXACT)
 
 set(GLM_INC_DIR ${SGE_FOLDER}/modules/glm)
 
