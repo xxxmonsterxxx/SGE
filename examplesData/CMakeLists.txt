@@ -18,18 +18,21 @@ set(GLM_INC_DIR ../modules/glm)
 set(SGE_FOLDER ${CMAKE_SOURCE_DIR}/build/SGE-v${VERSION})
 
 find_package(Vulkan 1.3.283.0 REQUIRED)
+find_package(SGR 0.8.2 EXACT)
 
-find_library(SGRE_LIB SGE ${SGE_FOLDER}/lib NO_DEFAULT_PATH)
+find_library(SGE_LIB SGE ${SGE_FOLDER}/lib NO_DEFAULT_PATH)
 
 if (WIN32)
+	find_library(glfw glfw3 $ENV{GLFW3_LIB}/lib NO_DEFAULT_PATH)
 	include_directories($ENV{GLFW3_LIB}/include/GLFW)
+	target_link_libraries (${PROJECT_NAME} ${glfw})
 else (WIN32)
     find_package(glfw3 3.3 REQUIRED)
     get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
     include_directories(${GLFW3_INCLUDE_DIRS}/GLFW)
 endif (WIN32)
 
-include_directories(${Vulkan_INCLUDE_DIRS} ${GLM_INC_DIR} ${STB_INC_DIR} ${SGE_FOLDER}/include/SGE)
+include_directories(${Vulkan_INCLUDE_DIRS} ${GLM_INC_DIR} ${STB_INC_DIR} ${SGE_FOLDER}/include/SGE ${SGR_INCLUDE_DIRS})
 target_link_libraries (${PROJECT_NAME} ${Vulkan_LIBRARIES} ${SGE_LIB})
 
 file(COPY Resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
