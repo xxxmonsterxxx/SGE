@@ -125,6 +125,28 @@ if (NOT WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
 		COMMAND ${CMAKE_COMMAND} --install .
 	)
 endif ()
+
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
+	install(CODE "
+		execute_process(
+        COMMAND reg add \"HKCU\\\\Environment\" /v SGE_LIB /t REG_SZ /d \"${CMAKE_INSTALL_PREFIX}/lib\" /f
+        OUTPUT_VARIABLE result
+        ERROR_VARIABLE result
+        RESULT_VARIABLE exit_code
+		)
+	"
+	)
+
+	install(CODE "
+		execute_process(
+        COMMAND reg add \"HKCU\\\\Environment\" /v CMAKE_PREFIX_PATH /t REG_SZ /d \"${CMAKE_INSTALL_PREFIX}/include/SGE;$ENV{CMAKE_PREFIX_PATH}\" /f
+        OUTPUT_VARIABLE result
+        ERROR_VARIABLE result
+        RESULT_VARIABLE exit_code
+		)
+	"
+	)
+endif ()
 #######################################
 
 include(ProcessorCount)
