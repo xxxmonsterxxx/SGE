@@ -47,12 +47,7 @@ private:
 	EventManager& eventManager = EventManager::get();
 
 public:
-	static SGE& get() { 
-		if (!instance)
-			instance = new SGE();
-
-		return *instance;
-	}
+	static SGE& get();
 
     bool init(uint16_t width = 800, uint16_t height = 800, std::string windowName = "SGE");
 

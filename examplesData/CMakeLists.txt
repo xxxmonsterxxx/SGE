@@ -39,7 +39,7 @@ target_link_libraries (${PROJECT_NAME} ${Vulkan_LIBRARIES} ${SGE_LIB})
 file(COPY Resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 if (WIN32)
-    set(DLL_FILES ${CMAKE_SOURCE_DIR}/build/SGE-v${VERSION}/lib/SGE.dll)
+    set(DLL_FILES ${CMAKE_SOURCE_DIR}/build/SGE-v${VERSION}/lib/SGE.dll $ENV{SGR_LIB}/SGR.dll)
 
     add_custom_target(CopyDlls ALL
         COMMENT "Copying dynamic libraries to output directory"

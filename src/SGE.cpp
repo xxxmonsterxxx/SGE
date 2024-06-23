@@ -1,5 +1,6 @@
 #include "SGE.h"
 
+
 SGR SGE::renderer = SGR();
 SGE* SGE::instance = nullptr;
 std::string SGE::execPath = getExecutablePath();
@@ -7,6 +8,13 @@ std::string SGE::execPath = getExecutablePath();
 const uint16_t maximumInstanceNumber = 1000;
 
 SGE::SGE(){ }
+
+SGE& SGE::get() {
+	if (!instance)
+		instance = new SGE();
+
+	return *instance;
+}
 
 void SGE::staticUpdateRenderData()
 {

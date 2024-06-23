@@ -61,7 +61,11 @@ else ()
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") #optimization
 endif ()
 
-add_definitions(-DNDBUG=${RELEASE}) # set release or not status
+if(CMAKE_BUILD_TYPE STREQUAL "Release")  # set release or not status for source code
+	add_definitions(-DNDBUG=FALSE)
+else ()
+	add_definitions(-DNDBUG=TRUE)
+endif ()
 
 #######################################
 
