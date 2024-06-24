@@ -31,5 +31,8 @@ ___
   - *First step*
 - **Windows**
   - *First step*
+  - ***WARNING:***
+For engine test you required `DEBUG` version of SGR library.
+
 
 Each build can be **multithreaded**, after `cmake` command will be generated message with max number of your threads.
