@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SGR/SGR.h>
+#include <SGR.h>
 
 #include "GameObject.h"
 #include "TextObject.h"
@@ -30,6 +30,8 @@ private:
     SgrGlobalUniformBufferObject viewProjection;
 
 	const uint16_t defaultInstanceNumber = 100;
+	size_t requiredInstanceNumber = defaultInstanceNumber;
+	size_t totalInstanceNumber = 0;
 	SgrInstancesUniformBufferObject instancesData;
 
 	static std::string execPath;
@@ -45,18 +47,16 @@ private:
 	EventManager& eventManager = EventManager::get();
 
 public:
-	static SGE& get() { 
-		if (!instance)
-			instance = new SGE();
-
-		return *instance;
-	}
+	static SGE& get();
 
     bool init(uint16_t width = 800, uint16_t height = 800, std::string windowName = "SGE");
 
-    void addToRender(GameObject& gObj);
-    void addToRender(std::vector<GameObject*> gObjects);
-	void addToRender(TextObject& tObj);
+	bool setMaxInstanceNumber(uint16_t number);
+
+    bool addToRender(GameObject& gObj);
+    bool addToRender(std::vector<GameObject*> gObjects);
+	bool addToRender(TextObject& tObj);
+	size_t getRenderInstanceNumber() { return totalInstanceNumber; }
 
     void updateViewProj(glm::mat4 newView, glm::mat4 newProj) {;}
 
@@ -68,4 +68,6 @@ public:
 	bool mouseEventSubscribe(int key, int action, sgeMouseEventFunction func) { return eventManager.addMouseSubscriber(key, action, func); }
 
 	glm::vec2 getCursorPos();
+
+	std::string getExecPath();
 };

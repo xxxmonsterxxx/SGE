@@ -1,10 +1,20 @@
 #include "SGE.h"
 
+
 SGR SGE::renderer = SGR();
 SGE* SGE::instance = nullptr;
 std::string SGE::execPath = getExecutablePath();
 
+const uint16_t maximumInstanceNumber = 1000;
+
 SGE::SGE(){ }
+
+SGE& SGE::get() {
+	if (!instance)
+		instance = new SGE();
+
+	return *instance;
+}
 
 void SGE::staticUpdateRenderData()
 {
@@ -38,12 +48,12 @@ SgrBuffer* SGE::initGlobalViewMatrix()
 
 SgrBuffer* SGE::initInstancesData()
 {
-	instancesData.instnaceCount = defaultInstanceNumber;
+	instancesData.instnaceCount = requiredInstanceNumber;
 	instancesData.instanceSize = sizeof(Mesh::MeshInstanceData);
 	if (MemoryManager::createDynamicUniformMemory(instancesData) != sgrOK)
 		return nullptr;
 
-	SgrBuffer* instancesDataBuffer = nullptr;
+	SgrBuffer* instancesDataBuffer = nullptr; 
 	SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(instancesDataBuffer, instancesData.dataSize);
 	if (resultCreateBuffer != sgrOK)
 		return nullptr;
@@ -95,19 +105,25 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
     return true;
 }
 
-void SGE::addToRender(GameObject& gObj)
+bool SGE::addToRender(GameObject& gObj)
 {
+	if (totalInstanceNumber+1 > requiredInstanceNumber) {
+		return false;
+	}
 	for (auto& obj : meshesAndObjects) {
 		if(obj.mesh->_name == gObj._mesh._name) {
 			obj.gameObjects.push_back(&gObj);
-			return;
+			totalInstanceNumber++;
+			return true;
 		}
 	}
 
 	MeshAndObjects newMesh;
 	newMesh.mesh = &gObj._mesh;
+	totalInstanceNumber++;
 	newMesh.gameObjects.push_back(&gObj);
 	meshesAndObjects.push_back(newMesh);
+	return true;
 }
 
 bool SGE::drawNextFrame()
@@ -127,15 +143,20 @@ void SGE::setViewTransition(glm::vec3 viewTranslate, float angle, glm::vec3 axis
 	viewProjection.view = glm::rotate(viewProjection.view, glm::radians(angle), axis);
 }
 
-void SGE::addToRender(std::vector<GameObject*> gObjects)
+bool SGE::addToRender(std::vector<GameObject*> gObjects)
 {
-	for (auto newGObj : gObjects)
-		addToRender(*newGObj);
+	for (auto newGObj : gObjects) {
+		bool ret = addToRender(*newGObj);
+		if (!ret)
+			return false;
+	}
+
+	return true;
 }
 
-void SGE::addToRender(TextObject& tObj)
+bool SGE::addToRender(TextObject& tObj)
 {
-	addToRender(tObj.getGameObjectsData());
+	return addToRender(tObj.getGameObjectsData());
 }
 
 glm::vec2 SGE::getCursorPos()
@@ -146,4 +167,18 @@ glm::vec2 SGE::getCursorPos()
 	glfwGetCursorPos(window, &x, &y);
 
 	return glm::vec2(x,y);
+}
+
+std::string SGE::getExecPath()
+{
+	return execPath;
+}
+
+bool SGE::setMaxInstanceNumber(uint16_t number)
+{
+	if (number > maximumInstanceNumber)
+		return false;
+
+	requiredInstanceNumber = number;
+	return true;
 }

@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 
-class TextObject : iGameObject {
+class TextObject : public GameObjectBase {
 
 private:
 
@@ -19,7 +19,7 @@ private:
 	bool loadFontData();
 
 	struct LetterData {
-		glm::vec2 position;
+		glm::vec3 position;
 		glm::vec2 deltaTexture; // multiplier conversion from mesh to texture
 		glm::vec2 startMesh; // left top mesh coords
 		glm::vec2 startTexture; // left top texture coords
@@ -35,6 +35,9 @@ private:
 
 	bool _textReady = false;
 
+	// text center (left bot is coords of 0th character)
+	SGEPosition _centerPos;
+
 	static int _textId;
 
 public:
@@ -44,9 +47,13 @@ public:
 
 	std::vector<GameObject*> getGameObjectsData();
 
-	void setPosition(SGEPosition newPosition) override;
-	void setRotation(glm::vec3 axis, float angle) override;
-    void setScale(glm::vec3 newScale) override;
-	// void setColor(SgeColor newColor) { ; }
+	void setPosition(SGEPosition newPosition);
+	void setRotation(glm::vec3 angle);
+	void rotate(glm::vec3 dAngle);
+	void rotate(glm::vec3 begin, glm::vec3 end, float angle);
+	void move(glm::vec3 dPos);
+	glm::vec3 getPosition();
+
+	std::string getText() { return _text; }
 
 };

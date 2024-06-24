@@ -2,25 +2,25 @@
 #include "SGE.h"
 
 GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture) :
-		_name(name),
         _mesh(mesh),
 		_texturePath(texture) {
+			_name = name;
 			_mesh.setTextured(true);
 		}
 
 GameObject::GameObject(const std::string name, Mesh& mesh) :
-		_name(name),
         _mesh(mesh) {
+			_name = name;
 			_mesh.setTextured(false);
 		}
 
 GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight) :
-		_name(name),
         _mesh(mesh),
 		_texturePixels(texture),
 		_textureWidth(textureWidth),
 		_textureHeight(textureHeight)
 {
+	_name = name;
 	_mesh.setTextured(true);
 }
 
@@ -57,27 +57,10 @@ void GameObject::setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, 
 	_instanceData.textureStart = textureStart;
 }
 
-void GameObject::setPosition(SGEPosition newPosition)
-{
-	_position = newPosition;
-	_instanceData.model = glm::translate(_instanceData.model, glm::vec3(_position.x,_position.y,_position.z));
-}
-
-void GameObject::setScale(glm::vec3 newScale)
-{
-	_scale = newScale; 
-	_instanceData.model = glm::scale(_instanceData.model, _scale);
-}
-
-void GameObject::setColor(SgeColor newColor)
+void GameObject::setColor(SGEColor newColor)
 {
 	_color = newColor;
 	_instanceData.color.x = _color.x;
 	_instanceData.color.y = _color.y;
 	_instanceData.color.z = _color.z;
-}
-
-void GameObject::setRotation(glm::vec3 axis, float angle)
-{
-	_instanceData.model = glm::rotate(_instanceData.model, glm::radians(angle), axis);
 }

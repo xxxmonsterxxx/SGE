@@ -4,9 +4,9 @@
 # shell script for building and possible (re)installing
 
 echo
-echo "#####################################################"
+echo "##################################################"
 echo "Welcome to Simple Game Engine Library helper script #"
-echo "#####################################################"
+echo "##################################################"
 echo
 
 ############################################################
@@ -31,18 +31,26 @@ Help()
 ############################################################
 ############################################################
 
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_PATH="$( cd -P "$( dirname "$SOURCE" )" && pwd )/$(basename "$SOURCE")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+
 BUILD=false # do we need build or not?
-INSTALL=false # install library or not
 BUILD_TYPE=debug # release or debug
 CLEAN= # clean or not
 EXAMPLE_BUILD=false # need to build example project?
 OPTS_PRESENTED=false # options provided
 REMOVE_LIBRARY=false # remove library from folder where installed
 SYSTEM_TYPE="$(uname -s)"
-PATH_INC=
-PATH_LIB=
-
-############################################################
+USER_CONFIG_FILE=
+INSTALL_PATH=
+INSTALL=false
 
 echo
 echo "Your system is $SYSTEM_TYPE"
@@ -50,19 +58,20 @@ echo
 
 case $SYSTEM_TYPE in 
 	Linux)
-		PATH_INC=/usr/include
-		PATH_LIB=/usr/lib
+		INSTALL_PATH=/usr
+		USER_CONFIG_FILE="$HOME/.bashrc"
 		;;
 	Darwin)
-		PATH_INC=/usr/local/include
-		PATH_LIB=/usr/local/lib
+		INSTALL_PATH=/usr/local
+		USER_CONFIG_FILE="$HOME/.zshrc"
 		;;
 esac
 
-############################################################
+PATH_INC=$INSTALL_PATH/include
+PATH_LIB=$INSTALL_PATH/lib
 
 # Get the options
-while getopts ":rcidez" flag
+while getopts ":rcdezhi" flag
 do
 	OPTS_PRESENTED=true
     case $flag in
@@ -87,6 +96,13 @@ do
 		z)	# Remove library
 			REMOVE_LIBRARY=true
 			;;
+		i)	# Need to install
+			INSTALL=true
+			;;
+		h)  # Help
+			Help
+			exit
+			;;
 	   \?)	# Invalid option
 	   		echo
 			echo "Error: Invalid option - ${OPTARG}"
@@ -97,16 +113,12 @@ do
     esac
 done
 
-############################################################
-
 # If not option was provided
 if [ $OPTS_PRESENTED == false ]
 then
 	Help
 	exit
 fi
-
-############################################################
 
 # Remove library from /usr/**
 if [ $REMOVE_LIBRARY == true ]
@@ -117,8 +129,6 @@ then
 	echo "Library was removed succesfull"
 	echo
 fi
-
-############################################################
 
 # Clean without build
 if [ $BUILD == false ]
@@ -131,27 +141,17 @@ then
 		echo "Build folder was cleared"
 		echo
 	fi
-	if [ $INSTALL == true ]
-	then
-		echo
-		echo "Cannot install without building"
-		echo
-	fi
 	exit
 fi
 
 mkdir build
 cd build
 
-############################################################
-
 # Choose build type
 case $BUILD_TYPE in
-	debug)		cmake .. -DRELEASE=FALSE ;;
-	release)	cmake .. -DRELEASE=TRUE ;;
+	debug)		cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_EXAMPLE=FALSE --install-prefix $SCRIPT_DIR/build/ ;;
+	release)	cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLE=FALSE --install-prefix $INSTALL_PATH ;;
 esac
-
-############################################################
 
 # Need to clean?
 if [ $CLEAN ]
@@ -159,51 +159,50 @@ then
 	cmake --build . --CLEAN-first -- -j
 else
 	cmake --build . -- -j
+
+	if [ $BUILD_TYPE == release ] && [ $INSTALL == true ]
+	then
+		sudo mkdir $INSTALL_PATH/include/SGE
+		sudo make install
+	fi
+
+	if [ $EXAMPLE_BUILD == true ]
+	then
+		cmake .. -DBUILD_EXAMPLE=TRUE
+		cmake --build . -- -j
+	fi
 fi
 
-############################################################
-
 # If build type is release (with/out install option)
-if [ $BUILD_TYPE == release ]
+if [ $BUILD_TYPE == release ] && [ $INSTALL ]
 then
-	cd release
+	cd Release
 	rm -rf *.tar
 	for entry in `ls $search_dir`; do
-		if [ $INSTALL == true ]
-		then
-			sudo rm -rf $PATH_INC/SGE
-			sudo mkdir $PATH_INC/SGE
-			sudo cp -rf $entry/include/*.h $PATH_INC/SGE
-			sudo cp -f $entry/lib/shared/* $PATH_LIB
-			echo
-			echo "Installed in $PATH_INC and $PATH_LIB"
-			echo
+		#setting environement variables
+		if [ -f  ]; then
+			if ! grep -q "export CMAKE_PREFIX_PATH=$INSTALL_PATH/include/SGE:\${CMAKE_PREFIX_PATH}" $USER_CONFIG_FILE; then
+				echo >> $USER_CONFIG_FILE
+				echo "export CMAKE_PREFIX_PATH=$INSTALL_PATH/include/SGE:\${CMAKE_PREFIX_PATH} #for cmake package_find command" >> $USER_CONFIG_FILE
+			fi
+			
+			if ! grep -q "export SGE_LIB=$INSTALL_PATH/lib" $USER_CONFIG_FILE; then
+				echo "export SGE_LIB=$INSTALL_PATH/lib/" >> $USER_CONFIG_FILE
+				echo "SDK environement added to user config file successfully."
+			fi
 		fi
 		tar -cf $entry.tar $entry
 	done
 	cd ..
-else
-	if [ $INSTALL == true ]
-	then
-		echo
-		echo "Cannot install not release build type"
-		echo
-	fi
 fi
 
 cd ..
 
-############################################################
 
 # Example build and run if requested
 if [ $EXAMPLE_BUILD == true ]
 then
-	cd examplesData
-	mkdir build
-	cd build
-	cmake ..
-	cmake --build . -- -j
-	./exampleApplication/SGE_test
+	./build/exampleApplication/SGE_test
 fi
 
 ############################################################

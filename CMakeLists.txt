@@ -1,8 +1,8 @@
 ##########################################################################
 
-project(SGE DESCRIPTION "Simple Game Engine")
-
 cmake_minimum_required(VERSION 3.10)
+
+project(SGE DESCRIPTION "Simple Game Engine")
 
 ##########################################################################
 
@@ -19,45 +19,53 @@ set(VPATCH ${CMAKE_MATCH_1})
 
 set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
+
+if (BUILD_EXAMPLE)
+	add_subdirectory(examplesData)
+	return()
+endif()
+
+# Config version file generate 
+set(SGE_CONFIG_VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/SGEConfigVersion.cmake")
+set(SGE_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/SGEConfig.cmake")
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/SGEConfigVersion.cmake.in"
+  "${SGE_CONFIG_VERSION_FILE}"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/SGEConfig.cmake.in"
+  "${SGE_CONFIG_FILE}"
+  @ONLY
+)
+
 #######################################
 
-# platform detection
-if (UNIX AND NOT APPLE)
-	set(LINUX TRUE)
-endif (UNIX AND NOT APPLE)
-
-if (APPLE)
-	set(PLATFORM_NAME MacOS)
-endif (APPLE)
-
-if (LINUX)
-	set(PLATFORM_NAME Linux)
-endif (LINUX)
-
-if (WIN32)
-	set(PLATFORM_NAME Windows)
-endif (WIN32)
-
-#######################################
-
-if (RELEASE)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
 	message("Build Simple Game Engine v${VERSION}")
-else (RELEASE)
-	message("Build Simple Game Engine in debug mode")
-	set(DEBUG TRUE)
-endif (RELEASE)
+else ()
+	message("Build Simple Game Engine v${VERSION} in debug mode")
+endif()
 
 #######################################
+
 
 # compiler options
 set (CMAKE_CXX_STANDARD 17) #standard version is 17 - minimum for "optional" use
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3") #optimization
 
-if (DEBUG)
-	set(CMAKE_BUILD_TYPE RelWithDebInfo)
-endif (DEBUG)
+if (WIN32)
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2") #optimization
+else ()
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") #optimization
+endif ()
 
-add_definitions(-DNDBUG=${RELEASE}) # set release or not status
+if(CMAKE_BUILD_TYPE STREQUAL "Release")  # set release or not status for source code
+	add_definitions(-DNDBUG=FALSE)
+else ()
+	add_definitions(-DNDBUG=TRUE)
+endif ()
 
 #######################################
 
@@ -65,80 +73,87 @@ include_directories(include) # setup SGE includes
 
 file (GLOB SOURCE src/*.cpp)
 
-#######################################
-
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(SGE SHARED ${SOURCE})
-
-if (RELEASE)
-	add_library(SGE_ST STATIC ${SOURCE})
-endif (RELEASE)
 
 #######################################
 
 # find additional dependecies
-find_package(glfw3 3.3 REQUIRED)
+find_package(Vulkan 1.3.283.0 REQUIRED)
+find_package(SGR 0.8.2 EXACT)
 
-# define if glfw3 found
-if (NOT glfw3_DIR)
-	set(GLFW3_FOUND FALSE)
-else (NOT glfw3_DIR)
-	set(GLFW3_FOUND TRUE)
-	get_target_property(GLFW_INC_DIR glfw INTERFACE_INCLUDE_DIRECTORIES)
-endif (NOT glfw3_DIR)
-
-
-set(GLM_INC_DIR modules/glm) # include libraries
-
-find_library(SGR_LIB SGR)
-# define if SGR found
-if (NOT SGR_LIB)
-	set(SGR_FOUND FALSE)
-else (NOT SGR_LIB)
-	set(SGR_FOUND TRUE)
-endif (NOT SGR_LIB)
+set(GLM_INCLUDE_DIRS modules/glm) # include libraries
+set(STB_INC_DIR modules/stb)
 
 #######################################
 
-include_directories(${GLM_INC_DIR})
+include_directories(${GLM_INCLUDE_DIRS})
+include_directories(${Vulkan_INCLUDE_DIRS})
+include_directories(${STB_INC_DIR})
+include_directories(${SGR_INCLUDE_DIRS})
 
-# status info about external dependecies
-if (SGR_FOUND AND GLFW3_FOUND)
-    message(STATUS "Found SGR, Including and Linking now")
-	message(STATUS "Found GLFW3, Including and Linking now")
-    include_directories(${GLFW_INC_DIR})
-    target_link_libraries(SGE ${SGR_LIB} glfw)
-	if (RELEASE)
-		target_link_libraries(SGE_ST ${SGR_LIB})
-	endif (RELEASE)
-else (SGR_FOUND AND GLFW3_FOUND)
-	if (NOT SGR_FOUND)
-		message(FATAL_ERROR "SGR not found, please install SGR_FOUND using library README")
-	endif (NOT SGR_FOUND)
+target_link_libraries (SGE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES})
 
-	if (NOT GLFW3_FOUND)
-		message(FATAL_ERROR "GLFW3 not found, please install GLFW3 using library README")
-	endif (NOT GLFW3_FOUND)
-endif (SGR_FOUND AND GLFW3_FOUND)
+if (WIN32)
+	find_library(glfw glfw3 $ENV{GLFW3_LIB}/lib NO_DEFAULT_PATH)
+	include_directories($ENV{GLFW3_LIB}/include/GLFW)
+	target_link_libraries (SGE ${glfw})
+else (WIN32)
+	find_package(glfw3 3.3 REQUIRED)
+	target_link_libraries (SGE glfw)
+	get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
+	include_directories(${GLFW3_INCLUDE_DIRS}/GLFW)
+endif (WIN32)
+
+# linking MacOSX framework libraries
+if (APPLE)
+	target_link_libraries(SGE "-framework CoreFoundation")
+endif (APPLE)
 
 #######################################
 
-# library prefix based on paltform
-set(RELEASE_BUILD_DEST release/SGE-v${VERSION}-${PLATFORM_NAME}) # set release build destination
-set(DEBUG_BUILD_DEST debug) # set release build destination
+set(BUILD_DEST ${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}) # set build destination
+set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${BUILD_DEST}/lib OUTPUT_NAME "SGE")
 
-if (RELEASE)
-	file(COPY include DESTINATION ${RELEASE_BUILD_DEST})
-	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/shared)
-	set_target_properties(SGE_ST PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${RELEASE_BUILD_DEST}/lib/static)
-else (RELEASE)
-	set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY debug/shared)
-endif (RELEASE)
+# install process
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/SGE-v${VERSION})
+endif ()
 
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/SGE)
+install(TARGETS SGE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
+
+if (NOT WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_custom_command(TARGET SGE
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} --install .
+	)
+endif ()
+
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
+	install(CODE "
+		execute_process(
+        COMMAND reg add \"HKCU\\\\Environment\" /v SGE_LIB /t REG_SZ /d \"${CMAKE_INSTALL_PREFIX}/lib\" /f
+        OUTPUT_VARIABLE result
+        ERROR_VARIABLE result
+        RESULT_VARIABLE exit_code
+		)
+	"
+	)
+
+	install(CODE "
+		execute_process(
+        COMMAND reg add \"HKCU\\\\Environment\" /v CMAKE_PREFIX_PATH /t REG_SZ /d \"${CMAKE_INSTALL_PREFIX}/include/SGE;$ENV{CMAKE_PREFIX_PATH}\" /f
+        OUTPUT_VARIABLE result
+        ERROR_VARIABLE result
+        RESULT_VARIABLE exit_code
+		)
+	"
+	)
+endif ()
 #######################################
 
 include(ProcessorCount)
 ProcessorCount(N)
-message("Ready to build on ${PLATFORM_NAME}")
-message("Please build using: make -j${N}")
 
 ##########################################################################
