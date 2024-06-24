@@ -113,6 +113,7 @@ endif (APPLE)
 #######################################
 
 set(BUILD_DEST ${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}) # set build destination
+FILE(COPY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${BUILD_DEST}/include/SGE)
 set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${BUILD_DEST}/lib OUTPUT_NAME "SGE")
 
 # install process
