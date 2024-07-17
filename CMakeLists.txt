@@ -76,6 +76,15 @@ file (GLOB SOURCE src/*.cpp)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(SGE SHARED ${SOURCE})
 
+set_target_properties(SGE PROPERTIES
+    INSTALL_RPATH_USE_LINK_PATH TRUE
+)
+
+set_target_properties(SGE PROPERTIES
+    VERSION ${VERSION}
+    SOVERSION ${VMAJOR}.${VMINOR}.0
+)
+
 #######################################
 
 # find additional dependecies
