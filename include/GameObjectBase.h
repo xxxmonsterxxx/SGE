@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Mesh.h"
 
 class GameObjectBase {
@@ -18,17 +20,17 @@ public:
 	std::string getName() { return _name; }
 
 	// default interface
-    void setPosition(SGEPosition newPosition);
-	void setRotation(SGEPosition newRotation);
+    virtual void setPosition(SGEPosition newPosition);
+	virtual void setRotation(SGEPosition newRotation);
 	void setScale(glm::vec3 newScale);
 
-	void move(SGEPosition dPos);
-	void rotate(glm::vec3 dAngle);
-	void rotate(glm::vec3 begin, glm::vec3 end, float angle);
+	virtual void move(SGEPosition dPos);
+	virtual void rotate(glm::vec3 dAngle);
+	virtual void rotate(glm::vec3 begin, glm::vec3 end, float angle);
 	void scale(glm::vec3 sc);
     void scale(float sc);
 
-	SGEPosition getPosition();
+	virtual SGEPosition getPosition();
 	glm::vec3 getRotation();
 	glm::vec3 getScale();
 };

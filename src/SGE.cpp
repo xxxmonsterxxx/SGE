@@ -182,3 +182,15 @@ bool SGE::setMaxInstanceNumber(uint16_t number)
 	requiredInstanceNumber = number;
 	return true;
 }
+
+bool SGE::registerGameObject(GameObject& gObj)
+{
+	gameObjects.push_back(&gObj);
+	return addToRender(gObj);
+}
+
+bool SGE::registerGameObject(TextObject& tObj)
+{
+	gameObjects.push_back(&tObj);
+	return addToRender(tObj);
+}
