@@ -29,3 +29,30 @@ glm::vec3 getAnglesFromRotationMatrx(glm::mat4 R)
 
 	return ret;
 }
+
+void rotateVector(glm::vec3& v, glm::vec3 axis, float angle)
+{
+	glm::vec4 v4(v.x,v.y,v.z,1);
+	glm::mat4 rot(1);
+	
+	rot = glm::rotate(rot, glm::radians(angle), axis);
+	v4 = rot * v4;
+
+	v.x = v4.x;
+	v.y = v4.y;
+	v.z = v4.z;
+}
+
+float wrap180(float ang)
+{
+	float wrap360 = ang - (int)(ang / 360) * 360;
+	float ret = wrap360;
+	if (wrap360 < -180 || wrap360 > 180)
+		ret = -wrap360;
+	return ret;
+}
+
+glm::vec3 wrap180(glm::vec3 angles)
+{
+	return {wrap180(angles.x),wrap180(angles.y),wrap180(angles.z)};
+}
