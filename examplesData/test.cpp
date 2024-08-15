@@ -58,6 +58,7 @@ void moveCamera(int button, int action, int mods)
 
 int moveCameraZ = 0; // -1 - Forward, 1 - Backward
 int moveCameraX = 0; // -1 - Left, 1 - Right
+bool cameraReset = false;
 void changeCamera(int key, int scancode, int action, int mods)
 {
 	switch (key) {
@@ -85,6 +86,9 @@ void changeCamera(int key, int scancode, int action, int mods)
 			else
 				moveCameraX = 0;
 			break;
+		case GLFW_KEY_SPACE:
+			if (action == GLFW_PRESS)
+				cameraReset = true;
 	}
 }
 
@@ -158,6 +162,7 @@ int main()
 	sgeObject.keyEventSubscribe(GLFW_KEY_A, GLFW_RELEASE, changeCamera);
 	sgeObject.keyEventSubscribe(GLFW_KEY_D, GLFW_PRESS, changeCamera);
 	sgeObject.keyEventSubscribe(GLFW_KEY_D, GLFW_RELEASE, changeCamera);
+	sgeObject.keyEventSubscribe(GLFW_KEY_SPACE, GLFW_PRESS, changeCamera);
 	sgeObject.mouseEventSubscribe(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, moveCamera);
 	sgeObject.mouseEventSubscribe(GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE, moveCamera);
 
@@ -178,7 +183,8 @@ int main()
     if (!sgeObject.init())
         return 11;
 
-	sgeObject.getCameraObject().move({0,0,10});
+	sgeObject.getCameraObject().setDefaultPos({0,0,5});
+	sgeObject.getCameraObject().reset();
     
 	float mancoordanimation = 0;
     while(sgeObject.drawNextFrame()) {
@@ -186,9 +192,17 @@ int main()
 			return 1;
 
 		if (cameraRotate) {
-			glm::vec2 deltaCamera = sgeObject.getCursorPos() - cameraPos;
-			sgeObject.getCameraObject().rotate({-deltaCamera.y,deltaCamera.x,0});
-			cameraPos = sgeObject.getCursorPos();
+			glm::vec2 deltaMouse = sgeObject.getCursorPos() - cameraPos;
+			if (glm::length(deltaMouse) > 0) {
+				glm::vec3 rotateAngles(deltaMouse.y,-deltaMouse.x,0);
+				sgeObject.getCameraObject().rotate(rotateAngles);
+				cameraPos = sgeObject.getCursorPos();
+			}
+		}
+
+		if (cameraReset) {
+			cameraReset = false;
+			sgeObject.getCameraObject().reset();
 		}
 
 		if (moveCameraZ) {
