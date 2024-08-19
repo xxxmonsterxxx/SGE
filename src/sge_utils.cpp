@@ -56,3 +56,8 @@ glm::vec3 wrap180(glm::vec3 angles)
 {
 	return {wrap180(angles.x),wrap180(angles.y),wrap180(angles.z)};
 }
+
+void printVec(const char* prefix, glm::vec3 v)
+{
+	printf("\n%s : %f %f %f",prefix,v.x,v.y,v.z);
+}
