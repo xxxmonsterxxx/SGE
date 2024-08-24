@@ -1,9 +1,20 @@
 #include "GameObjectBase.h"
 #include "sge_utils.h"
 
+Mesh::MeshInstanceData GameObjectBase::getInstanceData()
+{
+	updateModel();
+	return _instanceData; 
+}
+
 void GameObjectBase::updateModel()
 {
 	glm::mat4 model(1.f);
+
+	if (_cs) {
+		// coordinate system translate
+		model = model * _cs->getTransMatr();
+	}
 
 	//reverse order
 	model = model * _positionM; // tranlate

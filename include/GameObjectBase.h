@@ -1,10 +1,17 @@
 #pragma once
 
 #include "Mesh.h"
+#include "CoordinateSystem.h"
 
 class GameObjectBase {
 
-// Coordinate system is left-handed and positive rotation is clockwise
+friend class SGE;
+
+// Local coordinate system is left-handed and positive rotation is clockwise
+// X - right; Y - down; Z - forward to us;
+private:
+
+	Mesh::MeshInstanceData getInstanceData();
 
 protected:
 	std::string _name;
@@ -13,6 +20,8 @@ protected:
 	glm::mat4 _positionM{1};
 	glm::mat4 _rotationM{1};
 	glm::mat4 _scaleM{1};
+
+	CoordinateSystem* _cs = nullptr;
 
 	void updateModel();
 
@@ -33,4 +42,6 @@ public:
 	virtual SGEPosition getPosition();
 	glm::vec3 getRotation();
 	glm::vec3 getScale();
+
+	void bindCoordSystem(CoordinateSystem* cs) { _cs = cs; }
 };

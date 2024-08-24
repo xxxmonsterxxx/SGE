@@ -28,7 +28,7 @@ void SGE::updateRenderData()
 	for (auto obj : meshesAndObjects) {
 		for (auto gObj : obj.gameObjects) {
 			Mesh::MeshInstanceData* currentObject = (Mesh::MeshInstanceData*)((uint64_t)instancesData.data + (objCounter++) * instancesData.dynamicAlignment);
-			*currentObject = gObj->_instanceData;
+			*currentObject = gObj->getInstanceData();
 		}
 	}
 	
