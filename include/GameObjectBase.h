@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Mesh.h"
-#include "CoordinateSystem.h"
+
+class CoordinateSystem;
 
 class GameObjectBase {
 

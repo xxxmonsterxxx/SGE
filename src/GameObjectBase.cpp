@@ -1,5 +1,5 @@
 #include "GameObjectBase.h"
-#include "sge_utils.h"
+#include "CoordinateSystem.h"
 
 Mesh::MeshInstanceData GameObjectBase::getInstanceData()
 {
@@ -9,14 +9,15 @@ Mesh::MeshInstanceData GameObjectBase::getInstanceData()
 
 void GameObjectBase::updateModel()
 {
+	// WARNING all matrcies transformation actions should be applied in reverse order
+	// so this code should be readed from down to up
 	glm::mat4 model(1.f);
 
-	if (_cs) {
-		// coordinate system translate
+	if (_cs) { // if this object was binded to certain coordinate system
 		model = model * _cs->getTransMatr();
 	}
 
-	//reverse order
+	// operations in coodinate system of this object
 	model = model * _positionM; // tranlate
 	model = model * _rotationM; // local rotations
 	model = model * _scaleM; // local scale

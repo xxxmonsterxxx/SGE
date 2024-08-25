@@ -110,6 +110,9 @@ bool SGE::addToRender(GameObject& gObj)
 	if (totalInstanceNumber+1 > requiredInstanceNumber) {
 		return false;
 	}
+
+	gObj.bindCoordSystem(&cs); // to each game object we bind SGE coordinate system which binded to camera
+
 	for (auto& obj : meshesAndObjects) {
 		if(obj.mesh->_name == gObj._mesh._name) {
 			obj.gameObjects.push_back(&gObj);

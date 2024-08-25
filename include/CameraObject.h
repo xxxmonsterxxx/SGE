@@ -1,25 +1,27 @@
 #pragma once
 
-#include "GameObjectBase.h"
+#include "CoordinateSystem.h"
 
-class CameraObject : public GameObjectBase {
+class CameraObject {
 
 private:
-    std::vector<GameObjectBase*>& _presentedObjects;
 
     SGEPosition _defaultPosition;
     SGEPosition _position;
 
     glm::vec3 _rotation;
 
+    CoordinateSystem* _cs;
+    std::string _name;
+
 public:
-    CameraObject(std::vector<GameObjectBase*>& presentedObjects) : _presentedObjects(presentedObjects) { ; }
+    CameraObject(CoordinateSystem* cs) : _cs(cs), _name("Camera") { ; }
 
     void setDefaultPos(SGEPosition pos);
-    void move(SGEPosition dPos) override;
-
-    void rotate(glm::vec3 dAngle) override;
-    glm::vec3 getRotation();
-
     void reset(); // reset to default position and orientation
+
+    void move(glm::vec3 deltaLookAngle, SGEPosition dPos);
+
+    SGEPosition getPosition();
+    glm::vec3 getRotation();
 };

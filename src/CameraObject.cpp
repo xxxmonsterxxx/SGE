@@ -7,31 +7,12 @@ void CameraObject::setDefaultPos(SGEPosition pos)
 
 void CameraObject::reset()
 {
-    rotate(-_rotation);
-
-    move(-_position + _defaultPosition);
+    move(-_rotation, (-_position + _defaultPosition));
 }
 
-void CameraObject::move(SGEPosition dPos)
+void CameraObject::move(glm::vec3 deltaLookAngle, SGEPosition dPos)
 {
-    for (auto& go : _presentedObjects) {
-        go->move(-dPos);
-    }
-
-    rotateVector(dPos, {1,0,0}, _rotation.x);
-    rotateVector(dPos, {0,1,0}, _rotation.y);
-
-    _position += dPos;
-}
-
-glm::vec3 CameraObject::getRotation()
-{
-    return _rotation;
-}
-
-void CameraObject::rotate(glm::vec3 dAngle)
-{
-    _rotation += dAngle;
+    _rotation += deltaLookAngle;
     _rotation = wrap180(_rotation);
 
     // imagine that camera rotates... so for real all object rotates but camera not, so around Y all object rotates by
@@ -39,8 +20,22 @@ void CameraObject::rotate(glm::vec3 dAngle)
     glm::vec3 yAxis(0,1,0); // warning... axis in Vulkan forwarded down
     rotateVector(yAxis, {1,0,0}, -_rotation.x); // y axis also with object should be rotated by reverse rotation camera angle
 
-    for (auto& go : _presentedObjects) {
-        go->rotate({0,0,0}, {1,0,0}, -dAngle.x);
-        go->rotate({0,0,0}, yAxis, -dAngle.y);
-    }
+    _cs->rotate({0,0,0}, {1,0,0}, -deltaLookAngle.x);
+    _cs->rotate({0,0,0}, yAxis, -deltaLookAngle.y);
+    _cs->move(-dPos);
+
+    rotateVector(dPos, {1,0,0}, _rotation.x);
+    rotateVector(dPos, {0,1,0}, _rotation.y);
+
+    _position += dPos;
+}
+
+SGEPosition CameraObject::getPosition()
+{
+    return _position;
+}
+
+glm::vec3 CameraObject::getRotation()
+{
+    return _rotation;
 }

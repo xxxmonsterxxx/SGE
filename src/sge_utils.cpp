@@ -43,13 +43,21 @@ void rotateVector(glm::vec3& v, glm::vec3 axis, float angle)
 	v.z = v4.z;
 }
 
+float wrap360(float ang)
+{
+	float ret = ang - (int)(ang / 360)*360;
+	if (ret < 0)
+		ret += 360;
+	return ret;
+}
+
 float wrap180(float ang)
 {
-	float wrap360 = ang - (int)(ang / 360) * 360;
-	float ret = wrap360;
-	if (wrap360 < -180 || wrap360 > 180)
-		ret = -wrap360;
-	return ret;
+	float ang360 = wrap360(ang);
+	if (ang360 > 180)
+		return ang360 - 360;
+	
+	return ang360;
 }
 
 glm::vec3 wrap180(glm::vec3 angles)

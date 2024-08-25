@@ -102,6 +102,7 @@ int main()
 	// 3. Change parameters of GameObjects
 	// 4. Render GameObject
 
+	// since ver 0.5.0 coordinate system of SGE is: Y - up, Z - forward
     // we can create own geometry mesh
     const std::vector<glm::vec3> rectVertices{
 		{-0.5f,-0.5f,0.f},
@@ -118,8 +119,7 @@ int main()
 	// change gameobject parameters
 	man.scale(2);
 	man.setPosition({-1,0,0});
-	man.rotate({0,0,0},{0,0,1},90);
-	man.rotate({0,0,90});
+	man.rotate({0,0,0},{0,0,1},180);
 	
 
 	glm::vec2 deltaTextureMan;
@@ -129,19 +129,19 @@ int main()
 
 	// default geometry mesh
     GameObject man2("man2",rectMesh, manTex);
-    man2.setPosition({0.5,0.5,3});
+    man2.setPosition({-0.75,0.75,-2.5});
 	deltaTextureMan.x = (1 - 0) / (0.5 - -0.5);
 	deltaTextureMan.y = (1 - 0) / (0.5 - -0.5);
 	man2.setTextureMapping(deltaTextureMan, glm::vec2(-0.5, -0.5), glm::vec2(0,0));
 
 	Mesh rectangleFromDefault = Mesh::getDefaultRectangleMesh("defaultRect", false);
 	GameObject man3("man3",rectangleFromDefault);
-    man3.setPosition({2,-2,-1});
+    man3.setPosition({1.5,-1.5,-1});
 	man3.setColor({0,0,1});
 
 	TextObject helloSGE("Simple Game Engine");
 	// move text
-	helloSGE.setPosition({-1,0,0});
+	helloSGE.setPosition({-1.5,0,0});
 	helloSGE.rotate({0,0,-90});
 	helloSGE.setRotation({0,0,0});
 	helloSGE.rotate({0,0,0},{0,0,1},90);
@@ -191,13 +191,10 @@ int main()
 		if (EXIT)
 			return 1;
 
+		glm::vec2 deltaMouse(0.f);
 		if (cameraRotate) {
-			glm::vec2 deltaMouse = sgeObject.getCursorPos() - cameraPos;
-			if (glm::length(deltaMouse) > 0) {
-				glm::vec3 rotateAngles(deltaMouse.y,-deltaMouse.x,0);
-				sgeObject.getCameraObject().rotate(rotateAngles);
-				cameraPos = sgeObject.getCursorPos();
-			}
+			deltaMouse = sgeObject.getCursorPos() - cameraPos;
+			cameraPos = sgeObject.getCursorPos();
 		}
 
 		if (cameraReset) {
@@ -205,12 +202,10 @@ int main()
 			sgeObject.getCameraObject().reset();
 		}
 
-		if (moveCameraZ) {
-			sgeObject.getCameraObject().move({0, 0, moveCameraZ * 0.05});
+		if (moveCameraZ || moveCameraX || glm::length(deltaMouse) > 0) {
+			glm::vec3 rotateAngles(deltaMouse.y,-deltaMouse.x,0);
+			sgeObject.getCameraObject().move(rotateAngles,{moveCameraX * 0.05, 0, moveCameraZ * 0.05});
 		}
-		
-		if (moveCameraX)
-			sgeObject.getCameraObject().move({moveCameraX * 0.05, 0, 0});
 
 		deltaTextureMan.x = (0.111f - 0) / (0.5f - -0.5);
 		deltaTextureMan.y = (0.250f - 0) / (0.5f - -0.5);

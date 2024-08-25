@@ -6,6 +6,7 @@
 #include "TextObject.h"
 #include "EventManager.h"
 #include "CameraObject.h"
+#include "CoordinateSystem.h"
 
 class SGE {
 
@@ -47,7 +48,8 @@ private:
 	SgrBuffer* initInstancesData();
 
 	EventManager& eventManager = EventManager::get();
-	CameraObject camera{gameObjects};
+	CoordinateSystem cs{glm::vec3{0,0,0},glm::vec3{180,0,0}};
+	CameraObject camera{&cs};
 
 	bool addToRender(GameObject& gObj);
     bool addToRender(std::vector<GameObject*> gObjects);
