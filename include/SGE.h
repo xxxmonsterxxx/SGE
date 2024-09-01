@@ -78,7 +78,7 @@ public:
 
 	glm::vec2 getCursorPos();
 
-	std::string getExecPath();
+	static std::string getExecPath();
 
 	CameraObject& getCameraObject() { return camera; }
 };

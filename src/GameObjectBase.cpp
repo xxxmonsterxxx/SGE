@@ -120,3 +120,9 @@ void GameObjectBase::scale(float sc)
 {
 	setScale(glm::vec3(sc));
 }
+
+void GameObjectBase::bindCoordSystem(CoordinateSystem* cs)
+{
+	_cs = cs;
+	updateModel();
+}

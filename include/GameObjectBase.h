@@ -44,5 +44,5 @@ public:
 	glm::vec3 getRotation();
 	glm::vec3 getScale();
 
-	void bindCoordSystem(CoordinateSystem* cs) { _cs = cs; }
+	void bindCoordSystem(CoordinateSystem* cs);
 };
