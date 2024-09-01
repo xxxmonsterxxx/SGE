@@ -2,6 +2,8 @@
 
 #include "Mesh.h"
 #include "GameObjectBase.h"
+#include "AnimationSheet.h"
+#include <map>
 
 class SGE;
 
@@ -12,10 +14,13 @@ friend class SGE;
 public:
     GameObject(const std::string name, Mesh& mesh, const std::string& texture);
 	GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, uint32_t textureWidth, uint32_t textureHeight);
-    GameObject(const std::string name, Mesh& mesh);
+    GameObject(const std::string name, Mesh& mesh, bool textured = false);
 
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart);
 	void setColor(SGEColor newColor);
+
+	bool addAnimation(const std::string name, AnimationSheet& animSheet, uint8_t animationNumberInVertical);
+	void doAnimation(std::string name, uint8_t speed);
 
 private:
 	std::string _texturePath = "/Resources/Textures/empty.jpg";
@@ -29,4 +34,10 @@ private:
     Mesh& _mesh;
 
     bool init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer);
+
+	bool changeAnimation(std::string newAnimationName);
+	std::string _currentAnimation;
+	std::map<std::string, Animation> _animationList;
+
+	std::vector<void*> _descriptorSetData;
 };

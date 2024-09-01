@@ -81,3 +81,8 @@ bool Mesh::init()
 
 	return true;
 }
+
+glm::vec2 Mesh::getTextureBindPoint()
+{
+	return _vertices[_indices[0]];
+}

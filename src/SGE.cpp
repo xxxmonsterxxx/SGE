@@ -28,7 +28,7 @@ void SGE::updateRenderData()
 	for (auto obj : meshesAndObjects) {
 		for (auto gObj : obj.gameObjects) {
 			Mesh::MeshInstanceData* currentObject = (Mesh::MeshInstanceData*)((uint64_t)instancesData.data + (objCounter++) * instancesData.dynamicAlignment);
-			*currentObject = gObj->_instanceData;
+			*currentObject = gObj->getInstanceData();
 		}
 	}
 	
@@ -110,6 +110,9 @@ bool SGE::addToRender(GameObject& gObj)
 	if (totalInstanceNumber+1 > requiredInstanceNumber) {
 		return false;
 	}
+
+	gObj.bindCoordSystem(&cs); // to each game object we bind SGE coordinate system which binded to camera
+
 	for (auto& obj : meshesAndObjects) {
 		if(obj.mesh->_name == gObj._mesh._name) {
 			obj.gameObjects.push_back(&gObj);
@@ -181,4 +184,16 @@ bool SGE::setMaxInstanceNumber(uint16_t number)
 
 	requiredInstanceNumber = number;
 	return true;
+}
+
+bool SGE::registerGameObject(GameObject& gObj)
+{
+	gameObjects.push_back(&gObj);
+	return addToRender(gObj);
+}
+
+bool SGE::registerGameObject(TextObject& tObj)
+{
+	gameObjects.push_back(&tObj);
+	return addToRender(tObj);
 }

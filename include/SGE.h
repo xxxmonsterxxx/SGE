@@ -5,6 +5,8 @@
 #include "GameObject.h"
 #include "TextObject.h"
 #include "EventManager.h"
+#include "CameraObject.h"
+#include "CoordinateSystem.h"
 
 class SGE {
 
@@ -25,6 +27,7 @@ private:
 
     static SGR renderer;
 
+	std::vector<GameObjectBase*> gameObjects;
 	std::vector<MeshAndObjects> meshesAndObjects;
 
     SgrGlobalUniformBufferObject viewProjection;
@@ -45,6 +48,12 @@ private:
 	SgrBuffer* initInstancesData();
 
 	EventManager& eventManager = EventManager::get();
+	CoordinateSystem cs{glm::vec3{0,0,0},glm::vec3{180,0,0}};
+	CameraObject camera{&cs};
+
+	bool addToRender(GameObject& gObj);
+    bool addToRender(std::vector<GameObject*> gObjects);
+	bool addToRender(TextObject& tObj);
 
 public:
 	static SGE& get();
@@ -53,9 +62,9 @@ public:
 
 	bool setMaxInstanceNumber(uint16_t number);
 
-    bool addToRender(GameObject& gObj);
-    bool addToRender(std::vector<GameObject*> gObjects);
-	bool addToRender(TextObject& tObj);
+	bool registerGameObject(GameObject& gObj);
+	bool registerGameObject(TextObject& tObj);
+
 	size_t getRenderInstanceNumber() { return totalInstanceNumber; }
 
     void updateViewProj(glm::mat4 newView, glm::mat4 newProj) {;}
@@ -69,5 +78,7 @@ public:
 
 	glm::vec2 getCursorPos();
 
-	std::string getExecPath();
+	static std::string getExecPath();
+
+	CameraObject& getCameraObject() { return camera; }
 };

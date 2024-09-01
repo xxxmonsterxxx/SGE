@@ -10,3 +10,8 @@ using SGEColor = glm::vec3;
 const std::vector<SgrVertex> pointsToSGRVertex(const std::vector<SGEPosition> points);
 
 glm::vec3 getAnglesFromRotationMatrx(glm::mat4 R);
+
+void rotateVector(glm::vec3& v, glm::vec3 axis, float angle);
+float wrap180(float ang);
+glm::vec3 wrap180(glm::vec3 angles);
+void printVec(const char* prefix, glm::vec3 v);

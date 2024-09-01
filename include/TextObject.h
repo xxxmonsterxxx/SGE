@@ -47,12 +47,12 @@ public:
 
 	std::vector<GameObject*> getGameObjectsData();
 
-	void setPosition(SGEPosition newPosition);
-	void setRotation(glm::vec3 angle);
-	void rotate(glm::vec3 dAngle);
-	void rotate(glm::vec3 begin, glm::vec3 end, float angle);
-	void move(glm::vec3 dPos);
-	glm::vec3 getPosition();
+	void setPosition(SGEPosition newPosition) override;
+	void setRotation(glm::vec3 angle) override;
+	void rotate(glm::vec3 dAngle) override;
+	void rotate(glm::vec3 begin, glm::vec3 end, float angle) override;
+	void move(glm::vec3 dPos) override;
+	glm::vec3 getPosition() override;
 
 	std::string getText() { return _text; }
 

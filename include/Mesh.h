@@ -39,11 +39,11 @@ public:
 	bool init();
 
 	struct MeshInstanceData {
-		glm::mat4 model = glm::mat4(1);
-		glm::vec4 color = glm::vec4(1, 0, 0, 0);
-		glm::vec2 meshToTextureDelta;
+		glm::mat4 model{1};
+		glm::vec4 color{1, 0, 0, 0};
+		glm::vec2 meshToTextureDelta{1};
 		glm::vec2 meshStart;
-		glm::vec2 textureStart = glm::vec2(0);
+		glm::vec2 textureStart{0};
 	};
 
 	void setTextured(bool isTextured) { _textured = isTextured; }
@@ -52,4 +52,6 @@ public:
 
 	static Mesh getDefaultRectangleMesh(const std::string name, const bool filld = true);
 	static Mesh getDefaultTriangleMesh(const std::string name, const bool filld = true);
+
+	glm::vec2 getTextureBindPoint();
 };
