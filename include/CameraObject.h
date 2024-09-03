@@ -6,10 +6,10 @@ class CameraObject {
 
 private:
 
-    SGEPosition _defaultPosition;
-    SGEPosition _position;
+    SGEPosition _defaultPosition{0};
+    SGEPosition _position{0};
 
-    glm::vec3 _rotation;
+    glm::vec3 _rotation{0};
 
     CoordinateSystem* _cs;
     std::string _name;
