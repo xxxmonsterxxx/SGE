@@ -8,6 +8,9 @@ GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture)
 			_mesh.setTextured(true);
 		}
 
+GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) : 
+			GameObject(name, mesh, std::string(texture)) { ; }
+
 GameObject::GameObject(const std::string name, Mesh& mesh, bool textured) :
         _mesh(mesh) {
 			_name = name;
@@ -69,6 +72,10 @@ bool GameObject::addAnimation(const std::string name, AnimationSheet& animSheet,
 	Animation newAnim;
 	if (animSheet.getAnimation(newAnim, animationNumberInVertical)) {
 		_animationList[name] = newAnim;
+
+		if (_currentAnimation == "")
+			doAnimation(name, 60);
+
 		return true;
 	}
 
@@ -80,9 +87,11 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 	if (_animationList.find(newAnimationName) == _animationList.end())
 		return false;
 
-	_descriptorSetData[1] = ((void*)(_animationList[newAnimationName].animPixels));
-	if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)
-		return false;
+	if (_descriptorSetData[1] != ((void*)(_animationList[newAnimationName].animPixels))) {
+		_descriptorSetData[1] = ((void*)(_animationList[newAnimationName].animPixels));
+		if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)
+			return false;
+	}
 
 	return true;
 }

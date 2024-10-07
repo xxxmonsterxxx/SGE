@@ -13,6 +13,7 @@ friend class SGE;
 
 public:
     GameObject(const std::string name, Mesh& mesh, const std::string& texture);
+	GameObject(const std::string name, Mesh& mesh, const char* texture);
 	GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, uint32_t textureWidth, uint32_t textureHeight);
     GameObject(const std::string name, Mesh& mesh, bool textured = false);
 
@@ -36,7 +37,7 @@ private:
     bool init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer);
 
 	bool changeAnimation(std::string newAnimationName);
-	std::string _currentAnimation;
+	std::string _currentAnimation = "";
 	std::map<std::string, Animation> _animationList;
 
 	std::vector<void*> _descriptorSetData;

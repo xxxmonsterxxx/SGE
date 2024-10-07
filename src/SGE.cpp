@@ -54,7 +54,7 @@ SgrBuffer* SGE::initInstancesData()
 		return nullptr;
 
 	SgrBuffer* instancesDataBuffer = nullptr; 
-	SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(instancesDataBuffer, instancesData.dataSize);
+	SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(instancesDataBuffer, instancesData.dataSize, instancesData.dynamicAlignment);
 	if (resultCreateBuffer != sgrOK)
 		return nullptr;
 
@@ -65,6 +65,8 @@ SgrBuffer* SGE::initInstancesData()
 
 bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 {
+	renderer.enableDebugMode();
+
     SgrErrCode resultSGRInit = renderer.init(width, height, windowName.c_str());
 	if (resultSGRInit != sgrOK)
 		return false;

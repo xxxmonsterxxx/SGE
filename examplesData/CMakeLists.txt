@@ -18,7 +18,7 @@ set(GLM_INC_DIR ../modules/glm)
 set(SGE_FOLDER ${CMAKE_SOURCE_DIR}/build/SGE-v${VERSION})
 
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.8.3 EXACT)
+find_package(SGR ${REQ_SGR_VER} EXACT)
 
 find_library(SGE_LIB SGE ${SGE_FOLDER}/lib NO_DEFAULT_PATH)
 

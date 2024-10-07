@@ -29,3 +29,6 @@ Makefile
 
 # Generated cmake templates
 include/*.cmake
+
+# CodeCounterSoft
+.VSCodeCounter/

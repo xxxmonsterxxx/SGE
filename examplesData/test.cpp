@@ -141,8 +141,7 @@ int main()
 	Mesh rectMesh("rectangle", rectVertices, rectIndices);
 
     // create new object
-    std::string manTex = "/Resources/Textures/manTex.png";
-    GameObject man("man",rectMesh);
+    GameObject man("man",rectMesh,true);
 	// change gameobject parameters
 	man.scale(2);
 	man.rotate({180,0,0});
@@ -159,7 +158,7 @@ int main()
 	AnimationSheet soldRech("Soldier recharge", "/Resources/Textures/Soldier/Recharge.png", 13, 1);
 
 	Mesh rectangleFromDefault = Mesh::getDefaultRectangleMesh("defaultRect", false);
-	GameObject man3("man3",rectangleFromDefault);
+	GameObject man3("man3",rectangleFromDefault,false);
     man3.setPosition({1.5,-1.5,-1});
 	man3.setColor({0,0,1});
 
