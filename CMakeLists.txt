@@ -19,11 +19,11 @@ set(VPATCH ${CMAKE_MATCH_1})
 
 set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
-set(REQ_SGR_VER 0.9.1)
+set(REQ_SGR_VER 0.10.0)
 
 #######################################
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
+if(CMAKE_BUILD_TYPE STREQUAL "Release") # set release or not status for source code
 	message("Build Simple Game Engine v${VERSION}")
 	add_definitions(-DNDBUG=false)
 else ()
@@ -64,12 +64,6 @@ if (WIN32)
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2") #optimization
 else ()
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") #optimization
-endif ()
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")  # set release or not status for source code
-	add_definitions(-DNDBUG=FALSE)
-else ()
-	add_definitions(-DNDBUG=TRUE)
 endif ()
 
 #######################################
