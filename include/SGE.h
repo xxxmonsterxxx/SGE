@@ -7,6 +7,7 @@
 #include "EventManager.h"
 #include "CameraObject.h"
 #include "CoordinateSystem.h"
+#include "UIObject.h"
 
 class SGE {
 
@@ -29,6 +30,7 @@ private:
 
 	std::vector<GameObjectBase*> gameObjects;
 	std::vector<MeshAndObjects> meshesAndObjects;
+	std::vector<UIObject*> uiObjects;
 
     SgrGlobalUniformBufferObject viewProjection;
 
@@ -64,6 +66,7 @@ public:
 
 	bool registerGameObject(GameObject& gObj);
 	bool registerGameObject(TextObject& tObj);
+	bool registerUIObject(UIObject& uiObject);
 
 	size_t getRenderInstanceNumber() { return totalInstanceNumber; }
 

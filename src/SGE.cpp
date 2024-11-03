@@ -95,6 +95,9 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 		}
 	}
 
+	for (auto uiElem : uiObjects)
+		renderer.drawUIElement(*uiElem->getUIPtr());
+
 	renderer.setUpdateFunction(staticUpdateRenderData);
 
 	GLFWwindow* window;
@@ -103,6 +106,9 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	}
 
 	eventManager.init(window);
+
+	// this method should be called in the end of all users callback declaration
+	renderer.setupUICallback();
 
     return true;
 }
@@ -198,4 +204,10 @@ bool SGE::registerGameObject(TextObject& tObj)
 {
 	gameObjects.push_back(&tObj);
 	return addToRender(tObj);
+}
+
+bool SGE::registerUIObject(UIObject& uiObject)
+{
+	uiObjects.push_back(&uiObject);
+	return true;
 }

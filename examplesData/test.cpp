@@ -13,6 +13,11 @@ void terminate(int key, int scancode, int action, int mods)
 	EXIT = true;
 }
 
+void exitFunction()
+{
+	terminate(0,0,0,0);
+}
+
 int moveDirection = 1;
 
 void changeDirection(int key, int scancode, int action, int mods)
@@ -206,6 +211,12 @@ int main()
 	if (!ret)
 		return 333;
 	sgeObject.registerGameObject(helloSGE);
+
+	UIButton exitButt("Exit",{0.8,0.1},{0.1,0.1},exitFunction, "Exit!");
+	UIText sgetext("Sgetext",{0.5,0.5},{0.1,0.1},"Welcome to SGE example application!");
+
+	sgeObject.registerUIObject(exitButt);
+	sgeObject.registerUIObject(sgetext);
 
     if (!sgeObject.init())
         return 11;
