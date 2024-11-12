@@ -29,6 +29,7 @@ private:
     static SGR renderer;
 
 	std::vector<GameObjectBase*> gameObjects;
+	std::vector<PhysicsObject*> physObjects;
 	std::vector<MeshAndObjects> meshesAndObjects;
 	std::vector<UIObject*> uiObjects;
 
@@ -52,6 +53,7 @@ private:
 	EventManager& eventManager = EventManager::get();
 	CoordinateSystem cs{glm::vec3{0,0,0},glm::vec3{180,0,0}};
 	CameraObject camera{&cs};
+	PhysicsEngine& physEng = PhysicsEngine::get();
 
 	bool addToRender(GameObject& gObj);
     bool addToRender(std::vector<GameObject*> gObjects);

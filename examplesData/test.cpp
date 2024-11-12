@@ -213,7 +213,7 @@ int main()
 	sgeObject.registerGameObject(helloSGE);
 
 	UIButton exitButt("Exit",{0.8,0.1},{0.1,0.1},exitFunction, "Exit!");
-	UIText sgetext("Sgetext",{0.5,0.5},{0.1,0.1},"Welcome to SGE example application!");
+	UIText sgetext("Sgetext",{0.09,0.09},{0.1,0.1},"Welcome to SGE example application!");
 
 	sgeObject.registerUIObject(exitButt);
 	sgeObject.registerUIObject(sgetext);
@@ -257,24 +257,34 @@ int main()
 			sgeObject.getCameraObject().move(rotateAngles,{moveCameraX * 0.05, 0, moveCameraZ * 0.05});
 		}
 
-		if (moveDirection == 1)
+		if (moveDirection == 1) {
+			man.velocity={0,0,0.3};
 			man.doAnimation("Walk forward", 5);
-		else if (moveDirection == 2)
+		} else if (moveDirection == 2) {
 			man.doAnimation("Walk left", 5);
-		else if (moveDirection == 3)
+			man.velocity={-0.3,0,0};
+		} else if (moveDirection == 3) {
 			man.doAnimation("Walk back", 5);
-		else if (moveDirection == 4)
+			man.velocity={0,0,-0.3};
+		} else if (moveDirection == 4) {
 			man.doAnimation("Walk right", 5);
+			man.velocity={0.3,0,0};
+		}
 
 
-		if (soldierAction == 1)
+		if (soldierAction == 1) {
 			man2.doAnimation("Idle",5);
-		else if (soldierAction == 2)
+			man2.velocity = {0,0,0};
+		} else if (soldierAction == 2) {
 			man2.doAnimation("Run",5);
-		else if (soldierAction == 3)
+			man2.velocity = {0.3,0,0};
+		} else if (soldierAction == 3) {
 			man2.doAnimation("Shot",5);
-		else if (soldierAction == 4)
+			man2.velocity = {0,0,0};
+		} else if (soldierAction == 4) {
 			man2.doAnimation("Recharge",5);
+			man2.velocity = {0,0,0};
+		}
 
 		helloSGE.rotate({0,1,0});
     }

@@ -107,6 +107,9 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 
 	eventManager.init(window);
 
+	physEng.init(&physObjects);
+	physEng.start();
+
 	// this method should be called in the end of all users callback declaration
 	renderer.setupUICallback();
 
@@ -141,6 +144,8 @@ bool SGE::drawNextFrame()
 {
 	if (!renderer.isSGRRunning())
 		return false;
+
+	physEng.update();
 
 	if (renderer.drawFrame() != sgrOK)
 		return false;
@@ -197,12 +202,14 @@ bool SGE::setMaxInstanceNumber(uint16_t number)
 bool SGE::registerGameObject(GameObject& gObj)
 {
 	gameObjects.push_back(&gObj);
+	physObjects.push_back(&gObj);
 	return addToRender(gObj);
 }
 
 bool SGE::registerGameObject(TextObject& tObj)
 {
 	gameObjects.push_back(&tObj);
+	physObjects.push_back(&tObj);
 	return addToRender(tObj);
 }
 
