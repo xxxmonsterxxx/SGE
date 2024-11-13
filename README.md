@@ -1,6 +1,6 @@
 # ***Simple Game Engine ver. 0.6.0***
 
-![Image of project](https://i.postimg.cc/nzL371mC/sge.png)
+![Image of project](https://i.postimg.cc/7h6fcBVB/sge.png)
 
 ### *Description*
 ___
