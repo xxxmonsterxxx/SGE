@@ -9,7 +9,6 @@ bool EXIT = false;
 // right now simple realisation - later to-do event-subscription mechanism
 void terminate(int key, int scancode, int action, int mods)
 {
-	glfwTerminate();
 	EXIT = true;
 }
 
@@ -238,7 +237,7 @@ int main()
     
     while(sgeObject.drawNextFrame()) {
 		if (EXIT)
-			return 1;
+			break;
 
 		// camera processing
 		glm::vec2 deltaMouse(0.f);
@@ -289,5 +288,6 @@ int main()
 		helloSGE.rotate({0,1,0});
     }
 
+	glfwTerminate();
     return 0;
 }
