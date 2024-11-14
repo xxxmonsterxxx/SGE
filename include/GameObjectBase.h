@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Mesh.h"
+#include "PhysicsObject.h"
 
 class CoordinateSystem;
 
-class GameObjectBase {
+class GameObjectBase : public PhysicsObject {
 
 friend class SGE;
 
@@ -34,7 +35,7 @@ public:
 	virtual void setRotation(SGEPosition newRotation);
 	void setScale(glm::vec3 newScale);
 
-	virtual void move(SGEPosition dPos);
+	virtual void move(SGEPosition dPos) override;
 	virtual void rotate(glm::vec3 dAngle);
 	virtual void rotate(glm::vec3 begin, glm::vec3 end, float angle);
 	void scale(glm::vec3 sc);

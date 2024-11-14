@@ -25,7 +25,7 @@ bool TextObject::loadFontData()
 	const int charNumberToBake = _lastChar - _startChar;
 	_charsData = new unsigned char [charNumberToBake*sizeof(stbtt_bakedchar)];
 
-	int result = stbtt_BakeFontBitmap(fontData, 0, _fontHeight, _fontPixels, _fontBitmapWidth, _fontBitmapHeight, _startChar, charNumberToBake, (stbtt_bakedchar*)_charsData);
+	stbtt_BakeFontBitmap(fontData, 0, _fontHeight, _fontPixels, _fontBitmapWidth, _fontBitmapHeight, _startChar, charNumberToBake, (stbtt_bakedchar*)_charsData);
 
 	delete[] fontData;
 

@@ -32,3 +32,6 @@ include/*.cmake
 
 # CodeCounterSoft
 .VSCodeCounter/
+
+# imgui log files
+*.ini
