@@ -30,9 +30,10 @@ void UIObject::visible(bool visible)
 
 void UIButton::emptyButtonFunc() { ; } // Empty button function!
 
-UIButton::UIButton(std::string name, glm::vec2 pos, glm::vec2 size, void (*func)(), std::string buttonText) : UIObject(name, pos, size)
+UIButton::UIButton(std::string name, glm::vec2 pos, glm::vec2 size, std::string buttonText, void (*func)()) : UIObject(name, pos, size)
 {
     thisElement = new SgrUIButton(name, {pos.x, pos.y}, func, buttonText);
+    thisElement->setSize(size);
 }
 
 UIText::UIText(std::string name, glm::vec2 pos, glm::vec2 size, std::string text) : UIObject(name, pos, size)
