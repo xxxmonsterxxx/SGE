@@ -113,6 +113,9 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	// this method should be called in the end of all users callback declaration
 	renderer.setupUICallback();
 
+	currentFrame = 0;
+	lastDrawTime = SgrTime::now();
+
     return true;
 }
 
@@ -149,6 +152,13 @@ bool SGE::drawNextFrame()
 
 	if (renderer.drawFrame() != sgrOK)
 		return false;
+
+	currentFrame++;
+	if (getTimeDuration(lastDrawTime, SgrTime::now()) > 1) {
+		printf("\nfps = %d",currentFrame, currentFrame);
+		lastDrawTime = SgrTime::now();
+		currentFrame = 0;
+	}
 
     return true;
 }

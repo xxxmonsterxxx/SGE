@@ -14,12 +14,14 @@ SgrUIElement* UIObject::getUIPtr()
 
 void UIObject::setPosition(glm::vec2 newPos)
 {
-
+    thisElement->setPos(newPos);
+    _pos = newPos;
 }
 
 void UIObject::setSize(glm::vec2 newSize)
 {
-
+    thisElement->setSize(newSize);
+    _size = newSize;
 }
 
 void UIObject::visible(bool visible)

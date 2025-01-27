@@ -59,6 +59,9 @@ private:
     bool addToRender(std::vector<GameObject*> gObjects);
 	bool addToRender(TextObject& tObj);
 
+	uint8_t currentFrame;
+	SgrTime_t lastDrawTime;
+
 public:
 	static SGE& get();
 
