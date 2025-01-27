@@ -96,7 +96,7 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 	return true;
 }
 
-void GameObject::doAnimation(std::string name, uint8_t speed)
+bool GameObject::doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode)
 {
 	if (_currentAnimation != name) {
 		if (changeAnimation(name))
@@ -108,6 +108,8 @@ void GameObject::doAnimation(std::string name, uint8_t speed)
 	curr.speed = speed * curr.length;
 	glm::vec2 frameOffset{0};
 	frameOffset.x = curr.frameSize.x;
+	if (singleFrameMode > -1 && singleFrameMode <= curr.length)
+		curr.frame = singleFrameMode;
 	setTextureMapping(curr.frameSize, _mesh.getTextureBindPoint(), curr.startCoord + (float)curr.frame * frameOffset);
 	curr.frameCounter++;
 	if (curr.frameCounter > curr.speed / curr.length) {
@@ -115,6 +117,9 @@ void GameObject::doAnimation(std::string name, uint8_t speed)
 		curr.frameCounter = 0;
 		if (curr.frame == curr.length) {
 			curr.frame = 0;
+			return true;
 		}
 	}
+
+	return false;
 }

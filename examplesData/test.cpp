@@ -281,7 +281,9 @@ int main()
 			man2.doAnimation("Shot",5);
 			man2.velocity = {0,0,0};
 		} else if (soldierAction == 4) {
-			man2.doAnimation("Recharge",5);
+			bool finish = man2.doAnimation("Recharge",5);
+			if (finish)
+				soldierAction = 3;
 			man2.velocity = {0,0,0};
 		}
 

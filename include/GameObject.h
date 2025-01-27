@@ -21,7 +21,7 @@ public:
 	void setColor(SGEColor newColor);
 
 	bool addAnimation(const std::string name, AnimationSheet& animSheet, uint8_t animationNumberInVertical);
-	void doAnimation(std::string name, uint8_t speed);
+	bool doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode = -1);
 
 private:
 	std::string _texturePath = "/Resources/Textures/empty.jpg";

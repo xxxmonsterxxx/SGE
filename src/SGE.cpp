@@ -155,7 +155,7 @@ bool SGE::drawNextFrame()
 
 	currentFrame++;
 	if (getTimeDuration(lastDrawTime, SgrTime::now()) > 1) {
-		printf("\nfps = %d",currentFrame, currentFrame);
+		printf("\nfps = %d",currentFrame);
 		lastDrawTime = SgrTime::now();
 		currentFrame = 0;
 	}
