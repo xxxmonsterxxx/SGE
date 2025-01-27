@@ -105,7 +105,7 @@ bool GameObject::doAnimation(std::string name, uint8_t speed, int8_t singleFrame
 
 	Animation& curr = _animationList[_currentAnimation];
 
-	curr.speed = speed * curr.length;
+	curr.speed = speed;
 	glm::vec2 frameOffset{0};
 	frameOffset.x = curr.frameSize.x;
 	if (singleFrameMode > -1 && singleFrameMode <= curr.length)

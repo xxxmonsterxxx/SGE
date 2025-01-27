@@ -258,30 +258,30 @@ int main()
 
 		if (moveDirection == 1) {
 			man.velocity={0,0,0.3};
-			man.doAnimation("Walk forward", 5);
+			man.doAnimation("Walk forward", 60);
 		} else if (moveDirection == 2) {
-			man.doAnimation("Walk left", 5);
+			man.doAnimation("Walk left", 60);
 			man.velocity={-0.3,0,0};
 		} else if (moveDirection == 3) {
-			man.doAnimation("Walk back", 5);
+			man.doAnimation("Walk back", 60);
 			man.velocity={0,0,-0.3};
 		} else if (moveDirection == 4) {
-			man.doAnimation("Walk right", 5);
+			man.doAnimation("Walk right", 60);
 			man.velocity={0.3,0,0};
 		}
 
 
 		if (soldierAction == 1) {
-			man2.doAnimation("Idle",5);
+			man2.doAnimation("Idle",60);
 			man2.velocity = {0,0,0};
 		} else if (soldierAction == 2) {
-			man2.doAnimation("Run",5);
-			man2.velocity = {0.3,0,0};
+			man2.doAnimation("Run",40);
+			man2.velocity = {0.6,0,0};
 		} else if (soldierAction == 3) {
-			man2.doAnimation("Shot",5);
+			man2.doAnimation("Shot",10);
 			man2.velocity = {0,0,0};
 		} else if (soldierAction == 4) {
-			bool finish = man2.doAnimation("Recharge",5);
+			bool finish = man2.doAnimation("Recharge",60);
 			if (finish)
 				soldierAction = 3;
 			man2.velocity = {0,0,0};
