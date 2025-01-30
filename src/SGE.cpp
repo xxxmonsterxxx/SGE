@@ -95,6 +95,9 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 		}
 	}
 
+	fpsInfo = new UIText("FpsInfo", {0.09,0.09}, {50,50}, "FPS: ");
+	registerUIObject(*fpsInfo);
+
 	for (auto uiElem : uiObjects)
 		renderer.drawUIElement(*uiElem->getUIPtr());
 
@@ -155,7 +158,8 @@ bool SGE::drawNextFrame()
 
 	currentFrame++;
 	if (getTimeDuration(lastDrawTime, SgrTime::now()) > 1) {
-		printf("\nfps = %d",currentFrame);
+		std::string fpsText = "FPS: " + std::to_string(currentFrame);
+		fpsInfo->changeText(fpsText);
 		lastDrawTime = SgrTime::now();
 		currentFrame = 0;
 	}

@@ -36,4 +36,6 @@ class UIText : public UIObject {
 
 public:
     UIText(std::string name, glm::vec2 pos = {0,0}, glm::vec2 size = {50,50}, std::string text = "TextBox");
+
+    void changeText(std::string newText);
 };

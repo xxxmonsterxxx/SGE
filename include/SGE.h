@@ -62,6 +62,8 @@ private:
 	uint8_t currentFrame;
 	SgrTime_t lastDrawTime;
 
+	UIText* fpsInfo;
+
 public:
 	static SGE& get();
 

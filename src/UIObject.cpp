@@ -42,3 +42,8 @@ UIText::UIText(std::string name, glm::vec2 pos, glm::vec2 size, std::string text
 {
     thisElement = new SgrUIText(name, {pos.x, pos.y}, text);
 }
+
+void UIText::changeText(std::string newText)
+{
+    ((SgrUIText*)(thisElement))->changeText(newText);
+}

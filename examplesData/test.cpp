@@ -212,7 +212,7 @@ int main()
 	sgeObject.registerGameObject(helloSGE);
 
 	UIButton exitButt("Exit",{0.8,0.1},{50,20}, "Exit!", exitFunction);
-	UIText sgetext("Sgetext",{0.09,0.09},{50,50},"Welcome to SGE example application!");
+	UIText sgetext("Sgetext",{0.09,0.3},{50,50},"Welcome to SGE example application!");
 
 	sgeObject.registerUIObject(exitButt);
 	sgeObject.registerUIObject(sgetext);
