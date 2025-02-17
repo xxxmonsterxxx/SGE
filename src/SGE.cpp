@@ -46,21 +46,19 @@ SgrBuffer* SGE::initGlobalViewMatrix()
 	return viewProjBuffer;
 }
 
-SgrBuffer* SGE::initInstancesData()
+bool SGE::initInstancesData()
 {
 	instancesData.instnaceCount = requiredInstanceNumber;
 	instancesData.instanceSize = sizeof(Mesh::MeshInstanceData);
 	if (MemoryManager::createDynamicUniformMemory(instancesData) != sgrOK)
-		return nullptr;
+		return false;
 
-	SgrBuffer* instancesDataBuffer = nullptr; 
-	SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(instancesDataBuffer, instancesData.dataSize, instancesData.dynamicAlignment);
+	SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(instancesData.ubo, instancesData.dataSize, instancesData.dynamicAlignment);
 	if (resultCreateBuffer != sgrOK)
-		return nullptr;
+		return false;
 
-	renderer.setupInstancesUniformBufferObject(instancesDataBuffer);
 
-	return instancesDataBuffer;
+	return true;
 }
 
 bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
@@ -78,8 +76,7 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	viewProjection.view = glm::translate(viewProjection.view, glm::vec3(0, 0, -0.1));
 	viewProjection.proj = glm::perspective(45.f, 1.f/1.f, 0.1f, 100.f); // 0.1-min 100-max // axis is inverted
 
-	SgrBuffer* instancesDataBuffer = initInstancesData();
-	if (!instancesDataBuffer)
+	if (!initInstancesData())
 		return false;
 
 	int objCounter = 0;
@@ -90,7 +87,7 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 			if (renderer.addObjectInstance(meshesAndObjects[i].gameObjects[j]->_name,meshesAndObjects[i].mesh->_name,(objCounter++)*instancesData.dynamicAlignment) != sgrOK)
 				return false;
 
-			if (!meshesAndObjects[i].gameObjects[j]->init(viewProjBuffer, instancesDataBuffer))
+			if (!meshesAndObjects[i].gameObjects[j]->init(viewProjBuffer, instancesData.ubo))
 				return false;
 		}
 	}

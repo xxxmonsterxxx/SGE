@@ -141,7 +141,7 @@ int main()
 		{0.5f,0.5f,0.f},
 		{-0.5f,0.5f,0.f}
 	};
-    const std::vector<uint16_t> rectIndices{0,1,2,2,3,0};
+    const std::vector<uint32_t> rectIndices{0,1,2,2,3,0};
 	Mesh rectMesh("rectangle", rectVertices, rectIndices);
 
     // create new object

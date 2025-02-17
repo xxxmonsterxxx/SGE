@@ -7,14 +7,14 @@ const std::vector <SGEPosition> Mesh::defaultRectangleVertices = {
 		{0.5f,0.5f,0.f},
 		{-0.5f,0.5f,0.f}
 	};
-const std::vector<uint16_t> Mesh::defaultRectangleIndices = { 0,1,2,2,3,0 };
+const std::vector<uint32_t> Mesh::defaultRectangleIndices = { 0,1,2,2,3,0 };
 
 const std::vector <SGEPosition> Mesh::defaultTriangleVertices = {
 		{-0.5f,-0.5f,0.f},
 		{0.5f,-0.5f,0.f},
 		{0.5f,0.5f,0.f}
 	};
-const std::vector<uint16_t> Mesh::defaultTriangleIndices = { 0,1,2 };
+const std::vector<uint32_t> Mesh::defaultTriangleIndices = { 0,1,2 };
 
 Mesh Mesh::getDefaultRectangleMesh(const std::string name, const bool filled)
 {
@@ -27,7 +27,7 @@ Mesh Mesh::getDefaultTriangleMesh(const std::string name, const bool filled)
 }
 
 
-Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, const std::vector<uint16_t> indices, const bool filled) :
+Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, const std::vector<uint32_t> indices, const bool filled) :
 			_name(name), _vertices(vertices), _indices(indices), _filled(filled)
 {
     VkVertexInputAttributeDescription positionDescr;
@@ -73,8 +73,9 @@ Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, cons
 
 bool Mesh::init()
 {
+	VkDeviceSize vertsSize = _vertices.size() * sizeof(SgrVertex);
 	if (SGE::renderer.addNewObjectGeometry(_name,
-										pointsToSGRVertex(_vertices), _indices,
+										(void*)_vertices.data(), vertsSize, _indices,
 										SGE::execPath+shaderVertex, _textured?SGE::execPath+shaderFragmentTexture:SGE::execPath+shaderFragmentColor, _filled,
 										_meshBindingDescriptions, _meshAttributeDescriptions, _additionalDataLayouts) != sgrOK)
 		return false;

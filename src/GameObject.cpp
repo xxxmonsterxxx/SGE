@@ -40,7 +40,7 @@ bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 		return false;
 		
 	_descriptorSetData.push_back((void*)(viewProj));
-	_descriptorSetData.push_back((void*)(_texture));
+	_descriptorSetData.push_back((void*)(&_texture));
 	_descriptorSetData.push_back((void*)(allInstancesBuffer));
 
 	if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)
@@ -87,8 +87,8 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 	if (_animationList.find(newAnimationName) == _animationList.end())
 		return false;
 
-	if (_descriptorSetData[1] != ((void*)(_animationList[newAnimationName].animPixels))) {
-		_descriptorSetData[1] = ((void*)(_animationList[newAnimationName].animPixels));
+	if (_descriptorSetData[1] != ((void*)(&_animationList[newAnimationName].animPixels))) {
+		_descriptorSetData[1] = ((void*)(&_animationList[newAnimationName].animPixels));
 		if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)
 			return false;
 	}

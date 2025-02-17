@@ -19,7 +19,7 @@ set(VPATCH ${CMAKE_MATCH_1})
 
 set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
-set(REQ_SGR_VER 0.10.1)
+set(REQ_SGR_VER 0.11.0)
 
 #######################################
 

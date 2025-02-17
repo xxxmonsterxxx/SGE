@@ -48,7 +48,7 @@ private:
 	static void staticUpdateRenderData();
 
 	SgrBuffer* initGlobalViewMatrix();
-	SgrBuffer* initInstancesData();
+	bool initInstancesData();
 
 	EventManager& eventManager = EventManager::get();
 	CoordinateSystem cs{glm::vec3{0,0,0},glm::vec3{180,0,0}};

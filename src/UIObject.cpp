@@ -14,20 +14,20 @@ SgrUIElement* UIObject::getUIPtr()
 
 void UIObject::setPosition(glm::vec2 newPos)
 {
-    thisElement->setPos(newPos);
+    thisElement->_position = newPos;
     _pos = newPos;
 }
 
 void UIObject::setSize(glm::vec2 newSize)
 {
-    thisElement->setSize(newSize);
+    thisElement->_size = newSize;
     _size = newSize;
 }
 
 void UIObject::visible(bool visible)
 {
     _visible = visible;
-    thisElement->show(_visible);
+    thisElement->_visible = _visible;
 }
 
 void UIButton::emptyButtonFunc() { ; } // Empty button function!
@@ -35,7 +35,7 @@ void UIButton::emptyButtonFunc() { ; } // Empty button function!
 UIButton::UIButton(std::string name, glm::vec2 pos, glm::vec2 size, std::string buttonText, void (*func)()) : UIObject(name, pos, size)
 {
     thisElement = new SgrUIButton(name, {pos.x, pos.y}, func, buttonText);
-    thisElement->setSize(size);
+    thisElement->_size = size;
 }
 
 UIText::UIText(std::string name, glm::vec2 pos, glm::vec2 size, std::string text) : UIObject(name, pos, size)
