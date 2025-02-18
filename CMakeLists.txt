@@ -1,6 +1,6 @@
-##########################################################################
+############ S I M P L E   G A M E   E N G I N E #########################
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 project(SGE DESCRIPTION "Simple Game Engine")
 
@@ -19,6 +19,8 @@ set(VPATCH ${CMAKE_MATCH_1})
 
 set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
+set(BUILD_DEST ${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}-${CMAKE_SYSTEM_NAME}) # set build destination
+
 set(REQ_SGR_VER 0.11.0)
 
 #######################################
@@ -32,11 +34,6 @@ else ()
 endif()
 
 #######################################
-
-if (BUILD_EXAMPLE)
-	add_subdirectory(examplesData)
-	return()
-endif()
 
 # Config version file generate 
 set(SGE_CONFIG_VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/SGEConfigVersion.cmake")
@@ -62,6 +59,7 @@ set (CMAKE_CXX_STANDARD 17) #standard version is 17 - minimum for "optional" use
 
 if (WIN32)
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2") #optimization
+	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")  # /MD runtime library
 else ()
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") #optimization
 endif ()
@@ -69,7 +67,6 @@ endif ()
 #######################################
 
 include_directories(include) # setup SGE includes
-
 file (GLOB SOURCE src/*.cpp)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -92,9 +89,11 @@ find_package(SGR ${REQ_SGR_VER} EXACT)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)
+set(TINY_OBJ_LOADER_INC_DIR modules/tiny_obj_loader)
 
 #######################################
 
+include_directories(${TINY_OBJ_LOADER_INC_DIR})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${STB_INC_DIR})
@@ -120,16 +119,17 @@ endif (APPLE)
 
 #######################################
 
-set(BUILD_DEST ${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}) # set build destination
 FILE(COPY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${BUILD_DEST}/include/SGE)
-set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${BUILD_DEST}/lib OUTPUT_NAME "SGE")
+set_target_properties(SGE PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${BUILD_DEST}/lib OUTPUT_NAME "SGE"
+									 ARCHIVE_OUTPUT_DIRECTORY ${BUILD_DEST}/lib OUTPUT_NAME "SGE"
+									 RUNTIME_OUTPUT_DIRECTORY  ${BUILD_DEST}/lib OUTPUT_NAME "SGE")
 
 # install process
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/SGE-v${VERSION})
 endif ()
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/SGE)
+install(DIRECTORY ${BUILD_DEST}/include/SGE DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 install(TARGETS SGE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
 
 if (NOT WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -164,5 +164,12 @@ endif ()
 
 include(ProcessorCount)
 ProcessorCount(N)
+
+#######################################
+
+if (BUILD_EXAMPLE)
+	add_subdirectory(examplesData)
+	return()
+endif()
 
 ##########################################################################
