@@ -229,3 +229,11 @@ bool SGE::registerUIObject(UIObject& uiObject)
 	uiObjects.push_back(&uiObject);
 	return true;
 }
+
+bool SGE::setGameAppLogo(std::string path)
+{
+	if (renderer.setApplicationLogo(getExecPath() + path) != sgrOK)
+ 		return false;
+
+	return true;
+}

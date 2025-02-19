@@ -12,7 +12,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/exampleApplication)
 file(GLOB SOURCES test.cpp)
 
 if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_executable(${PROJECT_NAME} WIN32 ${SOURCES} Resources/logo/icon.rc)
+    add_executable(${PROJECT_NAME} WIN32 ${SOURCES} Resources/Logo/icon.rc)
+    file(COPY Resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 elseif (APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
     set(MACOSX_BUNDLE TRUE)
 

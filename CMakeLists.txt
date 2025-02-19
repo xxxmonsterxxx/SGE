@@ -21,8 +21,6 @@ set(VERSION ${VMAJOR}.${VMINOR}.${VPATCH})
 
 set(BUILD_DEST ${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}-${CMAKE_SYSTEM_NAME}) # set build destination
 
-set(REQ_SGR_VER 0.11.0)
-
 #######################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release") # set release or not status for source code
@@ -85,7 +83,7 @@ set_target_properties(SGE PROPERTIES
 
 # find additional dependecies
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR ${REQ_SGR_VER} EXACT)
+find_package(SGR 0.11.0 EXACT)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)

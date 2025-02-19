@@ -220,6 +220,7 @@ int main()
     if (!sgeObject.init())
         return 11;
 
+	sgeObject.setGameAppLogo("/Resources/Logo/Logo.png");
 
 	man.addAnimation("Walk forward",torchMan, 1);
 	man.addAnimation("Walk left", 	torchMan, 2);
@@ -293,3 +294,13 @@ int main()
 	glfwTerminate();
     return 0;
 }
+
+#if _WIN64
+#include "Windows.h"
+
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	return main();
+}
+
+#endif

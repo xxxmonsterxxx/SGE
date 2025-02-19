@@ -4,8 +4,9 @@
       "name": "SGE(Debug)",
       "generator": "Ninja",
       "configurationType": "Debug",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\examplesData\\build",
+      "installRoot": "${projectDir}\\build",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
         {
           "name": "BUILD_EXAMPLE",
@@ -18,9 +19,9 @@
       "name": "SGE(Release)",
       "generator": "Ninja",
       "configurationType": "Release",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "buildRoot": "${projectDir}\\build",
+      "buildRoot": "${projectDir}\\examplesData\\build",
       "installRoot": "C:\\Libs\\SGE",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
         {
           "name": "BUILD_EXAMPLE",

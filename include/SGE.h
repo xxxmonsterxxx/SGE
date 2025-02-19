@@ -91,4 +91,6 @@ public:
 	static std::string getExecPath();
 
 	CameraObject& getCameraObject() { return camera; }
+
+	bool setGameAppLogo(std::string path);
 };
