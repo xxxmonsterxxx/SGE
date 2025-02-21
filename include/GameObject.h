@@ -3,6 +3,7 @@
 #include "Mesh.h"
 #include "GameObjectBase.h"
 #include "AnimationSheet.h"
+#include "Model.h"
 #include <map>
 
 class SGE;
@@ -16,6 +17,7 @@ public:
 	GameObject(const std::string name, Mesh& mesh, const char* texture);
 	GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, uint32_t textureWidth, uint32_t textureHeight);
     GameObject(const std::string name, Mesh& mesh, bool textured = false);
+	GameObject(const std::string name, Model& model);
 
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart);
 	void setColor(SGEColor newColor);

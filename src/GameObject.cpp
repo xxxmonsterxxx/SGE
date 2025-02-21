@@ -27,6 +27,11 @@ GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* 
 	_mesh.setTextured(true);
 }
 
+GameObject::GameObject(const std::string name, Model& model) : _mesh(model.getMesh())
+{
+	_name = name;
+}
+
 bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 {
 	SgrImage* _texture = nullptr;

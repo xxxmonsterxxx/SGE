@@ -174,6 +174,9 @@ int main()
 	helloSGE.rotate({0,0,0},{0,0,1},90);
 	helloSGE.move({-1,0,0});
 
+	Model halcon("Halcon", "/Resources/3d_models/Halcon_Milenario", Model::ModelType::OBJ);
+	GameObject ship("Ship", halcon);
+
 
 	// subscribe to events binded with keys pressing/release
 	sgeObject.keyEventSubscribe(GLFW_KEY_ESCAPE, GLFW_RELEASE, terminate);

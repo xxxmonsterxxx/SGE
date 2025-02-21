@@ -71,6 +71,17 @@ Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, cons
 	_additionalDataLayouts.push_back(instanceUBOLayoutBinding);
 }
 
+Mesh::Mesh(const std::string name, void* vertices, const std::vector<uint32_t> indices,
+							std::vector<VkVertexInputBindingDescription> bindDescr,
+							std::vector<VkVertexInputAttributeDescription> attrDescr,
+							std::vector<VkDescriptorSetLayoutBinding> layoutBind,
+							const bool filled) : _name(name), _filled(filled)
+{
+	_meshBindingDescriptions = bindDescr;
+	_meshAttributeDescriptions = attrDescr;
+	_additionalDataLayouts = layoutBind;
+}
+
 bool Mesh::init()
 {
 	VkDeviceSize vertsSize = _vertices.size() * sizeof(SgrVertex);
