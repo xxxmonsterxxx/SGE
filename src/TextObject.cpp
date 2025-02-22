@@ -73,7 +73,7 @@ TextObject::LetterData TextObject::getLetterData(glm::vec2& nextLetter, char let
 TextObject::TextObject(std::string text) :
 	_text(text)
 {
-	_fontPath = SGE::execPath + _fontPath;
+	_fontPath = SGE::resourcesPath + _fontPath;
 	if (!loadFontData())
 		return;
 

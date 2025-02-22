@@ -4,6 +4,7 @@
 SGR SGE::renderer = SGR();
 SGE* SGE::instance = nullptr;
 std::string SGE::execPath = getExecutablePath();
+std::string SGE::resourcesPath = execPath;
 
 const uint16_t maximumInstanceNumber = 1000;
 
@@ -232,7 +233,7 @@ bool SGE::registerUIObject(UIObject& uiObject)
 
 bool SGE::setGameAppLogo(std::string path)
 {
-	if (renderer.setApplicationLogo(getExecPath() + path) != sgrOK)
+	if (renderer.setApplicationLogo(resourcesPath + path) != sgrOK)
  		return false;
 
 	return true;

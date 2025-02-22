@@ -15,11 +15,11 @@ bool Model::loadGLTFData(std::string path)
 
 bool Model::loadObjData(std::string path)
 {
-	std::string fullPath = SGE::getExecPath() + path;
+	std::string fullPath = SGE::getResourcesPath() + path;
 	std::filesystem::path fsPath(path);
 	std::string modelName = fsPath.filename().string();
 
-	std::string objPath = SGE::getExecPath() + path + "/" + modelName + ".obj";
+	std::string objPath = SGE::getResourcesPath() + path + "/" + modelName + ".obj";
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;

@@ -87,7 +87,7 @@ bool Mesh::init()
 	VkDeviceSize vertsSize = _vertices.size() * sizeof(SgrVertex);
 	if (SGE::renderer.addNewObjectGeometry(_name,
 										(void*)_vertices.data(), vertsSize, _indices,
-										SGE::execPath+shaderVertex, _textured?SGE::execPath+shaderFragmentTexture:SGE::execPath+shaderFragmentColor, _filled,
+										SGE::resourcesPath+shaderVertex, _textured?SGE::resourcesPath+shaderFragmentTexture:SGE::resourcesPath+shaderFragmentColor, _filled,
 										_meshBindingDescriptions, _meshAttributeDescriptions, _additionalDataLayouts) != sgrOK)
 		return false;
 

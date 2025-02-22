@@ -68,6 +68,12 @@ include_directories(include) # setup SGE includes
 file (GLOB SOURCE src/*.cpp)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+	set(CMAKE_INSTALL_RPATH "@executable_path")
+endif()
+
 add_library(SGE SHARED ${SOURCE})
 
 set_target_properties(SGE PROPERTIES
@@ -97,22 +103,26 @@ include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${STB_INC_DIR})
 include_directories(${SGR_INCLUDE_DIRS})
 
-target_link_libraries (SGE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES})
+target_link_libraries (SGE PRIVATE ${SGR_LIBRARIES} ${Vulkan_LIBRARIES})
 
 if (WIN32)
 	find_library(glfw glfw3 $ENV{GLFW3_LIB}/lib NO_DEFAULT_PATH)
 	include_directories($ENV{GLFW3_LIB}/include/GLFW)
-	target_link_libraries (SGE ${glfw})
+	target_link_libraries (SGE PRIVATE ${glfw})
 else (WIN32)
 	find_package(glfw3 3.3 REQUIRED)
-	target_link_libraries (SGE glfw)
+	target_link_libraries (SGE PRIVATE glfw)
 	get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
 	include_directories(${GLFW3_INCLUDE_DIRS}/GLFW)
 endif (WIN32)
 
 # linking MacOSX framework libraries
 if (APPLE)
-	target_link_libraries(SGE "-framework CoreFoundation")
+	target_link_libraries(SGE PRIVATE "-framework CoreFoundation")
+
+	add_custom_command(TARGET SGE POST_BUILD
+    	COMMAND install_name_tool -change /opt/homebrew/opt/glfw/lib/libglfw.3.dylib @rpath/libglfw.3.dylib $<TARGET_FILE:SGE>
+	)
 endif (APPLE)
 
 #######################################
@@ -127,15 +137,23 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/SGE-v${VERSION})
 endif ()
 
+#######################################
+
+# post build actions
+
+# post build command for copy include files into build directory
+add_custom_command(
+    TARGET SGE POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/include
+        ${BUILD_DEST}/include/SGE
+    COMMENT "Copying includes to build directory..."
+)
+
+# install options
+
 install(DIRECTORY ${BUILD_DEST}/include/SGE DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 install(TARGETS SGE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
-
-if (NOT WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_custom_command(TARGET SGE
-		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} --install .
-	)
-endif ()
 
 if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
 	install(CODE "

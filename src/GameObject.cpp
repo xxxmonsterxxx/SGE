@@ -39,7 +39,7 @@ bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 	if (_texturePixels)
 		resultCreateTextureImage = TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight , _texture);
 	else
-		resultCreateTextureImage = TextureManager::createTextureImage(SGE::execPath + _texturePath, _texture);
+		resultCreateTextureImage = TextureManager::createTextureImage(SGE::resourcesPath + _texturePath, _texture);
 
 	if (resultCreateTextureImage != sgrOK)
 		return false;

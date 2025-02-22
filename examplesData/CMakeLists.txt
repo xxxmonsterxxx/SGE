@@ -27,28 +27,35 @@ elseif (APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
                                     HEADER_FILE_ONLY ON)
     endforeach()
 
-    set(MACOSX_BUNDLE_ICON_FILE "logo/Logo.icns")
+    set(MACOSX_BUNDLE_ICON_FILE "Logo/Logo.icns")
+
+    # install rpath for distributing
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
 
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES}
                                                  ${RESOURCE_FILES})
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
-                                          MACOSX_BUNDLE_BUNDLE_NAME "SGR"
-    )
+                                        MACOSX_BUNDLE TRUE
+                                        MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+                                        MACOSX_BUNDLE_BUNDLE_VERSION ${VERSION}
+                                        MACOSX_BUNDLE_SHORT_VERSION_STRING ${VMAJOR}.${VMINOR}
+                                        MACOSX_BUNDLE_COPYRIGHT "© 2022 SimpleGraphicsFam. All rights reserved.")
 
     set(BUNDLE_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.app)
     set(FRAMEWORKS_PATH ${BUNDLE_PATH}/Contents/Frameworks)
     set(ICD_PATH ${BUNDLE_PATH}/Contents/Resources/vulkan/icd.d)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E make_directory ${FRAMEWORKS_PATH}
-                    COMMAND ${CMAKE_COMMAND} -E make_directory ${ICD_PATH}
-                    
-                    COMMAND ${CMAKE_COMMAND} -E copy $ENV{VULKAN_SDK}/lib/libvulkan.1.dylib ${FRAMEWORKS_PATH}
-                    COMMAND ${CMAKE_COMMAND} -E copy $ENV{VULKAN_SDK}/lib/libMoltenVK.dylib ${FRAMEWORKS_PATH}
 
-                    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Resources/icd.d/MoltenVK_icd.json ${ICD_PATH}
-                    COMMAND codesign --deep --force --verbose --sign - ${BUNDLE_PATH}
-                    COMMENT "Signing the application bundle...")
+    file(COPY ${Vulkan_LIBRARIES} DESTINATION ${FRAMEWORKS_PATH} FOLLOW_SYMLINK_CHAIN)
+    file(COPY $ENV{VULKAN_SDK}/lib/libMoltenVK.dylib DESTINATION ${FRAMEWORKS_PATH} FOLLOW_SYMLINK_CHAIN)
+    file(COPY ${SGR_LIBRARIES} DESTINATION ${FRAMEWORKS_PATH} FOLLOW_SYMLINK_CHAIN)
+    file(COPY ${BUILD_DEST}/lib/libSGE.dylib DESTINATION ${FRAMEWORKS_PATH} FOLLOW_SYMLINK_CHAIN)
+    file(COPY ${GLFW3_INCLUDE_DIRS}/../lib/libglfw.dylib DESTINATION ${FRAMEWORKS_PATH} FOLLOW_SYMLINK_CHAIN)
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD                    
+                        COMMAND codesign --deep --force --verbose --sign - ${BUNDLE_PATH}
+                        COMMENT "Signing the application bundle...")
 else ()
     add_executable(${PROJECT_NAME} ${SOURCES})
     file(COPY Resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -58,22 +65,10 @@ set(GLM_INC_DIR ../modules/glm)
 
 set(SGE_FOLDER ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}-${CMAKE_SYSTEM_NAME})
 
-find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR ${REQ_SGR_VER} EXACT)
+find_package(SGR 0.11.0 EXACT)
 
-if (WIN32)
-	find_library(glfw glfw3 $ENV{GLFW3_LIB}/lib NO_DEFAULT_PATH)
-	include_directories($ENV{GLFW3_LIB}/include/GLFW)
-	target_link_libraries (${PROJECT_NAME} ${glfw})
-else (WIN32)
-    find_package(glfw3 3.3 REQUIRED)
-    get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
-    include_directories(${GLFW3_INCLUDE_DIRS}/GLFW)
-    target_link_libraries (${PROJECT_NAME} glfw)
-endif (WIN32)
-
-include_directories(${Vulkan_INCLUDE_DIRS} ${GLM_INC_DIR} ${STB_INC_DIR} ${SGE_FOLDER}/include/SGE ${SGR_INCLUDE_DIRS})
-target_link_libraries (${PROJECT_NAME} ${Vulkan_LIBRARIES} SGE)
+include_directories(${GLM_INC_DIR} ${STB_INC_DIR} ${SGE_FOLDER}/include/SGE ${SGR_INCLUDE_DIRS})
+target_link_libraries (${PROJECT_NAME} SGE)
 
 if (WIN32)
     set(DLL_FILES ${BUILD_DEST}/lib/SGE.dll $ENV{SGR_LIB}/SGR.dll $ENV{GLFW3_LIB}/lib/glfw3.dll)

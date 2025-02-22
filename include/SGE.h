@@ -41,6 +41,7 @@ private:
 	SgrInstancesUniformBufferObject instancesData;
 
 	static std::string execPath;
+	static std::string resourcesPath;
 
     bool buffersInit();
 
@@ -93,4 +94,7 @@ public:
 	CameraObject& getCameraObject() { return camera; }
 
 	bool setGameAppLogo(std::string path);
+
+	void setResourcesPath(std::string path) { resourcesPath = path; }
+	static std::string getResourcesPath() { return resourcesPath; }
 };

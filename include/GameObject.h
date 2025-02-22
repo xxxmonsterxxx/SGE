@@ -26,7 +26,7 @@ public:
 	bool doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode = -1);
 
 private:
-	std::string _texturePath = "/Resources/Textures/empty.jpg";
+	std::string _texturePath = "/Textures/empty.jpg";
 	
 	const unsigned char* _texturePixels = nullptr;
 	const uint32_t _textureWidth = 0;

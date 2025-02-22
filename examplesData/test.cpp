@@ -127,6 +127,12 @@ int main()
 {
     SGE& sgeObject = SGE::get();
 
+#if __APPLE__ && !NDBUG
+	sgeObject.setResourcesPath(SGE::getExecPath()+"/../Resources");
+#else
+	sgeObject.setResourcesPath(SGE::getExecPath()+"/Resources");
+#endif
+
     // steps
 	// 1. Create MESH
 	// 2. Create GameObject
@@ -149,17 +155,17 @@ int main()
 	// change gameobject parameters
 	man.scale(2);
 	man.rotate({180,0,0});
-	AnimationSheet torchMan("TorchMan", "/Resources/Textures/manTex.png", 9, 4);
+	AnimationSheet torchMan("TorchMan", "/Textures/manTex.png", 9, 4);
 
 	// default geometry mesh
     GameObject man2("soldier",rectMesh,true);
 	man2.scale(3);
 	man2.move({2,0.5,0});
 	man2.rotate({180,0,0});
-	AnimationSheet soldIdle("Soldier idle", "/Resources/Textures/Soldier/Idle.png", 7, 1);
-	AnimationSheet soldRun("Soldier run", "/Resources/Textures/Soldier/Run.png", 8, 1);
-	AnimationSheet soldShot("Soldier shot", "/Resources/Textures/Soldier/Shot_2.png", 4, 1);
-	AnimationSheet soldRech("Soldier recharge", "/Resources/Textures/Soldier/Recharge.png", 13, 1);
+	AnimationSheet soldIdle("Soldier idle", "/Textures/Soldier/Idle.png", 7, 1);
+	AnimationSheet soldRun("Soldier run", "/Textures/Soldier/Run.png", 8, 1);
+	AnimationSheet soldShot("Soldier shot", "/Textures/Soldier/Shot_2.png", 4, 1);
+	AnimationSheet soldRech("Soldier recharge", "/Textures/Soldier/Recharge.png", 13, 1);
 
 	Mesh rectangleFromDefault = Mesh::getDefaultRectangleMesh("defaultRect", false);
 	GameObject man3("man3",rectangleFromDefault,false);
@@ -174,7 +180,7 @@ int main()
 	helloSGE.rotate({0,0,0},{0,0,1},90);
 	helloSGE.move({-1,0,0});
 
-	Model halcon("Halcon", "/Resources/3d_models/Halcon_Milenario", Model::ModelType::OBJ);
+	Model halcon("Halcon", "/3d_models/Halcon_Milenario", Model::ModelType::OBJ);
 	GameObject ship("Ship", halcon);
 
 
@@ -223,7 +229,7 @@ int main()
     if (!sgeObject.init())
         return 11;
 
-	sgeObject.setGameAppLogo("/Resources/Logo/Logo.png");
+	sgeObject.setGameAppLogo("/Logo/Logo.png");
 
 	man.addAnimation("Walk forward",torchMan, 1);
 	man.addAnimation("Walk left", 	torchMan, 2);
@@ -294,7 +300,6 @@ int main()
 		helloSGE.rotate({0,1,0});
     }
 
-	glfwTerminate();
     return 0;
 }
 
