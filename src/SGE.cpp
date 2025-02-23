@@ -238,3 +238,8 @@ bool SGE::setGameAppLogo(std::string path)
 
 	return true;
 }
+
+void SGE::setResourcesPath(std::string path)
+{
+	resourcesPath = path;
+}

@@ -22,7 +22,7 @@ private:
 	SGE();
 	
 	struct MeshAndObjects {
-		Mesh* mesh;
+		Mesh* mesh = nullptr;
 		std::vector<GameObject*> gameObjects;
 	};
 
@@ -60,10 +60,10 @@ private:
     bool addToRender(std::vector<GameObject*> gObjects);
 	bool addToRender(TextObject& tObj);
 
-	uint8_t currentFrame;
+	uint8_t currentFrame = 0;
 	SgrTime_t lastDrawTime;
 
-	UIText* fpsInfo;
+	UIText* fpsInfo = nullptr;
 
 public:
 	static SGE& get();
@@ -95,6 +95,6 @@ public:
 
 	bool setGameAppLogo(std::string path);
 
-	void setResourcesPath(std::string path) { resourcesPath = path; }
+	void setResourcesPath(std::string path);
 	static std::string getResourcesPath() { return resourcesPath; }
 };
