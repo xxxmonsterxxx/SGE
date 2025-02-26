@@ -8,6 +8,7 @@
 #include "CameraObject.h"
 #include "CoordinateSystem.h"
 #include "UIObject.h"
+#include "ModelGameObject.h"
 
 class SGE {
 
@@ -23,6 +24,7 @@ private:
 	
 	struct MeshAndObjects {
 		Mesh* mesh = nullptr;
+		SgrInstancesUniformBufferObject instancesData;
 		std::vector<GameObject*> gameObjects;
 	};
 
@@ -38,7 +40,6 @@ private:
 	const uint16_t defaultInstanceNumber = 100;
 	size_t requiredInstanceNumber = defaultInstanceNumber;
 	size_t totalInstanceNumber = 0;
-	SgrInstancesUniformBufferObject instancesData;
 
 	static std::string execPath;
 	static std::string resourcesPath;

@@ -181,7 +181,10 @@ int main()
 	helloSGE.move({-1,0,0});
 
 	Model halcon("Halcon", "/3d_models/Halcon_Milenario", Model::ModelType::OBJ);
-	GameObject ship("Ship", halcon);
+	ModelGameObject ship("Ship", halcon);
+	ship.scale(0.005);
+	ship.rotate({0,180,0});
+	ship.move({0,-2,0});
 
 
 	// subscribe to events binded with keys pressing/release
@@ -208,17 +211,16 @@ int main()
 
 	// render objects
 	// sgeObject.setMaxInstanceNumber(4);
-	bool ret = false;
-    ret = sgeObject.registerGameObject(man);
-	if (!ret)
+    if (!sgeObject.registerGameObject(man))
 		return 111;
-    ret = sgeObject.registerGameObject(man2);
-	if (!ret)
+	if (!sgeObject.registerGameObject(man2))
 		return 222;
-	ret = sgeObject.registerGameObject(man3);
-	if (!ret)
+	if (!sgeObject.registerGameObject(man3))
 		return 333;
-	sgeObject.registerGameObject(helloSGE);
+	if (!sgeObject.registerGameObject(helloSGE))
+		return 444;
+	if (!sgeObject.registerGameObject(ship))
+		return 555;
 
 	UIButton exitButt("Exit",{0.8,0.1},{50,20}, "Exit!", exitFunction);
 	UIText sgetext("Sgetext",{0.09,0.3},{50,50},"Welcome to SGE example application!");
@@ -298,6 +300,7 @@ int main()
 		}
 
 		helloSGE.rotate({0,1,0});
+		ship.rotate({0,0.1,0});
     }
 
     return 0;

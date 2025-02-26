@@ -69,25 +69,35 @@ Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, cons
     _additionalDataLayouts.push_back(uboLayoutBinding);
 	_additionalDataLayouts.push_back(samplerLayoutBinding);
 	_additionalDataLayouts.push_back(instanceUBOLayoutBinding);
+
+	shaderVertex = defaultShaderVertex;
+	shaderFragment = defaultShaderFragmentColor;
+
+	verticesData = (void*)_vertices.data();
+	verticesDataSize = _vertices.size() * sizeof(SgrVertex);
 }
 
-Mesh::Mesh(const std::string name, void* vertices, const std::vector<uint32_t> indices,
+Mesh::Mesh(const std::string name, void* vertices, VkDeviceSize verticesSize, const std::vector<uint32_t> indices,
 							std::vector<VkVertexInputBindingDescription> bindDescr,
 							std::vector<VkVertexInputAttributeDescription> attrDescr,
 							std::vector<VkDescriptorSetLayoutBinding> layoutBind,
-							const bool filled) : _name(name), _filled(filled)
+							std::string vertexShader,
+							std::string fragmentShader,
+							const bool filled) : _name(name), _filled(filled), _indices(indices), verticesData(vertices), verticesDataSize(verticesSize)
 {
 	_meshBindingDescriptions = bindDescr;
 	_meshAttributeDescriptions = attrDescr;
 	_additionalDataLayouts = layoutBind;
+
+	shaderVertex = vertexShader;
+	shaderFragment = fragmentShader;
 }
 
 bool Mesh::init()
 {
-	VkDeviceSize vertsSize = _vertices.size() * sizeof(SgrVertex);
 	if (SGE::renderer.addNewObjectGeometry(_name,
-										(void*)_vertices.data(), vertsSize, _indices,
-										SGE::resourcesPath+shaderVertex, _textured?SGE::resourcesPath+shaderFragmentTexture:SGE::resourcesPath+shaderFragmentColor, _filled,
+										verticesData, verticesDataSize, _indices,
+										SGE::resourcesPath+shaderVertex, SGE::resourcesPath+shaderFragment, _filled,
 										_meshBindingDescriptions, _meshAttributeDescriptions, _additionalDataLayouts) != sgrOK)
 		return false;
 
@@ -97,4 +107,21 @@ bool Mesh::init()
 glm::vec2 Mesh::getTextureBindPoint()
 {
 	return _vertices[_indices[0]];
+}
+
+void Mesh::useTexture()
+{
+	shaderFragment = defaultShaderFragmentTexture;
+}
+
+void* Mesh::generateInstanceData(GameObject* go)
+{
+	MeshInstanceData data;
+	data.model = go->getModel();
+	data.color = go->getColor();
+	data.meshToTextureDelta = go->getDeltaTexture();
+	data.meshStart = go->getMeshStart();
+	data.textureStart = go->getTextureStart();
+
+	return (void*)&data;
 }

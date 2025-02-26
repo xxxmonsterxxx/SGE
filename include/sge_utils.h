@@ -5,7 +5,7 @@
 #include <string>
 
 using SGEPosition = glm::vec3;
-using SGEColor = glm::vec3;
+using SGEColor = glm::vec4;
 
 glm::vec3 getAnglesFromRotationMatrx(glm::mat4 R);
 

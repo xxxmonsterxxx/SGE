@@ -25,15 +25,16 @@ void SGE::staticUpdateRenderData()
 
 void SGE::updateRenderData()
 {
-	size_t objCounter = 0;
 	for (auto obj : meshesAndObjects) {
+		size_t objCounter = 0;
 		for (auto gObj : obj.gameObjects) {
-			Mesh::MeshInstanceData* currentObject = (Mesh::MeshInstanceData*)((uint64_t)instancesData.data + (objCounter++) * instancesData.dynamicAlignment);
-			*currentObject = gObj->getInstanceData();
+			uint8_t* objData = (uint8_t*)((uint64_t)obj.instancesData.data + (objCounter++) * obj.instancesData.dynamicAlignment);
+			memcpy((void*)objData, obj.mesh->generateInstanceData(gObj), obj.instancesData.dynamicAlignment);
 		}
+
+		renderer.updateInstancesUniformBufferObject(obj.instancesData);
 	}
-	
-	renderer.updateInstancesUniformBufferObject(instancesData);
+
 	renderer.updateGlobalUniformBufferObject(viewProjection);
 }
 
@@ -49,14 +50,17 @@ SgrBuffer* SGE::initGlobalViewMatrix()
 
 bool SGE::initInstancesData()
 {
-	instancesData.instnaceCount = requiredInstanceNumber;
-	instancesData.instanceSize = sizeof(Mesh::MeshInstanceData);
-	if (MemoryManager::createDynamicUniformMemory(instancesData) != sgrOK)
-		return false;
+	for (auto& mao : meshesAndObjects) {
+		mao.instancesData.instnaceCount = requiredInstanceNumber;
+		mao.instancesData.instanceSize = mao.mesh->getInstanceDataSize();
+		if (MemoryManager::createDynamicUniformMemory(mao.instancesData) != sgrOK)
+			return false;
 
-	SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(instancesData.ubo, instancesData.dataSize, instancesData.dynamicAlignment);
-	if (resultCreateBuffer != sgrOK)
-		return false;
+		SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(mao.instancesData.ubo, mao.instancesData.dataSize, mao.instancesData.dynamicAlignment);
+		if (resultCreateBuffer != sgrOK)
+			return false;
+
+	}
 
 
 	return true;
@@ -80,15 +84,15 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	if (!initInstancesData())
 		return false;
 
-	int objCounter = 0;
 	for (size_t i = 0; i < meshesAndObjects.size(); i++) {
 		if (!meshesAndObjects[i].mesh->init())
 			return false;
+		int objCounter = 0;
 		for (size_t j = 0; j < meshesAndObjects[i].gameObjects.size(); j++) {
-			if (renderer.addObjectInstance(meshesAndObjects[i].gameObjects[j]->_name,meshesAndObjects[i].mesh->_name,(objCounter++)*instancesData.dynamicAlignment) != sgrOK)
+			if (renderer.addObjectInstance(meshesAndObjects[i].gameObjects[j]->_name,meshesAndObjects[i].mesh->_name,(objCounter++)* meshesAndObjects[i].instancesData.dynamicAlignment) != sgrOK)
 				return false;
 
-			if (!meshesAndObjects[i].gameObjects[j]->init(viewProjBuffer, instancesData.ubo))
+			if (!meshesAndObjects[i].gameObjects[j]->init(viewProjBuffer, meshesAndObjects[i].instancesData.ubo))
 				return false;
 		}
 	}
