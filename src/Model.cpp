@@ -8,12 +8,11 @@
 #include <filesystem>
 
 
-void* ModelMesh::generateInstanceData(GameObject* go)
+void ModelMesh::generateInstanceData(GameObject* go, void* data)
 {
-	MeshInstanceData data;
-	data.model = go->getModel();
-
-	return (void*)&data;
+	MeshInstanceData newData{};
+	newData.model = go->getModel();
+	*(MeshInstanceData*)data = newData;
 }
 
 
@@ -47,12 +46,18 @@ bool Model::loadObjData(std::string path)
 	for (const auto& shape : shapes) {
 		for (const auto& index : shape.mesh.indices) {
 			ObjModelVertex v{};
-			v.vertex.x = attrib.vertices[3 * index.vertex_index + 0];
-			v.vertex.y = attrib.vertices[3 * index.vertex_index + 1];
-			v.vertex.z = attrib.vertices[3 * index.vertex_index + 2];
+			v.vertex.x = attrib.vertices[(size_t)3 * index.vertex_index + 0];
+			v.vertex.y = attrib.vertices[(size_t)3 * index.vertex_index + 1];
+			v.vertex.z = attrib.vertices[(size_t)3 * index.vertex_index + 2];
 
-			v.texCoord = { attrib.texcoords[2 * index.texcoord_index + 0],
-								 1.0f - attrib.texcoords[2 * index.texcoord_index + 1] };
+			/*auto it = std::find(verts.begin(), verts.end(), v);
+			if (it != verts.end()) {
+				indices.push_back(std::distance(verts.begin(), it));
+				continue;
+			}*/
+
+			v.texCoord = { attrib.texcoords[(size_t)2 * index.texcoord_index + 0],
+								 1.0f - attrib.texcoords[(size_t)2 * index.texcoord_index + 1] };
 
 			v.texInd = 0;
 			v.color[3] = 1;
@@ -87,41 +92,44 @@ bool Model::loadObjData(std::string path)
 		}
 	}
 
-	VkVertexInputBindingDescription vBindingD;
+	if (verts.empty())
+		return false;
+
+	VkVertexInputBindingDescription vBindingD{};
 	vBindingD.binding = 0;
 	vBindingD.stride = sizeof(ObjModelVertex);
 	vBindingD.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 	bindingDescription.push_back(vBindingD);
 
-	VkVertexInputAttributeDescription posD;
+	VkVertexInputAttributeDescription posD{};
 	posD.binding = 0;
 	posD.location = 0;
 	posD.format = VK_FORMAT_R32G32B32_SFLOAT;
 	posD.offset = offsetof(ObjModelVertex, vertex);
 	attributeDescription.push_back(posD);
 
-	VkVertexInputAttributeDescription colorD;
+	VkVertexInputAttributeDescription colorD{};
 	colorD.binding = 0;
 	colorD.location = 3;
 	colorD.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 	colorD.offset = offsetof(ObjModelVertex, color);
 	attributeDescription.push_back(colorD);
 
-	VkVertexInputAttributeDescription texIndD;
+	VkVertexInputAttributeDescription texIndD{};
 	texIndD.binding = 0;
 	texIndD.location = 1;
 	texIndD.format = VK_FORMAT_R32_SINT;
 	texIndD.offset = offsetof(ObjModelVertex, texInd);
 	attributeDescription.push_back(texIndD);
 
-	VkVertexInputAttributeDescription texCoordD;
+	VkVertexInputAttributeDescription texCoordD{};
 	texCoordD.binding = 0;
 	texCoordD.location = 2;
 	texCoordD.format = VK_FORMAT_R32G32_SFLOAT;
 	texCoordD.offset = offsetof(ObjModelVertex, texCoord);
 	attributeDescription.push_back(texCoordD);
 
-	VkDescriptorSetLayoutBinding uboB;
+	VkDescriptorSetLayoutBinding uboB{};
 	uboB.binding = 0;
 	uboB.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	uboB.descriptorCount = 1;
@@ -129,7 +137,7 @@ bool Model::loadObjData(std::string path)
 	uboB.pImmutableSamplers = nullptr;
 	layoutBindings.push_back(uboB);
 
-	VkDescriptorSetLayoutBinding instanceUboB;
+	VkDescriptorSetLayoutBinding instanceUboB{};
 	instanceUboB.binding = 1;
 	instanceUboB.descriptorCount = 1;
 	instanceUboB.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;

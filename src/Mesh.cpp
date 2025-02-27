@@ -30,7 +30,7 @@ Mesh Mesh::getDefaultTriangleMesh(const std::string name, const bool filled)
 Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, const std::vector<uint32_t> indices, const bool filled) :
 			_name(name), _vertices(vertices), _indices(indices), _filled(filled)
 {
-    VkVertexInputAttributeDescription positionDescr;
+    VkVertexInputAttributeDescription positionDescr{};
 	positionDescr.binding = 0;
 	positionDescr.location = 0;
 	positionDescr.format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -38,14 +38,14 @@ Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, cons
 
 	_meshAttributeDescriptions.push_back(positionDescr);
 
-	VkVertexInputBindingDescription vertexBindingDescription;
+	VkVertexInputBindingDescription vertexBindingDescription{};
 	vertexBindingDescription.binding = 0;
 	vertexBindingDescription.stride = sizeof(SgrVertex);
 	vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	_meshBindingDescriptions.push_back(vertexBindingDescription);
 
-	VkDescriptorSetLayoutBinding uboLayoutBinding;
+	VkDescriptorSetLayoutBinding uboLayoutBinding{};
 	uboLayoutBinding.binding = 0;
 	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	uboLayoutBinding.descriptorCount = 1;
@@ -114,14 +114,14 @@ void Mesh::useTexture()
 	shaderFragment = defaultShaderFragmentTexture;
 }
 
-void* Mesh::generateInstanceData(GameObject* go)
+void Mesh::generateInstanceData(GameObject* go, void* data)
 {
-	MeshInstanceData data;
-	data.model = go->getModel();
-	data.color = go->getColor();
-	data.meshToTextureDelta = go->getDeltaTexture();
-	data.meshStart = go->getMeshStart();
-	data.textureStart = go->getTextureStart();
+	MeshInstanceData newData;
+	newData.model = go->getModel();
+	newData.color = go->getColor();
+	newData.meshToTextureDelta = go->getDeltaTexture();
+	newData.meshStart = go->getMeshStart();
+	newData.textureStart = go->getTextureStart();
 
-	return (void*)&data;
+	*(MeshInstanceData*)data = newData;
 }

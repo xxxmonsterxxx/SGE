@@ -25,11 +25,15 @@ void SGE::staticUpdateRenderData()
 
 void SGE::updateRenderData()
 {
-	for (auto obj : meshesAndObjects) {
+	for (auto& obj : meshesAndObjects) {
 		size_t objCounter = 0;
-		for (auto gObj : obj.gameObjects) {
+		for (auto& gObj : obj.gameObjects) {
 			uint8_t* objData = (uint8_t*)((uint64_t)obj.instancesData.data + (objCounter++) * obj.instancesData.dynamicAlignment);
-			memcpy((void*)objData, obj.mesh->generateInstanceData(gObj), obj.instancesData.dynamicAlignment);
+			void* generatedData = malloc(obj.instancesData.dynamicAlignment);
+			if (generatedData) {
+				obj.mesh->generateInstanceData(gObj, generatedData);
+				memcpy((void*)objData, generatedData, obj.instancesData.dynamicAlignment);
+			}
 		}
 
 		renderer.updateInstancesUniformBufferObject(obj.instancesData);

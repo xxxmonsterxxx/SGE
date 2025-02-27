@@ -71,5 +71,5 @@ public:
 	glm::vec2 getTextureBindPoint();
 
 protected:
-	virtual void* generateInstanceData(GameObject* go);
+	virtual void generateInstanceData(GameObject* go, void* data);
 };

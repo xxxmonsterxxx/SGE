@@ -182,11 +182,13 @@ int main()
 
 	Model halcon("Halcon", "/3d_models/Halcon_Milenario", Model::ModelType::OBJ);
 	ModelGameObject ship("Ship", halcon);
-	// ship.scale(0.005);
 	ship.move({-1.5,0,0});
+	ship.rotate({-10,0,0});
 
-	Model bmw("bmw", "/3d_models/bmw_m3", Model::ModelType::OBJ);
-	ModelGameObject car("BMW", bmw);
+	Model audi("Audi", "/3d_models/Audi_S5_Sportback", Model::ModelType::OBJ);
+	ModelGameObject car("Car", audi);
+	car.move({1,1,0});
+	car.rotate({-20,0,0});
 
 
 	// subscribe to events binded with keys pressing/release
@@ -305,6 +307,7 @@ int main()
 
 		helloSGE.rotate({0,1,0});
 		ship.rotate({0,0.1,0});
+		car.rotate({ 0,0.1,0 });
     }
 
     return 0;
@@ -313,7 +316,7 @@ int main()
 #if _WIN64
 #include "Windows.h"
 
-
+_Use_decl_annotations_
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	return main();
 }

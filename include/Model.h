@@ -14,7 +14,7 @@ public:
 
 protected:
 
-	void* generateInstanceData(GameObject* go) override;
+	void generateInstanceData(GameObject* go, void* data) override;
 };
 
 class Model {
@@ -44,6 +44,11 @@ public:
 		glm::vec4 color;
 		int texInd;
 		glm::vec2 texCoord;
+
+		bool operator==(const ObjModelVertex& other) const
+		{
+			return vertex == other.vertex;
+		}
 	};
 
 	struct ObjModelInstanceData {
