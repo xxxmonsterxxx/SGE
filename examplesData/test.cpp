@@ -182,9 +182,11 @@ int main()
 
 	Model halcon("Halcon", "/3d_models/Halcon_Milenario", Model::ModelType::OBJ);
 	ModelGameObject ship("Ship", halcon);
-	ship.scale(0.005);
-	ship.rotate({0,180,0});
-	ship.move({0,-2,0});
+	// ship.scale(0.005);
+	ship.move({-1.5,0,0});
+
+	Model bmw("bmw", "/3d_models/bmw_m3", Model::ModelType::OBJ);
+	ModelGameObject car("BMW", bmw);
 
 
 	// subscribe to events binded with keys pressing/release
@@ -221,6 +223,8 @@ int main()
 		return 444;
 	if (!sgeObject.registerGameObject(ship))
 		return 555;
+	if (!sgeObject.registerGameObject(car))
+		return 666;
 
 	UIButton exitButt("Exit",{0.8,0.1},{50,20}, "Exit!", exitFunction);
 	UIText sgetext("Sgetext",{0.09,0.3},{50,50},"Welcome to SGE example application!");

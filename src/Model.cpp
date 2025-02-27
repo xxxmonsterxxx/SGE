@@ -150,14 +150,29 @@ bool Model::loadObjData(std::string path)
 
 void Model::normalize()
 {
-	/*SgrVertex centroid{ 0,0,0 };
-	for (const auto& v : vertices) {
+	SgrVertex centroid{ 0,0,0 };
+	glm::vec3 maxCoord{verts[0].vertex.x,verts[0].vertex.y,verts[0].vertex.z};
+	glm::vec3 minCoord{verts[0].vertex.x,verts[0].vertex.y,verts[0].vertex.z};
+	for (const auto& v : verts) {
 		centroid += v.vertex;
+
+		if (v.vertex.x > maxCoord.x) maxCoord.x = v.vertex.x;
+		if (v.vertex.y > maxCoord.y) maxCoord.y = v.vertex.y;
+		if (v.vertex.z > maxCoord.z) maxCoord.z = v.vertex.z;
+
+		if (v.vertex.x < minCoord.x) minCoord.x = v.vertex.x;
+		if (v.vertex.y < minCoord.y) minCoord.y = v.vertex.y;
+		if (v.vertex.z < minCoord.z) minCoord.z = v.vertex.z;
 	}
 
-	for (auto& v : vertices) {
-		v.vertex -= (centroid / (float)vertices.size());
-	}*/
+	float maxDistance = maxCoord.x - minCoord.x;
+	if ((maxCoord.y - minCoord.y) > maxDistance) maxDistance = maxCoord.y - minCoord.y;
+	if ((maxCoord.z - minCoord.z) > maxDistance) maxDistance = maxCoord.z - minCoord.z;
+
+	for (auto& v : verts) {
+		v.vertex -= (centroid / (float)verts.size());
+		v.vertex /= maxDistance / 2;
+	}
 }
 
 Model::Model(std::string name, std::string modelPath, ModelType type)
