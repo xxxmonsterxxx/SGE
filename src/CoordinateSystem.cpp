@@ -2,7 +2,7 @@
 
 glm::mat4 CoordinateSystem::getTransMatr()
 {
-    return _instanceData.model;
+    return _model;
 }
 
 CoordinateSystem::CoordinateSystem(glm::vec3 startPos, glm::vec3 startRot)

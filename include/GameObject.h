@@ -20,19 +20,30 @@ public:
 	GameObject(const std::string name, Model& model);
 
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart);
+	void setColor(glm::vec3 newColor);
 	void setColor(SGEColor newColor);
 
 	bool addAnimation(const std::string name, AnimationSheet& animSheet, uint8_t animationNumberInVertical);
 	bool doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode = -1);
 
+	glm::mat4 getModel() const { return _model; }
+	glm::vec2 getDeltaTexture() const { return _deltaTexture; }
+	glm::vec2 getMeshStart() const { return _meshStart; }
+	glm::vec2 getTextureStart() const { return _textureStart; }
+	glm::vec4 getColor() const { return _color; }
+
 private:
-	std::string _texturePath = "/Textures/empty.jpg";
+	std::vector<std::string> _texturePath{"/Textures/empty.jpg"};
 	
 	const unsigned char* _texturePixels = nullptr;
 	const uint32_t _textureWidth = 0;
 	const uint32_t _textureHeight = 0;
 
     SGEColor _color;
+
+	glm::vec2 _deltaTexture;
+	glm::vec2 _meshStart;
+	glm::vec2 _textureStart;
 
     Mesh& _mesh;
 
@@ -42,5 +53,10 @@ private:
 	std::string _currentAnimation = "";
 	std::map<std::string, Animation> _animationList;
 
+protected:
+
 	std::vector<void*> _descriptorSetData;
+	std::vector<SgrImage*> _textures;
+	bool textureLoading();
+	virtual bool descriptorsUpdate(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer);
 };

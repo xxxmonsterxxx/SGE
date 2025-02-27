@@ -13,15 +13,16 @@ friend class SGE;
 // X - right; Y - down; Z - forward to us;
 private:
 
-	Mesh::MeshInstanceData getInstanceData();
+	glm::mat4 getInstanceModel();
 
 protected:
 	std::string _name;
-	Mesh::MeshInstanceData _instanceData;
 
 	glm::mat4 _positionM{1};
 	glm::mat4 _rotationM{1};
 	glm::mat4 _scaleM{1};
+
+	glm::mat4 _model;
 
 	CoordinateSystem* _cs = nullptr;
 

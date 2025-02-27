@@ -1,10 +1,10 @@
 #include "GameObjectBase.h"
 #include "CoordinateSystem.h"
 
-Mesh::MeshInstanceData GameObjectBase::getInstanceData()
+glm::mat4 GameObjectBase::getInstanceModel()
 {
 	updateModel();
-	return _instanceData; 
+	return _model; 
 }
 
 void GameObjectBase::updateModel()
@@ -22,7 +22,7 @@ void GameObjectBase::updateModel()
 	model = model * _rotationM; // local rotations
 	model = model * _scaleM; // local scale
 
-	_instanceData.model = model;
+	_model = model;
 }
 
 SGEPosition GameObjectBase::getPosition()
