@@ -237,7 +237,9 @@ int main()
     if (!sgeObject.init())
         return 11;
 
+#if !__linux__
 	sgeObject.setGameAppLogo("/Logo/Logo.png");
+#endif
 
 	man.addAnimation("Walk forward",torchMan, 1);
 	man.addAnimation("Walk left", 	torchMan, 2);
