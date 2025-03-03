@@ -61,6 +61,6 @@ ___
 
 **In result you should to see something like this**
 
-![Gif of project](https://i.postimg.cc/c47cDyGk/0303.gif)
+![Gif of project](https://i.postimg.cc/T1FBC883/0303-2.gif)
 
 Each build can be **multithreaded**, after `cmake` command will be generated message with max number of your threads.
