@@ -89,7 +89,7 @@ set_target_properties(SGE PROPERTIES
 
 # find additional dependecies
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.11.0 EXACT)
+find_package(SGR 0.11.1 EXACT)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)

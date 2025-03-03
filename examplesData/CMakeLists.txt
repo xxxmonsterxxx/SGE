@@ -65,8 +65,6 @@ set(GLM_INC_DIR ../modules/glm)
 
 set(SGE_FOLDER ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERSION}-${CMAKE_SYSTEM_NAME})
 
-find_package(SGR 0.11.0 EXACT)
-
 include_directories(${GLM_INC_DIR} ${STB_INC_DIR} ${SGE_FOLDER}/include/SGE ${SGR_INCLUDE_DIRS})
 target_link_libraries (${PROJECT_NAME} SGE)
 
