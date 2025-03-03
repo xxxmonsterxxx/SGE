@@ -1,10 +1,19 @@
-# ***Simple Game Engine ver. 0.6.0***
+# ***Simple Game Engine ver. 0.7***
 
 ![Image of project](https://i.postimg.cc/7h6fcBVB/sge.png)
 
 ### *Description*
 ___
-This project is a simple to use library for game and graphics applications development. Tasks like window creation, draw 2d/3d geometry, load for them textures and create sprite animations, using SGE become easier that with naked Vulkan, OpenGL, DirectX etc. Using this engine you achieve fully crossplatform. To work demonstrate of this engine you can build and run example.
+**Simple Game Engine (SGE)** is a user-friendly library for game and graphics application development. It simplifies tasks such as:  
+✔ Creating windows  
+✔ Rendering 2D and 3D geometry  
+✔ Loading textures  
+✔ Creating sprite animations  
+✔ Loading .obj models  
+
+Using **SGE**, you can achieve full cross-platform compatibility without dealing directly with **Vulkan, OpenGL, DirectX**, or other low-level APIs.  
+
+📌 To see the engine in action, you can build and run the example project.  
 
 ### *How to use?*
 ___
@@ -18,9 +27,9 @@ project follows libraries:
 - [**Vulkan**](https://www.lunarg.com/vulkan-sdk)
 - [**GLFW**](https://github.com/glfw/glfw) (Crossplatform system library)
 
-Set path to `SGE/include` as include path and
-`libSGE.*` as external library
-for your projects.
+### 🔧 Integration  
+1. Set the path to `SGE/include` in **include directories**  
+2. Add `libSGE.*` to your project's **external libraries**  
 
 Manual documentation is currently unavailable. :cry:
 
@@ -48,9 +57,10 @@ ___
   - The project can also be built on Windows in both debug and release modes.
   - Open the CMake file in Microsoft Visual Studio, which will automatically configure the project settings.
   - You can switch between build modes using the standard methods available in Microsoft Visual Studio.
-  - ***WARNING:***
-    For engine testing, you are required to use the `DEBUG` version of the SGR library.
+  
 
+**In result you should to see something like this**
 
+![Gif of project](https://i.postimg.cc/T1FBC883/0303-2.gif)
 
 Each build can be **multithreaded**, after `cmake` command will be generated message with max number of your threads.

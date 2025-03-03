@@ -7,7 +7,7 @@ class TextObject : public GameObjectBase {
 private:
 
 	std::string _text;
-	std::string _fontPath = "/Resources/Fonts/times new roman.ttf";
+	std::string _fontPath = "/Fonts/times new roman.ttf";
 	unsigned char* _fontPixels = nullptr;
 	unsigned char*  _charsData = nullptr;
 

@@ -8,6 +8,7 @@
 #include "CameraObject.h"
 #include "CoordinateSystem.h"
 #include "UIObject.h"
+#include "ModelGameObject.h"
 
 class SGE {
 
@@ -22,7 +23,8 @@ private:
 	SGE();
 	
 	struct MeshAndObjects {
-		Mesh* mesh;
+		Mesh* mesh = nullptr;
+		SgrInstancesUniformBufferObject instancesData;
 		std::vector<GameObject*> gameObjects;
 	};
 
@@ -38,9 +40,9 @@ private:
 	const uint16_t defaultInstanceNumber = 100;
 	size_t requiredInstanceNumber = defaultInstanceNumber;
 	size_t totalInstanceNumber = 0;
-	SgrInstancesUniformBufferObject instancesData;
 
 	static std::string execPath;
+	static std::string resourcesPath;
 
     bool buffersInit();
 
@@ -48,7 +50,7 @@ private:
 	static void staticUpdateRenderData();
 
 	SgrBuffer* initGlobalViewMatrix();
-	SgrBuffer* initInstancesData();
+	bool initInstancesData();
 
 	EventManager& eventManager = EventManager::get();
 	CoordinateSystem cs{glm::vec3{0,0,0},glm::vec3{180,0,0}};
@@ -58,6 +60,11 @@ private:
 	bool addToRender(GameObject& gObj);
     bool addToRender(std::vector<GameObject*> gObjects);
 	bool addToRender(TextObject& tObj);
+
+	uint8_t currentFrame = 0;
+	SgrTime_t lastDrawTime;
+
+	UIText* fpsInfo = nullptr;
 
 public:
 	static SGE& get();
@@ -86,4 +93,9 @@ public:
 	static std::string getExecPath();
 
 	CameraObject& getCameraObject() { return camera; }
+
+	bool setGameAppLogo(std::string path);
+
+	void setResourcesPath(std::string path);
+	static std::string getResourcesPath() { return resourcesPath; }
 };

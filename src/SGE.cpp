@@ -4,6 +4,7 @@
 SGR SGE::renderer = SGR();
 SGE* SGE::instance = nullptr;
 std::string SGE::execPath = getExecutablePath();
+std::string SGE::resourcesPath = execPath;
 
 const uint16_t maximumInstanceNumber = 1000;
 
@@ -24,15 +25,20 @@ void SGE::staticUpdateRenderData()
 
 void SGE::updateRenderData()
 {
-	size_t objCounter = 0;
-	for (auto obj : meshesAndObjects) {
-		for (auto gObj : obj.gameObjects) {
-			Mesh::MeshInstanceData* currentObject = (Mesh::MeshInstanceData*)((uint64_t)instancesData.data + (objCounter++) * instancesData.dynamicAlignment);
-			*currentObject = gObj->getInstanceData();
+	for (auto& obj : meshesAndObjects) {
+		size_t objCounter = 0;
+		for (auto& gObj : obj.gameObjects) {
+			uint8_t* objData = (uint8_t*)((uint64_t)obj.instancesData.data + (objCounter++) * obj.instancesData.dynamicAlignment);
+			void* generatedData = malloc(obj.instancesData.dynamicAlignment);
+			if (generatedData) {
+				obj.mesh->generateInstanceData(gObj, generatedData);
+				memcpy((void*)objData, generatedData, obj.instancesData.dynamicAlignment);
+			}
 		}
+
+		renderer.updateInstancesUniformBufferObject(obj.instancesData);
 	}
-	
-	renderer.updateInstancesUniformBufferObject(instancesData);
+
 	renderer.updateGlobalUniformBufferObject(viewProjection);
 }
 
@@ -46,21 +52,22 @@ SgrBuffer* SGE::initGlobalViewMatrix()
 	return viewProjBuffer;
 }
 
-SgrBuffer* SGE::initInstancesData()
+bool SGE::initInstancesData()
 {
-	instancesData.instnaceCount = requiredInstanceNumber;
-	instancesData.instanceSize = sizeof(Mesh::MeshInstanceData);
-	if (MemoryManager::createDynamicUniformMemory(instancesData) != sgrOK)
-		return nullptr;
+	for (auto& mao : meshesAndObjects) {
+		mao.instancesData.instnaceCount = requiredInstanceNumber;
+		mao.instancesData.instanceSize = mao.mesh->getInstanceDataSize();
+		if (MemoryManager::createDynamicUniformMemory(mao.instancesData) != sgrOK)
+			return false;
 
-	SgrBuffer* instancesDataBuffer = nullptr; 
-	SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(instancesDataBuffer, instancesData.dataSize, instancesData.dynamicAlignment);
-	if (resultCreateBuffer != sgrOK)
-		return nullptr;
+		SgrErrCode resultCreateBuffer = MemoryManager::get()->createDynamicUniformBuffer(mao.instancesData.ubo, mao.instancesData.dataSize, mao.instancesData.dynamicAlignment);
+		if (resultCreateBuffer != sgrOK)
+			return false;
 
-	renderer.setupInstancesUniformBufferObject(instancesDataBuffer);
+	}
 
-	return instancesDataBuffer;
+
+	return true;
 }
 
 bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
@@ -78,22 +85,24 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	viewProjection.view = glm::translate(viewProjection.view, glm::vec3(0, 0, -0.1));
 	viewProjection.proj = glm::perspective(45.f, 1.f/1.f, 0.1f, 100.f); // 0.1-min 100-max // axis is inverted
 
-	SgrBuffer* instancesDataBuffer = initInstancesData();
-	if (!instancesDataBuffer)
+	if (!initInstancesData())
 		return false;
 
-	int objCounter = 0;
 	for (size_t i = 0; i < meshesAndObjects.size(); i++) {
 		if (!meshesAndObjects[i].mesh->init())
 			return false;
+		int objCounter = 0;
 		for (size_t j = 0; j < meshesAndObjects[i].gameObjects.size(); j++) {
-			if (renderer.addObjectInstance(meshesAndObjects[i].gameObjects[j]->_name,meshesAndObjects[i].mesh->_name,(objCounter++)*instancesData.dynamicAlignment) != sgrOK)
+			if (renderer.addObjectInstance(meshesAndObjects[i].gameObjects[j]->_name,meshesAndObjects[i].mesh->_name,(objCounter++)* meshesAndObjects[i].instancesData.dynamicAlignment) != sgrOK)
 				return false;
 
-			if (!meshesAndObjects[i].gameObjects[j]->init(viewProjBuffer, instancesDataBuffer))
+			if (!meshesAndObjects[i].gameObjects[j]->init(viewProjBuffer, meshesAndObjects[i].instancesData.ubo))
 				return false;
 		}
 	}
+
+	fpsInfo = new UIText("FpsInfo", {0.09,0.09}, {50,50}, "FPS: ");
+	registerUIObject(*fpsInfo);
 
 	for (auto uiElem : uiObjects)
 		renderer.drawUIElement(*uiElem->getUIPtr());
@@ -112,6 +121,9 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 
 	// this method should be called in the end of all users callback declaration
 	renderer.setupUICallback();
+
+	currentFrame = 0;
+	lastDrawTime = SgrTime::now();
 
     return true;
 }
@@ -149,6 +161,14 @@ bool SGE::drawNextFrame()
 
 	if (renderer.drawFrame() != sgrOK)
 		return false;
+
+	currentFrame++;
+	if (getTimeDuration(lastDrawTime, SgrTime::now()) > 1) {
+		std::string fpsText = "FPS: " + std::to_string(currentFrame);
+		fpsInfo->changeText(fpsText);
+		lastDrawTime = SgrTime::now();
+		currentFrame = 0;
+	}
 
     return true;
 }
@@ -217,4 +237,17 @@ bool SGE::registerUIObject(UIObject& uiObject)
 {
 	uiObjects.push_back(&uiObject);
 	return true;
+}
+
+bool SGE::setGameAppLogo(std::string path)
+{
+	if (renderer.setApplicationLogo(resourcesPath + path) != sgrOK)
+ 		return false;
+
+	return true;
+}
+
+void SGE::setResourcesPath(std::string path)
+{
+	resourcesPath = path;
 }

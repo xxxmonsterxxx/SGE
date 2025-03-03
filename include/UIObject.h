@@ -29,11 +29,13 @@ private:
     static void emptyButtonFunc();
 
 public:
-    UIButton(std::string name, glm::vec2 pos = {0,0}, glm::vec2 size = {0.1,0.1}, void (*func)() = emptyButtonFunc, std::string buttonText = "Button");
+    UIButton(std::string name, glm::vec2 pos = {0,0}, glm::vec2 size = {50,50}, std::string buttonText = "Button", void (*func)() = emptyButtonFunc);
 };
 
 class UIText : public UIObject {
 
 public:
-    UIText(std::string name, glm::vec2 pos = {0,0}, glm::vec2 size = {0.1,0.1}, std::string text = "TextBox");
+    UIText(std::string name, glm::vec2 pos = {0,0}, glm::vec2 size = {50,50}, std::string text = "TextBox");
+
+    void changeText(std::string newText);
 };

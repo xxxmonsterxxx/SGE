@@ -1,44 +1,27 @@
 ﻿{
   "configurations": [
     {
-      "name": "SGE-Debug",
+      "name": "SGE(Debug)",
       "generator": "Ninja",
       "configurationType": "Debug",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "buildRoot": "${projectDir}\\build",
+      "buildRoot": "${projectDir}\\examplesData\\build",
       "installRoot": "${projectDir}\\build",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
         {
           "name": "BUILD_EXAMPLE",
-          "value": "FALSE",
+          "value": "TRUE",
           "type": "STRING"
         }
       ]
     },
     {
-      "name": "SGE-Release",
+      "name": "SGE(Release)",
       "generator": "Ninja",
       "configurationType": "Release",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "buildRoot": "${projectDir}\\build",
-      "installRoot": "C:\\Libs\\SGE",
-      "variables": [
-        {
-          "name": "BUILD_EXAMPLE",
-          "value": "FALSE",
-          "type": "STRING"
-        }
-      ]
-    },
-    {
-      "name": "SGE_test",
-      "generator": "Ninja",
-      "configurationType": "Debug",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\examplesData\\build",
-      "cmakeCommandArgs": "",
-      "buildCommandArgs": "",
-      "ctestCommandArgs": "",
+      "installRoot": "C:\\Libs\\SGE",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
         {
           "name": "BUILD_EXAMPLE",

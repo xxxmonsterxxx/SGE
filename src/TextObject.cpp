@@ -73,7 +73,7 @@ TextObject::LetterData TextObject::getLetterData(glm::vec2& nextLetter, char let
 TextObject::TextObject(std::string text) :
 	_text(text)
 {
-	_fontPath = SGE::execPath + _fontPath;
+	_fontPath = SGE::resourcesPath + _fontPath;
 	if (!loadFontData())
 		return;
 
@@ -86,7 +86,7 @@ TextObject::TextObject(std::string text) :
 		char letter = text[i];
 		std::string GOLetterName = "letter_" + std::to_string(_textId)+std::string("_")+std::to_string(i);
 		LetterData LD = getLetterData(nextLetter, letter);
-		Mesh* _letterMesh = new Mesh(GOLetterName, LD.mesh, std::vector<uint16_t>{ 0,1,2,2,3,0 });
+		Mesh* _letterMesh = new Mesh(GOLetterName, LD.mesh, std::vector<uint32_t>{ 0,1,2,2,3,0 });
 		
 		GameObject* letterGO = new GameObject(GOLetterName, *_letterMesh, _fontPixels, _fontBitmapWidth, _fontBitmapHeight);
 		letterGO->setPosition(LD.position);

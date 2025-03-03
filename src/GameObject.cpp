@@ -2,10 +2,10 @@
 #include "SGE.h"
 
 GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture) :
-        _mesh(mesh),
-		_texturePath(texture) {
+        _mesh(mesh) {
 			_name = name;
-			_mesh.setTextured(true);
+			_mesh.useTexture();
+			_texturePath.push_back(texture);
 		}
 
 GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) : 
@@ -14,7 +14,7 @@ GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) 
 GameObject::GameObject(const std::string name, Mesh& mesh, bool textured) :
         _mesh(mesh) {
 			_name = name;
-			_mesh.setTextured(textured);
+			if (textured) _mesh.useTexture();
 		}
 
 GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight) :
@@ -24,25 +24,52 @@ GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* 
 		_textureHeight(textureHeight)
 {
 	_name = name;
-	_mesh.setTextured(true);
+	_mesh.useTexture();
+}
+
+GameObject::GameObject(const std::string name, Model& model) : _mesh(model.getMesh()), _texturePath(model.getTextures())
+{
+	_name = name;
+}
+
+bool GameObject::textureLoading()
+{
+	if (_texturePixels) {
+		SgrImage* newTexture = nullptr;
+		if (TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight, newTexture) == sgrOK)
+			_textures.push_back(newTexture);
+		else
+			return false;
+	}
+	else {
+		for (auto p : _texturePath) {
+			SgrImage* newTexture = nullptr;
+			if (TextureManager::createTextureImage(SGE::resourcesPath + p, newTexture) == sgrOK)
+				_textures.push_back(newTexture);
+			else
+				return false;
+		}
+	}
+
+	return true;
+}
+
+bool GameObject::descriptorsUpdate(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
+{
+	if (!textureLoading())
+		return false;
+
+	_descriptorSetData.push_back((void*)(viewProj));
+	_descriptorSetData.push_back((void*)(_textures.data()));
+	_descriptorSetData.push_back((void*)(allInstancesBuffer));
+	return true;
 }
 
 bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 {
-	SgrImage* _texture = nullptr;
-	SgrErrCode resultCreateTextureImage;
-	if (_texturePixels)
-		resultCreateTextureImage = TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight , _texture);
-	else
-		resultCreateTextureImage = TextureManager::createTextureImage(SGE::execPath + _texturePath, _texture);
-
-	if (resultCreateTextureImage != sgrOK)
+	if (!descriptorsUpdate(viewProj, allInstancesBuffer))
 		return false;
-		
-	_descriptorSetData.push_back((void*)(viewProj));
-	_descriptorSetData.push_back((void*)(_texture));
-	_descriptorSetData.push_back((void*)(allInstancesBuffer));
-
+	
 	if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)
 		return false;
 
@@ -54,17 +81,19 @@ bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 
 void GameObject::setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart)
 {
-	_instanceData.meshToTextureDelta = deltaTexture;
-	_instanceData.meshStart = meshStart;
-	_instanceData.textureStart = textureStart;
+	_deltaTexture = deltaTexture;
+	_meshStart = meshStart;
+	_textureStart = textureStart;
+}
+
+void GameObject::setColor(glm::vec3 newColor)
+{
+	_color = glm::vec4{newColor.x,newColor.y,newColor.z,1};
 }
 
 void GameObject::setColor(SGEColor newColor)
 {
 	_color = newColor;
-	_instanceData.color.x = _color.x;
-	_instanceData.color.y = _color.y;
-	_instanceData.color.z = _color.z;
 }
 
 bool GameObject::addAnimation(const std::string name, AnimationSheet& animSheet, uint8_t animationNumberInVertical)
@@ -87,8 +116,8 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 	if (_animationList.find(newAnimationName) == _animationList.end())
 		return false;
 
-	if (_descriptorSetData[1] != ((void*)(_animationList[newAnimationName].animPixels))) {
-		_descriptorSetData[1] = ((void*)(_animationList[newAnimationName].animPixels));
+	if (_descriptorSetData[1] != ((void*)(&_animationList[newAnimationName].animPixels))) {
+		_descriptorSetData[1] = ((void*)(&_animationList[newAnimationName].animPixels));
 		if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)
 			return false;
 	}
@@ -96,7 +125,7 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 	return true;
 }
 
-void GameObject::doAnimation(std::string name, uint8_t speed)
+bool GameObject::doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode)
 {
 	if (_currentAnimation != name) {
 		if (changeAnimation(name))
@@ -105,9 +134,11 @@ void GameObject::doAnimation(std::string name, uint8_t speed)
 
 	Animation& curr = _animationList[_currentAnimation];
 
-	curr.speed = speed * curr.length;
+	curr.speed = speed;
 	glm::vec2 frameOffset{0};
 	frameOffset.x = curr.frameSize.x;
+	if (singleFrameMode > -1 && singleFrameMode <= curr.length)
+		curr.frame = singleFrameMode;
 	setTextureMapping(curr.frameSize, _mesh.getTextureBindPoint(), curr.startCoord + (float)curr.frame * frameOffset);
 	curr.frameCounter++;
 	if (curr.frameCounter > curr.speed / curr.length) {
@@ -115,6 +146,9 @@ void GameObject::doAnimation(std::string name, uint8_t speed)
 		curr.frameCounter = 0;
 		if (curr.frame == curr.length) {
 			curr.frame = 0;
+			return true;
 		}
 	}
+
+	return false;
 }

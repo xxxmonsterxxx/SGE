@@ -127,6 +127,12 @@ int main()
 {
     SGE& sgeObject = SGE::get();
 
+#if __APPLE__ && !NDBUG
+	sgeObject.setResourcesPath(SGE::getExecPath()+"/../Resources");
+#else
+	sgeObject.setResourcesPath(SGE::getExecPath()+"/Resources");
+#endif
+
     // steps
 	// 1. Create MESH
 	// 2. Create GameObject
@@ -141,7 +147,7 @@ int main()
 		{0.5f,0.5f,0.f},
 		{-0.5f,0.5f,0.f}
 	};
-    const std::vector<uint16_t> rectIndices{0,1,2,2,3,0};
+    const std::vector<uint32_t> rectIndices{0,1,2,2,3,0};
 	Mesh rectMesh("rectangle", rectVertices, rectIndices);
 
     // create new object
@@ -149,17 +155,17 @@ int main()
 	// change gameobject parameters
 	man.scale(2);
 	man.rotate({180,0,0});
-	AnimationSheet torchMan("TorchMan", "/Resources/Textures/manTex.png", 9, 4);
+	AnimationSheet torchMan("TorchMan", "/Textures/manTex.png", 9, 4);
 
 	// default geometry mesh
     GameObject man2("soldier",rectMesh,true);
 	man2.scale(3);
 	man2.move({2,0.5,0});
 	man2.rotate({180,0,0});
-	AnimationSheet soldIdle("Soldier idle", "/Resources/Textures/Soldier/Idle.png", 7, 1);
-	AnimationSheet soldRun("Soldier run", "/Resources/Textures/Soldier/Run.png", 8, 1);
-	AnimationSheet soldShot("Soldier shot", "/Resources/Textures/Soldier/Shot_2.png", 4, 1);
-	AnimationSheet soldRech("Soldier recharge", "/Resources/Textures/Soldier/Recharge.png", 13, 1);
+	AnimationSheet soldIdle("Soldier idle", "/Textures/Soldier/Idle.png", 7, 1);
+	AnimationSheet soldRun("Soldier run", "/Textures/Soldier/Run.png", 8, 1);
+	AnimationSheet soldShot("Soldier shot", "/Textures/Soldier/Shot_2.png", 4, 1);
+	AnimationSheet soldRech("Soldier recharge", "/Textures/Soldier/Recharge.png", 13, 1);
 
 	Mesh rectangleFromDefault = Mesh::getDefaultRectangleMesh("defaultRect", false);
 	GameObject man3("man3",rectangleFromDefault,false);
@@ -173,6 +179,16 @@ int main()
 	helloSGE.setRotation({0,0,0});
 	helloSGE.rotate({0,0,0},{0,0,1},90);
 	helloSGE.move({-1,0,0});
+
+	Model halcon("Halcon", "/3d_models/Halcon_Milenario", Model::ModelType::OBJ);
+	ModelGameObject ship("Ship", halcon);
+	ship.move({-1.5,0,0});
+	ship.rotate({-10,0,0});
+
+	Model audi("Audi", "/3d_models/Audi_S5_Sportback", Model::ModelType::OBJ);
+	ModelGameObject car("Car", audi);
+	car.move({1,1,0});
+	car.rotate({-20,0,0});
 
 
 	// subscribe to events binded with keys pressing/release
@@ -199,20 +215,21 @@ int main()
 
 	// render objects
 	// sgeObject.setMaxInstanceNumber(4);
-	bool ret = false;
-    ret = sgeObject.registerGameObject(man);
-	if (!ret)
+    if (!sgeObject.registerGameObject(man))
 		return 111;
-    ret = sgeObject.registerGameObject(man2);
-	if (!ret)
+	if (!sgeObject.registerGameObject(man2))
 		return 222;
-	ret = sgeObject.registerGameObject(man3);
-	if (!ret)
+	if (!sgeObject.registerGameObject(man3))
 		return 333;
-	sgeObject.registerGameObject(helloSGE);
+	if (!sgeObject.registerGameObject(helloSGE))
+		return 444;
+	if (!sgeObject.registerGameObject(ship))
+		return 555;
+	if (!sgeObject.registerGameObject(car))
+		return 666;
 
-	UIButton exitButt("Exit",{0.8,0.1},{0.1,0.1},exitFunction, "Exit!");
-	UIText sgetext("Sgetext",{0.09,0.09},{0.1,0.1},"Welcome to SGE example application!");
+	UIButton exitButt("Exit",{0.8,0.1},{50,20}, "Exit!", exitFunction);
+	UIText sgetext("Sgetext",{0.09,0.3},{50,50},"Welcome to SGE example application!");
 
 	sgeObject.registerUIObject(exitButt);
 	sgeObject.registerUIObject(sgetext);
@@ -220,6 +237,9 @@ int main()
     if (!sgeObject.init())
         return 11;
 
+#if !__linux__
+	sgeObject.setGameAppLogo("/Logo/Logo.png");
+#endif
 
 	man.addAnimation("Walk forward",torchMan, 1);
 	man.addAnimation("Walk left", 	torchMan, 2);
@@ -258,36 +278,49 @@ int main()
 
 		if (moveDirection == 1) {
 			man.velocity={0,0,0.3};
-			man.doAnimation("Walk forward", 5);
+			man.doAnimation("Walk forward", 60);
 		} else if (moveDirection == 2) {
-			man.doAnimation("Walk left", 5);
+			man.doAnimation("Walk left", 60);
 			man.velocity={-0.3,0,0};
 		} else if (moveDirection == 3) {
-			man.doAnimation("Walk back", 5);
+			man.doAnimation("Walk back", 60);
 			man.velocity={0,0,-0.3};
 		} else if (moveDirection == 4) {
-			man.doAnimation("Walk right", 5);
+			man.doAnimation("Walk right", 60);
 			man.velocity={0.3,0,0};
 		}
 
 
 		if (soldierAction == 1) {
-			man2.doAnimation("Idle",5);
+			man2.doAnimation("Idle",60);
 			man2.velocity = {0,0,0};
 		} else if (soldierAction == 2) {
-			man2.doAnimation("Run",5);
-			man2.velocity = {0.3,0,0};
+			man2.doAnimation("Run",40);
+			man2.velocity = {0.6,0,0};
 		} else if (soldierAction == 3) {
-			man2.doAnimation("Shot",5);
+			man2.doAnimation("Shot",10);
 			man2.velocity = {0,0,0};
 		} else if (soldierAction == 4) {
-			man2.doAnimation("Recharge",5);
+			bool finish = man2.doAnimation("Recharge",60);
+			if (finish)
+				soldierAction = 3;
 			man2.velocity = {0,0,0};
 		}
 
 		helloSGE.rotate({0,1,0});
+		ship.rotate({0,0.1,0});
+		car.rotate({ 0,0.1,0 });
     }
 
-	glfwTerminate();
     return 0;
 }
+
+#if _WIN64
+#include "Windows.h"
+
+_Use_decl_annotations_
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	return main();
+}
+
+#endif
