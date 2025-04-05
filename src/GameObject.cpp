@@ -5,7 +5,8 @@ GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture)
         _mesh(mesh) {
 			_name = name;
 			_mesh.useTexture();
-			_texturePath.push_back(texture);
+			_texturePath[0] = texture;
+			_meshStart = _mesh.getTextureBindPoint();
 		}
 
 GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) : 
