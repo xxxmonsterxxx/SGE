@@ -46,6 +46,7 @@ private:
 	glm::vec2 _textureStart{0,0};
 
     Mesh& _mesh;
+	bool _isMeshCorrect = false;
 
     bool init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer);
 

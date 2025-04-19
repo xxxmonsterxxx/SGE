@@ -6,7 +6,11 @@ GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture)
 			_name = name;
 			_mesh.useTexture();
 			_texturePath[0] = texture;
-			_meshStart = _mesh.getTextureBindPoint();
+
+			if (_mesh.isCorrect()) {
+				_isMeshCorrect = true;
+				_meshStart = _mesh.getTextureBindPoint();
+			}
 		}
 
 GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) : 
@@ -15,7 +19,10 @@ GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) 
 GameObject::GameObject(const std::string name, Mesh& mesh, bool textured) :
         _mesh(mesh) {
 			_name = name;
-			if (textured) _mesh.useTexture();
+			if (_mesh.isCorrect()) {
+				_isMeshCorrect = true;
+				if (textured) _mesh.useTexture();
+			}
 		}
 
 GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight) :
@@ -25,12 +32,18 @@ GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* 
 		_textureHeight(textureHeight)
 {
 	_name = name;
-	_mesh.useTexture();
+	if (_mesh.isCorrect()) {
+		_isMeshCorrect = true;
+		_mesh.useTexture();
+	}
 }
 
 GameObject::GameObject(const std::string name, Model& model) : _mesh(model.getMesh()), _texturePath(model.getTextures())
 {
 	_name = name;
+	if (_mesh.isCorrect()) {
+		_isMeshCorrect = true;
+	}
 }
 
 bool GameObject::textureLoading()
@@ -68,6 +81,9 @@ bool GameObject::descriptorsUpdate(SgrBuffer* viewProj, SgrBuffer* allInstancesB
 
 bool GameObject::init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer)
 {
+	if (!_isMeshCorrect)
+		return false;
+		
 	if (!descriptorsUpdate(viewProj, allInstancesBuffer))
 		return false;
 	

@@ -10,7 +10,9 @@ AnimationSheet::AnimationSheet(std::string name, std::string filePath, uint8_t h
 
 bool AnimationSheet::initImageData()
 {
-    if (TextureManager::createTextureImage(SGE::getResourcesPath() + _filePath, _animationImage) != sgrOK)
+    std::string path = SGE::getResourcesPath() + _filePath;
+    SgrErrCode res = TextureManager::createTextureImage(SGE::getResourcesPath() + _filePath, _animationImage);
+    if (res != sgrOK)
         return false;
     
     return true;
