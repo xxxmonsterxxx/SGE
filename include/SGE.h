@@ -24,7 +24,7 @@ private:
 	
 	struct MeshAndObjects {
 		Mesh* mesh = nullptr;
-		SgrInstancesUniformBufferObject instancesData;
+		SgrInstancesUBO instancesData;
 		std::vector<GameObject*> gameObjects;
 	};
 
@@ -35,7 +35,7 @@ private:
 	std::vector<MeshAndObjects> meshesAndObjects;
 	std::vector<UIObject*> uiObjects;
 
-    SgrGlobalUniformBufferObject viewProjection;
+	SgrGlobalUBO viewProjection;
 
 	const uint16_t defaultInstanceNumber = 100;
 	size_t requiredInstanceNumber = defaultInstanceNumber;
