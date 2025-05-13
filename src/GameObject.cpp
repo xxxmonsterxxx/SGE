@@ -56,7 +56,7 @@ bool GameObject::textureLoading()
 			return false;
 	}
 	else {
-		for (auto p : _texturePath) {
+		for (auto& p : _texturePath) {
 			SgrImage* newTexture = nullptr;
 			if (TextureManager::createTextureImage(SGE::resourcesPath + p, newTexture) == sgrOK)
 				_textures.push_back(newTexture);
