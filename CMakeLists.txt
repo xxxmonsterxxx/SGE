@@ -77,10 +77,6 @@ endif()
 add_library(SGE SHARED ${SOURCE})
 
 set_target_properties(SGE PROPERTIES
-    INSTALL_RPATH_USE_LINK_PATH TRUE
-)
-
-set_target_properties(SGE PROPERTIES
     VERSION ${VERSION}
     SOVERSION ${VMAJOR}.${VMINOR}.0
 )
@@ -89,7 +85,7 @@ set_target_properties(SGE PROPERTIES
 
 # find additional dependecies
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.11.1 EXACT)
+find_package(SGR 0.11 EXACT)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)

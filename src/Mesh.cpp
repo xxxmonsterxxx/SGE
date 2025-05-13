@@ -125,3 +125,11 @@ void Mesh::generateInstanceData(GameObject* go, void* data)
 
 	*(MeshInstanceData*)data = newData;
 }
+
+bool Mesh::isCorrect()
+{
+	if (!_name.empty() && (!_vertices.empty() || verticesData)  && !_indices.empty())
+		return true;
+
+	return false;
+}

@@ -172,6 +172,11 @@ int main()
     man3.setPosition({1.5,-1.5,-1});
 	man3.setColor({0,0,1});
 
+	GameObject man4("man4",rectMesh,"/Textures/manTex.png");
+	man4.rotate({180,0,0});
+	man4.setPosition({0,-2,0});
+	man4.scale(1.5);
+
 	TextObject helloSGE("Simple Game Engine");
 	// move text
 	helloSGE.setPosition({-1.5,0,0});
@@ -227,6 +232,8 @@ int main()
 		return 555;
 	if (!sgeObject.registerGameObject(car))
 		return 666;
+	if (!sgeObject.registerGameObject(man4))
+		return 777;
 
 	UIButton exitButt("Exit",{0.8,0.1},{50,20}, "Exit!", exitFunction);
 	UIText sgetext("Sgetext",{0.09,0.3},{50,50},"Welcome to SGE example application!");

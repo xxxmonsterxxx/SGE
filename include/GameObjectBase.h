@@ -22,7 +22,7 @@ protected:
 	glm::mat4 _rotationM{1};
 	glm::mat4 _scaleM{1};
 
-	glm::mat4 _model;
+	glm::mat4 _model{1};
 
 	CoordinateSystem* _cs = nullptr;
 

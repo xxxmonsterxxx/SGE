@@ -41,11 +41,12 @@ private:
 
     SGEColor _color;
 
-	glm::vec2 _deltaTexture;
+	glm::vec2 _deltaTexture{1,1};
 	glm::vec2 _meshStart;
-	glm::vec2 _textureStart;
+	glm::vec2 _textureStart{0,0};
 
     Mesh& _mesh;
+	bool _isMeshCorrect = false;
 
     bool init(SgrBuffer* viewProj, SgrBuffer* allInstancesBuffer);
 

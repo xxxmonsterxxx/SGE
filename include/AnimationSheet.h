@@ -10,7 +10,7 @@ struct Animation {
     uint8_t frameCounter{0};
     uint8_t length{1};
     uint8_t speed{1}; // in frames
-    const SgrImage* animPixels;
+    SgrImage* animPixels = nullptr;
 };
 
 class AnimationSheet {
