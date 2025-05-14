@@ -1,11 +1,14 @@
 #include "PhysicsObject.h"
 
 
-PhysicsObject::PhysicsObject() : mass(0), appliedForce(0), acceleration(0), velocity(0), angularRate(0) { ; }
+PhysicsObject::PhysicsObject() : mass(0), appliedForce(0), acceleration(0), velocity(0), angularRate(0), angularAccel(0), rotateAxis(0) { ; }
 
 void PhysicsObject::update(float dt)
 {
-    velocity += (acceleration + mass * appliedForce) * dt;
+    glm::vec3 appliedForceAccel(0);
+    if (mass > 0)
+        appliedForceAccel = appliedForce / mass;
+    velocity += (acceleration + appliedForceAccel + glm::vec3(0,-gravity,0)) * dt;
 
     glm::vec3 dPos = velocity * dt;
     move(dPos);
@@ -40,8 +43,12 @@ void PhysicsEngine::update()
 {
     float dt = getTimeDuration(lastUpdate, SgrTime::now());
 
-    for (auto phOb : *physObjects)
-        phOb->update(dt);
+    if (physObjects) {
+        for (auto phOb : *physObjects) {
+            phOb->gravity = gravity;
+            phOb->update(dt);
+        }
+    }
 
     lastUpdate = SgrTime::now();
 }

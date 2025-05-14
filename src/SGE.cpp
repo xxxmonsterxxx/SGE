@@ -117,6 +117,7 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	eventManager.init(window);
 
 	physEng.init(&physObjects);
+	physEng.gravity = 0;
 	physEng.start();
 
 	// this method should be called in the end of all users callback declaration

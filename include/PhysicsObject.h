@@ -4,6 +4,8 @@
 
 class PhysicsObject {
 
+friend class PhysicsEngine;
+
 public:
 
     PhysicsObject();
@@ -24,6 +26,10 @@ public:
 
     void update(float dt);
 
+private:
+
+    float gravity = 0;
+
 };
 
 class PhysicsEngine {
@@ -37,6 +43,8 @@ public:
     void stop();
     void update();
 
+    float gravity = 9.81;
+
 
 private:
     PhysicsEngine();
@@ -46,7 +54,7 @@ private:
     SgrTime_t startTime;
     SgrTime_t lastUpdate;
 
-    std::vector<PhysicsObject*> *physObjects;
+    std::vector<PhysicsObject*> *physObjects = nullptr;
 
     bool running;
 };
