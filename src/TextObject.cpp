@@ -111,6 +111,8 @@ TextObject::TextObject(std::string text) :
 
 	_textReady = true;
 	_textId++;
+
+	collidable = false;
 }
 
 std::vector<GameObject*> TextObject::getGameObjectsData()

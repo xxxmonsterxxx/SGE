@@ -14,6 +14,19 @@ void PhysicsObject::update(float dt)
     move(dPos);
 }
 
+void PhysicsObject::checkCollision(PhysicsObject* obj)
+{
+    float dist = glm::length(obj->position - position);
+
+    if (dist < 0.1) {
+        appliedForce = glm::vec3(0);
+        acceleration = glm::vec3(0);
+
+        obj->appliedForce = glm::vec3(0);
+        obj->acceleration = glm::vec3(0);
+    }
+}
+
 
 PhysicsEngine* PhysicsEngine::_singleton = nullptr;
 
@@ -43,6 +56,8 @@ void PhysicsEngine::update()
 {
     float dt = getTimeDuration(lastUpdate, SgrTime::now());
 
+    collisionsUpdate();
+
     if (physObjects) {
         for (auto phOb : *physObjects) {
             phOb->gravity = gravity;
@@ -51,4 +66,16 @@ void PhysicsEngine::update()
     }
 
     lastUpdate = SgrTime::now();
+}
+
+void PhysicsEngine::collisionsUpdate()
+{
+    if (physObjects) {
+        for (size_t i = 0; i < physObjects->size(); i++) {
+            for (size_t j = i + 1; j < physObjects->size(); j++) {
+                if ((*physObjects)[i]->collidable && (*physObjects)[j]->collidable)
+                    (*physObjects)[i]->checkCollision((*physObjects)[j]);
+            }
+        }
+    }
 }

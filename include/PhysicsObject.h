@@ -12,10 +12,13 @@ public:
     float mass;
     glm::vec3 appliedForce;
     glm::vec3 acceleration;
+    glm::vec3 position;
     glm::vec3 velocity;
     glm::vec3 rotateAxis;
     float angularAccel;
     float angularRate;
+
+    std::vector <glm::vec3> boundary;
 
     void setVelocity(glm::vec3 newVel);
     void setAccel(glm::vec3 newAcc);
@@ -26,9 +29,13 @@ public:
 
     void update(float dt);
 
+    bool collidable = true;
+
 private:
 
     float gravity = 0;
+
+    void checkCollision(PhysicsObject* obj);
 
 };
 
@@ -57,4 +64,6 @@ private:
     std::vector<PhysicsObject*> *physObjects = nullptr;
 
     bool running;
+
+    void collisionsUpdate();
 };

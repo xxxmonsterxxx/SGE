@@ -22,6 +22,8 @@ void GameObjectBase::updateModel()
 	model = model * _rotationM; // local rotations
 	model = model * _scaleM; // local scale
 
+	position = {_positionM[3][0],_positionM[3][1],_positionM[3][2]}; // update position for physics engine
+
 	_model = model;
 }
 
