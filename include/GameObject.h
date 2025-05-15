@@ -24,7 +24,7 @@ public:
 	void setColor(SGEColor newColor);
 
 	bool addAnimation(const std::string name, AnimationSheet& animSheet, uint8_t animationNumberInVertical);
-	bool doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode = -1);
+	bool doAnimation(std::string name, uint8_t speed, int waitFrame = -1, int8_t singleFrameMode = -1);
 
 	glm::mat4 getModel() const { return _model; }
 	glm::vec2 getDeltaTexture() const { return _deltaTexture; }

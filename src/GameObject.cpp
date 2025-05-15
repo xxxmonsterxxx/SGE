@@ -147,10 +147,12 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 			return false;
 	}
 
+	_animationList[newAnimationName].frame = 0;
+
 	return true;
 }
 
-bool GameObject::doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode)
+bool GameObject::doAnimation(std::string name, uint8_t speed, int waitFrame, int8_t singleFrameMode)
 {
 	if (_currentAnimation != name) {
 		if (changeAnimation(name))
@@ -171,8 +173,13 @@ bool GameObject::doAnimation(std::string name, uint8_t speed, int8_t singleFrame
 		curr.frameCounter = 0;
 		if (curr.frame == curr.length) {
 			curr.frame = 0;
-			return true;
+
+			if (waitFrame == -1)
+				return true;
 		}
+
+		if (curr.frame == waitFrame)
+			return true;
 	}
 
 	return false;
