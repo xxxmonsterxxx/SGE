@@ -5,7 +5,7 @@ GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture)
         _mesh(mesh) {
 			_name = name;
 			_mesh.useTexture();
-			_texturePath[0] = texture;
+			_texturePath.push_back(texture);
 
 			if (_mesh.isCorrect()) {
 				_isMeshCorrect = true;
@@ -63,6 +63,13 @@ bool GameObject::textureLoading()
 			else
 				return false;
 		}
+	}
+
+	if (_textures.empty()) {
+		char emptyPixel = 0;
+		SgrImage* emptyTexture = nullptr;
+		TextureManager::createTextureImage((void*)&emptyPixel, 1, 1, emptyTexture);
+		_textures.push_back(emptyTexture);
 	}
 
 	return true;
@@ -133,6 +140,7 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 	if (_animationList.find(newAnimationName) == _animationList.end())
 		return false;
 
+	// we need if unused forward f.e. emptyTexture destroy this image
 	if (_descriptorSetData[1] != ((void*)(&_animationList[newAnimationName].animPixels))) {
 		_descriptorSetData[1] = ((void*)(&_animationList[newAnimationName].animPixels));
 		if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)

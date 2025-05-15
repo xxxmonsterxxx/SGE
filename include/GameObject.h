@@ -33,7 +33,7 @@ public:
 	glm::vec4 getColor() const { return _color; }
 
 private:
-	std::vector<std::string> _texturePath{"/Textures/empty.jpg"};
+	std::vector<std::string> _texturePath;
 	
 	const unsigned char* _texturePixels = nullptr;
 	const uint32_t _textureWidth = 0;
