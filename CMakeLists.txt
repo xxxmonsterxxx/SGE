@@ -90,6 +90,7 @@ find_package(SGR 0.12 EXACT)
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)
 set(TINY_OBJ_LOADER_INC_DIR modules/tiny_obj_loader)
+set(TINY_GLTF_LOADER_INC_DIR modules/tiny_gltf_loader)
 
 #######################################
 

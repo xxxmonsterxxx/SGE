@@ -1,9 +1,17 @@
 #include "Model.h"
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "SGE.h"	
+#define STB_TRUETYPE_IMPLEMENTATION
+#include "stb_truetype.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define TINYGLTF_NO_STB_IMAGE_WRITE
+#include "tiny_gltf.h"
+
+#include "SGE.h"	
 
 #include <filesystem>
 
@@ -18,7 +26,31 @@ void ModelMesh::generateInstanceData(GameObject* go, void* data)
 
 bool Model::loadGLTFData(std::string path)
 {
-	return false;
+	printf("\nLoading GLTF model %s", filename.c_str());
+	tinygltf::Model glTFInput;
+	tinygltf::TinyGLTF gltfContext;
+	std::string error, warning;
+
+	bool fileLoaded = gltfContext.LoadASCIIFromFile(&glTFInput, &error, &warning, filename);
+
+	if (!loadImages(glTFInput, images))
+		return false;
+	/*glTFModel.loadMaterials(glTFInput);
+	glTFModel.loadTextures(glTFInput);*/
+
+	const tinygltf::Scene& scene = glTFInput.scenes[0];
+	printf("\nLoading nodes\n");
+	for (size_t i = 0; i < scene.nodes.size(); i++) {
+		printf("\rLoad process...[%d]", (int)(i / (float)scene.nodes.size() * 100));
+		fflush(stdout);
+		const tinygltf::Node node = glTFInput.nodes[scene.nodes[i]];
+		loadNode(node, glTFInput, nullptr, nodes);
+	}
+
+	printf("\rLoad process...[%d]", 100);
+	fflush(stdout);
+
+	return fileLoaded;
 }
 
 bool Model::loadObjData(std::string path)

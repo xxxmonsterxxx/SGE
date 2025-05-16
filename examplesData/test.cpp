@@ -196,6 +196,10 @@ int main()
 	car.rotate({-20,0,0});
 
 
+	Model helm("Helm", "/3d_models/Flight_Helmet", Model::ModelType::GLTF);
+	ModelGameObject helmet("Helmet", helm);
+
+
 	// subscribe to events binded with keys pressing/release
 	sgeObject.keyEventSubscribe(GLFW_KEY_ESCAPE, GLFW_RELEASE, terminate);
 	sgeObject.keyEventSubscribe(GLFW_KEY_UP, GLFW_PRESS, changeDirection);
@@ -234,6 +238,8 @@ int main()
 		return 666;
 	if (!sgeObject.registerGameObject(man4))
 		return 777;
+	if (!sgeObject.registerGameObject(helmet))
+		return 888;
 
 	UIButton exitButt("Exit",{0.8,0.1},{50,20}, "Exit!", exitFunction);
 	UIText sgetext("Sgetext",{0.09,0.3},{50,50},"Welcome to SGE example application!");
