@@ -3,7 +3,6 @@
 #include "Mesh.h"
 #include "GameObjectBase.h"
 #include "AnimationSheet.h"
-#include "Model.h"
 #include <map>
 
 class SGE;
@@ -13,11 +12,11 @@ class GameObject : public GameObjectBase {
 friend class SGE;
 
 public:
-    GameObject(const std::string name, Mesh& mesh, const std::string& texture);
-	GameObject(const std::string name, Mesh& mesh, const char* texture);
-	GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, uint32_t textureWidth, uint32_t textureHeight);
-    GameObject(const std::string name, Mesh& mesh, bool textured = false);
-	GameObject(const std::string name, Model& model);
+    GameObject(const std::string name, Mesh& mesh, const std::string& texture, bool SRGBMode = true);
+	GameObject(const std::string name, Mesh& mesh, const char* texture, bool SRGBMode = true);
+	GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, uint32_t textureWidth, uint32_t textureHeight, bool SRGBMode = true);
+    GameObject(const std::string name, Mesh& mesh, bool textured = false, bool SRGBMode = true);
+	GameObject(const std::string name, Mesh& mesh, std::vector<std::string> textures, bool SRGBMode = true);
 
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart);
 	void setColor(glm::vec3 newColor);
@@ -53,6 +52,8 @@ private:
 	bool changeAnimation(std::string newAnimationName);
 	std::string _currentAnimation = "";
 	std::map<std::string, Animation> _animationList;
+
+	const bool _SRGBMode;
 
 protected:
 

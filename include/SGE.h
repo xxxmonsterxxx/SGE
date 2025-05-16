@@ -8,7 +8,8 @@
 #include "CameraObject.h"
 #include "CoordinateSystem.h"
 #include "UIObject.h"
-#include "ModelGameObject.h"
+#include "ObjModelObject.h"
+#include "GLTFObject.h"
 
 class SGE {
 
@@ -60,6 +61,7 @@ private:
 	bool addToRender(GameObject& gObj);
     bool addToRender(std::vector<GameObject*> gObjects);
 	bool addToRender(TextObject& tObj);
+	bool addToRender(GLTFObject& gltfObj);
 
 	uint8_t currentFrame = 0;
 	SgrTime_t lastDrawTime;
@@ -75,6 +77,7 @@ public:
 
 	bool registerGameObject(GameObject& gObj);
 	bool registerGameObject(TextObject& tObj);
+	bool registerGameObject(GLTFObject& gltfObj);
 	bool registerUIObject(UIObject& uiObject);
 
 	size_t getRenderInstanceNumber() { return totalInstanceNumber; }

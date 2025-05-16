@@ -85,15 +85,17 @@ set_target_properties(SGE PROPERTIES
 
 # find additional dependecies
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.12 EXACT)
+find_package(SGR 0.12 REQUIRED)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)
 set(TINY_OBJ_LOADER_INC_DIR modules/tiny_obj_loader)
+set(TINY_GLTF_LOADER_INC_DIR modules/tiny_gltf_loader)
 
 #######################################
 
 include_directories(${TINY_OBJ_LOADER_INC_DIR})
+include_directories(${TINY_GLTF_LOADER_INC_DIR})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${STB_INC_DIR})

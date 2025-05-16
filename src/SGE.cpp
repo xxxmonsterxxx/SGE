@@ -252,3 +252,15 @@ void SGE::setResourcesPath(std::string path)
 {
 	resourcesPath = path;
 }
+
+bool SGE::addToRender(GLTFObject& gltfObj)
+{
+	return addToRender(gltfObj.getGameObjectsData());
+}
+
+bool SGE::registerGameObject(GLTFObject& gltfObj)
+{
+	gameObjects.push_back(&gltfObj);
+	physObjects.push_back(&gltfObj);
+	return addToRender(gltfObj);
+}

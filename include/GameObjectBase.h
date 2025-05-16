@@ -15,6 +15,8 @@ private:
 
 	glm::mat4 getInstanceModel();
 
+	glm::mat4 _customTransform{1};
+
 protected:
 	std::string _name;
 
@@ -39,12 +41,14 @@ public:
 	virtual void move(SGEPosition dPos) override;
 	virtual void rotate(glm::vec3 dAngle);
 	virtual void rotate(glm::vec3 begin, glm::vec3 end, float angle);
-	void scale(glm::vec3 sc);
-    void scale(float sc);
+	virtual void scale(glm::vec3 sc);
+    virtual void scale(float sc);
 
 	virtual SGEPosition getPosition();
 	glm::vec3 getRotation();
 	glm::vec3 getScale();
+
+	void additionalTransform(glm::mat4 trans); // don't affect on pos rot scale only for drawing model, so be carefully
 
 	void bindCoordSystem(CoordinateSystem* cs);
 };

@@ -18,9 +18,10 @@ void GameObjectBase::updateModel()
 	}
 
 	// operations in coodinate system of this object
-	model = model * _positionM; // tranlate
+	model = model * _positionM; // translate
 	model = model * _rotationM; // local rotations
 	model = model * _scaleM; // local scale
+	model = model * _customTransform;
 
 	position = {_positionM[3][0],_positionM[3][1],_positionM[3][2]}; // update position for physics engine
 
@@ -123,7 +124,12 @@ void GameObjectBase::scale(float sc)
 	setScale(glm::vec3(sc));
 }
 
-void GameObjectBase::bindCoordSystem(CoordinateSystem* cs)
+void GameObjectBase::additionalTransform(glm::mat4 trans)
+{
+	_customTransform = trans;
+}
+
+void GameObjectBase::bindCoordSystem(CoordinateSystem *cs)
 {
 	_cs = cs;
 	updateModel();
