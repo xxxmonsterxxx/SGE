@@ -127,7 +127,7 @@ int main()
 {
     SGE& sgeObject = SGE::get();
 
-#if __APPLE__ && !NDBUG
+#if __APPLE__ && NDBUG
 	sgeObject.setResourcesPath(SGE::getExecPath()+"/../Resources");
 #else
 	sgeObject.setResourcesPath(SGE::getExecPath()+"/Resources");

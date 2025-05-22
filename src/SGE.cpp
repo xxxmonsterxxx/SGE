@@ -72,7 +72,9 @@ bool SGE::initInstancesData()
 
 bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 {
+#if SGE_DEBUG
 	renderer.enableDebugMode();
+#endif
 
     SgrErrCode resultSGRInit = renderer.init(width, height, windowName.c_str());
 	if (resultSGRInit != sgrOK)

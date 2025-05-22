@@ -25,9 +25,10 @@ set(BUILD_DEST ${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/SGE-v${VERS
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release") # set release or not status for source code
 	message("Build Simple Game Engine v${VERSION}")
-	add_definitions(-DNDBUG=false)
+	add_definitions(-DSGE_DEBUG=false)
 else ()
 	message("Build Simple Game Engine v${VERSION} in debug mode")
+	add_definitions(-DSGE_DEBUG=true)
 	add_definitions(-DNDBUG=true)
 endif()
 
@@ -85,7 +86,7 @@ set_target_properties(SGE PROPERTIES
 
 # find additional dependecies
 find_package(Vulkan 1.3.283.0 REQUIRED)
-find_package(SGR 0.12 EXACT)
+find_package(SGR 0.12 REQUIRED)
 
 set(GLM_INCLUDE_DIRS modules/glm) # include libraries
 set(STB_INC_DIR modules/stb)

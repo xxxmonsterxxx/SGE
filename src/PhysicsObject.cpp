@@ -54,6 +54,8 @@ void PhysicsEngine::start()
 
 void PhysicsEngine::update()
 {
+    if (!running)
+        return;
     float dt = getTimeDuration(lastUpdate, SgrTime::now());
 
     collisionsUpdate();
