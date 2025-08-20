@@ -1,11 +1,6 @@
 #include "GameObjectBase.h"
 #include "CoordinateSystem.h"
 
-glm::mat4 GameObjectBase::getInstanceModel()
-{
-	updateModel();
-	return _model; 
-}
 
 void GameObjectBase::updateModel()
 {

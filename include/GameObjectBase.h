@@ -11,9 +11,6 @@ friend class SGE;
 
 // Local coordinate system is left-handed and positive rotation is clockwise
 // X - right; Y - down; Z - forward to us;
-private:
-
-	glm::mat4 getInstanceModel();
 
 protected:
 	std::string _name;

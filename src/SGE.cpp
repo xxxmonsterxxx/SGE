@@ -31,8 +31,10 @@ void SGE::updateRenderData()
 			uint8_t* objData = (uint8_t*)((uint64_t)obj.instancesData.data + (objCounter++) * obj.instancesData.dynamicAlignment);
 			void* generatedData = malloc(obj.instancesData.dynamicAlignment);
 			if (generatedData) {
+				gObj->updateModel();
 				obj.mesh->generateInstanceData(gObj, generatedData);
 				memcpy((void*)objData, generatedData, obj.instancesData.dynamicAlignment);
+				free(generatedData);
 			}
 		}
 
@@ -124,6 +126,8 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 
 	// this method should be called in the end of all users callback declaration
 	renderer.setupUICallback();
+
+	//renderer.setFPSDesired(70);
 
 	currentFrame = 0;
 	lastDrawTime = SgrTime::now();
