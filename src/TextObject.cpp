@@ -87,8 +87,9 @@ TextObject::TextObject(std::string text) :
 		std::string GOLetterName = "letter_" + std::to_string(_textId)+std::string("_")+std::to_string(i);
 		LetterData LD = getLetterData(nextLetter, letter);
 		Mesh* _letterMesh = new Mesh(GOLetterName, LD.mesh, std::vector<uint32_t>{ 0,1,2,2,3,0 });
+		_letterMesh->useTexture();
 		
-		GameObject* letterGO = new GameObject(GOLetterName, *_letterMesh, _fontPixels, _fontBitmapWidth, _fontBitmapHeight);
+		GameObject* letterGO = new GameObject(GOLetterName, *_letterMesh, _fontPixels, _fontBitmapWidth, _fontBitmapHeight, false);
 		letterGO->setPosition(LD.position);
 		letterGO->setTextureMapping(LD.deltaTexture, LD.startMesh, LD.startTexture);
 		_gameObjectsData.push_back(letterGO);

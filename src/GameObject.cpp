@@ -1,8 +1,8 @@
 #include "GameObject.h"
 #include "SGE.h"
 
-GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture) :
-        _mesh(mesh) {
+GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture, bool SRGBMode) :
+        _mesh(mesh), _SRGBMode(SRGBMode) {
 			_name = name;
 			_mesh.useTexture();
 			_texturePath.push_back(texture);
@@ -13,11 +13,11 @@ GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture)
 			}
 		}
 
-GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) : 
-			GameObject(name, mesh, std::string(texture)) { ; }
+GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture, bool SRGBMode) : 
+			GameObject(name, mesh, std::string(texture), SRGBMode) { ; }
 
-GameObject::GameObject(const std::string name, Mesh& mesh, bool textured) :
-        _mesh(mesh) {
+GameObject::GameObject(const std::string name, Mesh& mesh, bool textured, bool SRGBMode) :
+        _mesh(mesh), _SRGBMode(SRGBMode) {
 			_name = name;
 			if (_mesh.isCorrect()) {
 				_isMeshCorrect = true;
@@ -25,20 +25,20 @@ GameObject::GameObject(const std::string name, Mesh& mesh, bool textured) :
 			}
 		}
 
-GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight) :
+GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight, bool SRGBMode) :
         _mesh(mesh),
 		_texturePixels(texture),
 		_textureWidth(textureWidth),
-		_textureHeight(textureHeight)
+		_textureHeight(textureHeight),
+		_SRGBMode(SRGBMode)
 {
 	_name = name;
-	if (_mesh.isCorrect()) {
+	if (_mesh.isCorrect())
 		_isMeshCorrect = true;
-		_mesh.useTexture();
-	}
 }
 
-GameObject::GameObject(const std::string name, Model& model) : _mesh(model.getMesh()), _texturePath(model.getTextures())
+GameObject::GameObject(const std::string name, Mesh& mesh, std::vector<std::string> textures, bool SRGBMode) :
+			_mesh(mesh), _texturePath(textures), _SRGBMode(SRGBMode)
 {
 	_name = name;
 	if (_mesh.isCorrect()) {
@@ -50,10 +50,17 @@ bool GameObject::textureLoading()
 {
 	if (_texturePixels) {
 		SgrImage* newTexture = nullptr;
-		if (TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight, newTexture) == sgrOK)
-			_textures.push_back(newTexture);
-		else
-			return false;
+		if (!_SRGBMode) {
+			if (TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight, newTexture) == sgrOK)
+				_textures.push_back(newTexture);
+			else
+				return false;
+		} else {
+			if (TextureManager::createTextureImage((void*)_texturePixels, _textureWidth, _textureHeight, newTexture) == sgrOK)
+				_textures.push_back(newTexture);
+			else
+				return false;
+		}
 	}
 	else {
 		for (auto& p : _texturePath) {
