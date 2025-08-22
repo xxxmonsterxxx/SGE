@@ -200,6 +200,7 @@ int main()
 	GLTFObject helmet("Helmet", helm);
 	helmet.rotate({0,0,0}, {0,0,1}, 180);
 	helmet.scale(2);
+	helmet.move({0,2,0});
 
 
 	// subscribe to events binded with keys pressing/release
