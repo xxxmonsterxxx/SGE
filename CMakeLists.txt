@@ -29,7 +29,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release") # set release or not status for source c
 else ()
 	message("Build Simple Game Engine v${VERSION} in debug mode")
 	add_definitions(-DSGE_DEBUG=true)
-	add_definitions(-DNDBUG=true)
 endif()
 
 #######################################

@@ -7,7 +7,7 @@ project(SGE_test)
 if(CMAKE_BUILD_TYPE STREQUAL "Release") # set release or not status for source code
 	add_definitions(-DNDBUG=true)
 else ()
-	add_definitions(-DNDBUG=true)
+	add_definitions(-DNDBUG=false)
 endif()
 
 # compiler options
