@@ -31,23 +31,25 @@ void SGE::updateRenderData()
 			uint8_t* objData = (uint8_t*)((uint64_t)obj.instancesData.data + (objCounter++) * obj.instancesData.dynamicAlignment);
 			void* generatedData = malloc(obj.instancesData.dynamicAlignment);
 			if (generatedData) {
+				gObj->updateModel();
 				obj.mesh->generateInstanceData(gObj, generatedData);
 				memcpy((void*)objData, generatedData, obj.instancesData.dynamicAlignment);
+				free(generatedData);
 			}
 		}
 
-		renderer.updateInstancesUniformBufferObject(obj.instancesData);
+		renderer.updateInstancesUBO(obj.instancesData);
 	}
 
-	renderer.updateGlobalUniformBufferObject(viewProjection);
+	renderer.updateGlobalUBO(viewProjection);
 }
 
 SgrBuffer* SGE::initGlobalViewMatrix()
 {
 	SgrBuffer* viewProjBuffer = nullptr;
-	if (MemoryManager::get()->createUniformBuffer(viewProjBuffer, sizeof(SgrGlobalUniformBufferObject)) != sgrOK)
+	if (MemoryManager::get()->createDynamicUniformBuffer(viewProjBuffer, sizeof(SgrGlobalUBO)) != sgrOK)
 		return nullptr;
-	renderer.setupGlobalUniformBufferObject(viewProjBuffer);
+	renderer.setupGlobalUBO(viewProjBuffer);
 
 	return viewProjBuffer;
 }
@@ -72,7 +74,9 @@ bool SGE::initInstancesData()
 
 bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 {
+#if SGE_DEBUG
 	renderer.enableDebugMode();
+#endif
 
     SgrErrCode resultSGRInit = renderer.init(width, height, windowName.c_str());
 	if (resultSGRInit != sgrOK)
@@ -117,10 +121,13 @@ bool SGE::init(uint16_t width, uint16_t height, std::string windowName)
 	eventManager.init(window);
 
 	physEng.init(&physObjects);
+	physEng.gravity = 0;
 	physEng.start();
 
 	// this method should be called in the end of all users callback declaration
 	renderer.setupUICallback();
+
+	//renderer.setFPSDesired(70);
 
 	currentFrame = 0;
 	lastDrawTime = SgrTime::now();
@@ -250,4 +257,16 @@ bool SGE::setGameAppLogo(std::string path)
 void SGE::setResourcesPath(std::string path)
 {
 	resourcesPath = path;
+}
+
+bool SGE::addToRender(GLTFObject& gltfObj)
+{
+	return addToRender(gltfObj.getGameObjectsData());
+}
+
+bool SGE::registerGameObject(GLTFObject& gltfObj)
+{
+	gameObjects.push_back(&gltfObj);
+	physObjects.push_back(&gltfObj);
+	return addToRender(gltfObj);
 }

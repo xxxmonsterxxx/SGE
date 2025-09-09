@@ -3,7 +3,6 @@
 #include "Mesh.h"
 #include "GameObjectBase.h"
 #include "AnimationSheet.h"
-#include "Model.h"
 #include <map>
 
 class SGE;
@@ -13,18 +12,18 @@ class GameObject : public GameObjectBase {
 friend class SGE;
 
 public:
-    GameObject(const std::string name, Mesh& mesh, const std::string& texture);
-	GameObject(const std::string name, Mesh& mesh, const char* texture);
-	GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, uint32_t textureWidth, uint32_t textureHeight);
-    GameObject(const std::string name, Mesh& mesh, bool textured = false);
-	GameObject(const std::string name, Model& model);
+    GameObject(const std::string name, Mesh& mesh, const std::string& texture, bool SRGBMode = true);
+	GameObject(const std::string name, Mesh& mesh, const char* texture, bool SRGBMode = true);
+	GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, uint32_t textureWidth, uint32_t textureHeight, bool SRGBMode = true);
+    GameObject(const std::string name, Mesh& mesh, bool textured = false, bool SRGBMode = true);
+	GameObject(const std::string name, Mesh& mesh, std::vector<std::string> textures, bool SRGBMode = true);
 
 	void setTextureMapping(glm::vec2 deltaTexture, glm::vec2 meshStart, glm::vec2 textureStart);
 	void setColor(glm::vec3 newColor);
 	void setColor(SGEColor newColor);
 
 	bool addAnimation(const std::string name, AnimationSheet& animSheet, uint8_t animationNumberInVertical);
-	bool doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode = -1);
+	bool doAnimation(std::string name, uint8_t speed, int waitFrame = -1, int8_t singleFrameMode = -1);
 
 	glm::mat4 getModel() const { return _model; }
 	glm::vec2 getDeltaTexture() const { return _deltaTexture; }
@@ -33,7 +32,7 @@ public:
 	glm::vec4 getColor() const { return _color; }
 
 private:
-	std::vector<std::string> _texturePath{"/Textures/empty.jpg"};
+	std::vector<std::string> _texturePath;
 	
 	const unsigned char* _texturePixels = nullptr;
 	const uint32_t _textureWidth = 0;
@@ -53,6 +52,8 @@ private:
 	bool changeAnimation(std::string newAnimationName);
 	std::string _currentAnimation = "";
 	std::map<std::string, Animation> _animationList;
+
+	const bool _SRGBMode;
 
 protected:
 

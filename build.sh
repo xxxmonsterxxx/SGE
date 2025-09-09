@@ -43,7 +43,7 @@ SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
 
 BUILD=false # do we need build or not?
 BUILD_TYPE=debug # release or debug
-CLEAN= # clean or not
+CLEAN=false # clean or not
 EXAMPLE_BUILD=false # need to build example project?
 OPTS_PRESENTED=false # options provided
 REMOVE_LIBRARY=false # remove library from folder where installed
@@ -111,14 +111,14 @@ do
 done
 
 # If not option was provided
-if [ $OPTS_PRESENTED == false ]
+if [ "$OPTS_PRESENTED" = false ]
 then
 	Help
 	exit
 fi
 
 # Remove library from /usr/**
-if [ $REMOVE_LIBRARY == true ]
+if [ "$REMOVE_LIBRARY" = true ]
 then
 	sudo rm -rf $PATH_INC/SGE
 	sudo rm -f $PATH_LIB/libSGE.*
@@ -128,9 +128,9 @@ then
 fi
 
 # Clean without build
-if [ $BUILD == false ]
+if [ "$BUILD" = false ]
 then
-	if [ $CLEAN ]
+	if [ "$CLEAN" = true ]
 	then
 		rm -rf build
 		rm -rf examplesData/build
@@ -141,29 +141,29 @@ then
 	exit
 fi
 
-mkdir build
+mkdir -p build
 cd build
 
 # Choose build type
 case $BUILD_TYPE in
-	debug)		cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_EXAMPLE=FALSE --install-prefix $SCRIPT_DIR/build/ ;;
-	release)	cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLE=FALSE --install-prefix $INSTALL_PATH ;;
+	debug)		cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_EXAMPLE=FALSE -DCMAKE_INSTALL_PREFIX=$SCRIPT_DIR/build/ ;;
+	release)	cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLE=FALSE -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH ;;
 esac
 
 # Need to clean?
-if [ $CLEAN ]
+if [ "$CLEAN" = true ]
 then
-	cmake --build . --CLEAN-first -- -j
+	cmake --build . --clean-first -- -j
 else
 	cmake --build . -- -j
 
-	if [ $BUILD_TYPE == release ] && [ $INSTALL == true ]
+	if [ "$BUILD_TYPE" = "release" ] && [ "$INSTALL" = true ]
 	then
-		sudo mkdir $INSTALL_PATH/include/SGE
+		sudo mkdir -p $INSTALL_PATH/include/SGE
 		sudo make install
 	fi
 
-	if [ $EXAMPLE_BUILD == true ]
+	if [ "$EXAMPLE_BUILD" = true ]
 	then
 		cmake .. -DBUILD_EXAMPLE=TRUE
 		cmake --build . -- -j
@@ -171,23 +171,24 @@ else
 fi
 
 # If build type is release (with/out install option)
-if [ $BUILD_TYPE == release ] && [ $INSTALL ]
+if [ "$BUILD_TYPE" = "release" ] && [ $INSTALL ]
 then
 	#setting environement variables
-	if [ -f  ]; then
+	if [ -f "$USER_CONFIG_FILE" ]; then
 		if ! grep -q "export CMAKE_PREFIX_PATH=$INSTALL_PATH/include/SGE:\${CMAKE_PREFIX_PATH}" $USER_CONFIG_FILE; then
 			echo >> $USER_CONFIG_FILE
 			echo "export CMAKE_PREFIX_PATH=$INSTALL_PATH/include/SGE:\${CMAKE_PREFIX_PATH} #for cmake package_find command" >> $USER_CONFIG_FILE
 		fi
 		
 		if ! grep -q "export SGE_LIB=$INSTALL_PATH/lib" $USER_CONFIG_FILE; then
-			echo "export SGE_LIB=$INSTALL_PATH/lib/" >> $USER_CONFIG_FILE
+			echo "export SGE_LIB=$INSTALL_PATH/lib" >> $USER_CONFIG_FILE
 			echo "SDK environement added to user config file successfully."
 		fi
 	fi
 	
 	cd Release
 	rm -rf *.tar
+	search_dir="."
 	for entry in `ls $search_dir`; do
 		tar -cf $entry.tar $entry
 	done
@@ -198,7 +199,7 @@ cd ..
 
 
 # Example build and run if requested
-if [ $EXAMPLE_BUILD == true ] && [ $BUILD_TYPE == debug ]
+if [ "$EXAMPLE_BUILD" = true ] && [ "$BUILD_TYPE" = "debug" ]
 then
 	./build/exampleApplication/SGE_test
 fi

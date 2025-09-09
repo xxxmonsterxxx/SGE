@@ -77,21 +77,24 @@ Mesh::Mesh(const std::string name, const std::vector<SGEPosition> vertices, cons
 	verticesDataSize = _vertices.size() * sizeof(SgrVertex);
 }
 
-Mesh::Mesh(const std::string name, void* vertices, VkDeviceSize verticesSize, const std::vector<uint32_t> indices,
-							std::vector<VkVertexInputBindingDescription> bindDescr,
-							std::vector<VkVertexInputAttributeDescription> attrDescr,
-							std::vector<VkDescriptorSetLayoutBinding> layoutBind,
-							std::string vertexShader,
-							std::string fragmentShader,
-							const bool filled) : _name(name), _filled(filled), _indices(indices), verticesData(vertices), verticesDataSize(verticesSize)
-{
-	_meshBindingDescriptions = bindDescr;
-	_meshAttributeDescriptions = attrDescr;
-	_additionalDataLayouts = layoutBind;
+Mesh::Mesh(const std::string name, void* vertices, VkDeviceSize verticesSize, const std::vector<uint32_t> indices, const bool filled) :
+	_name(name), _filled(filled), _indices(indices), verticesData(vertices), verticesDataSize(verticesSize) { ; }
 
-	shaderVertex = vertexShader;
-	shaderFragment = fragmentShader;
-}
+// Mesh::Mesh(const std::string name, void* vertices, VkDeviceSize verticesSize, const std::vector<uint32_t> indices,
+// 							std::vector<VkVertexInputBindingDescription> bindDescr,
+// 							std::vector<VkVertexInputAttributeDescription> attrDescr,
+// 							std::vector<VkDescriptorSetLayoutBinding> layoutBind,
+// 							std::string vertexShader,
+// 							std::string fragmentShader,
+// 							const bool filled) : _name(name), _filled(filled), _indices(indices), verticesData(vertices), verticesDataSize(verticesSize)
+// {
+// 	_meshBindingDescriptions = bindDescr;
+// 	_meshAttributeDescriptions = attrDescr;
+// 	_additionalDataLayouts = layoutBind;
+
+// 	shaderVertex = vertexShader;
+// 	shaderFragment = fragmentShader;
+// }
 
 bool Mesh::init()
 {

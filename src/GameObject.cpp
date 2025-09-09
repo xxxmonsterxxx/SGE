@@ -1,11 +1,11 @@
 #include "GameObject.h"
 #include "SGE.h"
 
-GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture) :
-        _mesh(mesh) {
+GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture, bool SRGBMode) :
+        _mesh(mesh), _SRGBMode(SRGBMode) {
 			_name = name;
 			_mesh.useTexture();
-			_texturePath[0] = texture;
+			_texturePath.push_back(texture);
 
 			if (_mesh.isCorrect()) {
 				_isMeshCorrect = true;
@@ -13,11 +13,11 @@ GameObject::GameObject(std::string name, Mesh& mesh, const std::string& texture)
 			}
 		}
 
-GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture) : 
-			GameObject(name, mesh, std::string(texture)) { ; }
+GameObject::GameObject(const std::string name, Mesh& mesh, const char* texture, bool SRGBMode) : 
+			GameObject(name, mesh, std::string(texture), SRGBMode) { ; }
 
-GameObject::GameObject(const std::string name, Mesh& mesh, bool textured) :
-        _mesh(mesh) {
+GameObject::GameObject(const std::string name, Mesh& mesh, bool textured, bool SRGBMode) :
+        _mesh(mesh), _SRGBMode(SRGBMode) {
 			_name = name;
 			if (_mesh.isCorrect()) {
 				_isMeshCorrect = true;
@@ -25,20 +25,20 @@ GameObject::GameObject(const std::string name, Mesh& mesh, bool textured) :
 			}
 		}
 
-GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight) :
+GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* texture, const uint32_t textureWidth, const uint32_t textureHeight, bool SRGBMode) :
         _mesh(mesh),
 		_texturePixels(texture),
 		_textureWidth(textureWidth),
-		_textureHeight(textureHeight)
+		_textureHeight(textureHeight),
+		_SRGBMode(SRGBMode)
 {
 	_name = name;
-	if (_mesh.isCorrect()) {
+	if (_mesh.isCorrect())
 		_isMeshCorrect = true;
-		_mesh.useTexture();
-	}
 }
 
-GameObject::GameObject(const std::string name, Model& model) : _mesh(model.getMesh()), _texturePath(model.getTextures())
+GameObject::GameObject(const std::string name, Mesh& mesh, std::vector<std::string> textures, bool SRGBMode) :
+			_mesh(mesh), _texturePath(textures), _SRGBMode(SRGBMode)
 {
 	_name = name;
 	if (_mesh.isCorrect()) {
@@ -50,10 +50,17 @@ bool GameObject::textureLoading()
 {
 	if (_texturePixels) {
 		SgrImage* newTexture = nullptr;
-		if (TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight, newTexture) == sgrOK)
-			_textures.push_back(newTexture);
-		else
-			return false;
+		if (!_SRGBMode) {
+			if (TextureManager::createFontTextureImage((void*)_texturePixels, _textureWidth, _textureHeight, newTexture) == sgrOK)
+				_textures.push_back(newTexture);
+			else
+				return false;
+		} else {
+			if (TextureManager::createTextureImage((void*)_texturePixels, _textureWidth, _textureHeight, newTexture) == sgrOK)
+				_textures.push_back(newTexture);
+			else
+				return false;
+		}
 	}
 	else {
 		for (auto& p : _texturePath) {
@@ -63,6 +70,13 @@ bool GameObject::textureLoading()
 			else
 				return false;
 		}
+	}
+
+	if (_textures.empty()) {
+		char emptyPixel = 0;
+		SgrImage* emptyTexture = nullptr;
+		TextureManager::createTextureImage((void*)&emptyPixel, 1, 1, emptyTexture);
+		_textures.push_back(emptyTexture);
 	}
 
 	return true;
@@ -133,16 +147,19 @@ bool GameObject::changeAnimation(std::string newAnimationName)
 	if (_animationList.find(newAnimationName) == _animationList.end())
 		return false;
 
+	// we need if unused forward f.e. emptyTexture destroy this image
 	if (_descriptorSetData[1] != ((void*)(&_animationList[newAnimationName].animPixels))) {
 		_descriptorSetData[1] = ((void*)(&_animationList[newAnimationName].animPixels));
 		if (SGE::renderer.writeDescriptorSets(_name, _descriptorSetData) != sgrOK)
 			return false;
 	}
 
+	_animationList[newAnimationName].frame = 0;
+
 	return true;
 }
 
-bool GameObject::doAnimation(std::string name, uint8_t speed, int8_t singleFrameMode)
+bool GameObject::doAnimation(std::string name, uint8_t speed, int waitFrame, int8_t singleFrameMode)
 {
 	if (_currentAnimation != name) {
 		if (changeAnimation(name))
@@ -163,8 +180,13 @@ bool GameObject::doAnimation(std::string name, uint8_t speed, int8_t singleFrame
 		curr.frameCounter = 0;
 		if (curr.frame == curr.length) {
 			curr.frame = 0;
-			return true;
+
+			if (waitFrame == -1)
+				return true;
 		}
+
+		if (curr.frame == waitFrame)
+			return true;
 	}
 
 	return false;

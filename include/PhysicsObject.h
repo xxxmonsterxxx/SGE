@@ -4,16 +4,21 @@
 
 class PhysicsObject {
 
+friend class PhysicsEngine;
+
 public:
 
     PhysicsObject();
     float mass;
     glm::vec3 appliedForce;
     glm::vec3 acceleration;
+    glm::vec3 position;
     glm::vec3 velocity;
     glm::vec3 rotateAxis;
     float angularAccel;
     float angularRate;
+
+    std::vector <glm::vec3> boundary;
 
     void setVelocity(glm::vec3 newVel);
     void setAccel(glm::vec3 newAcc);
@@ -23,6 +28,14 @@ public:
     void setAngularRate(float newRate);
 
     void update(float dt);
+
+    bool collidable = true;
+
+private:
+
+    float gravity = 0;
+
+    void checkCollision(PhysicsObject* obj);
 
 };
 
@@ -37,6 +50,8 @@ public:
     void stop();
     void update();
 
+    float gravity = 9.81;
+
 
 private:
     PhysicsEngine();
@@ -46,7 +61,9 @@ private:
     SgrTime_t startTime;
     SgrTime_t lastUpdate;
 
-    std::vector<PhysicsObject*> *physObjects;
+    std::vector<PhysicsObject*> *physObjects = nullptr;
 
     bool running;
+
+    void collisionsUpdate();
 };

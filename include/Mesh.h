@@ -20,8 +20,7 @@ private:
 	void* verticesData;
 	VkDeviceSize verticesDataSize;
 
-	std::string shaderVertex;
-	std::string shaderFragment;
+
 
 	// default shaders
     const std::string defaultShaderVertex = "/DefaultShaders/vertInstanceSh.spv";
@@ -41,6 +40,9 @@ protected:
     std::vector<VkVertexInputAttributeDescription> _meshAttributeDescriptions;
 	std::vector<VkDescriptorSetLayoutBinding> _additionalDataLayouts;
 
+	std::string shaderVertex;
+	std::string shaderFragment;
+
 public:
 	bool init();
 
@@ -57,13 +59,14 @@ public:
 	void useTexture();
 
     Mesh(const std::string name, const std::vector<SGEPosition> vertices, const std::vector<uint32_t> indices, const bool filled = true);
-	Mesh(const std::string name, void* vertices, VkDeviceSize verticesSize, const std::vector<uint32_t> indices,
-												std::vector<VkVertexInputBindingDescription> bindDescr,
-												std::vector<VkVertexInputAttributeDescription> attrDescr,
-												std::vector<VkDescriptorSetLayoutBinding> layoutBind,
-												std::string vertexShader,
-												std::string fragmentShader,
-												const bool filled = true);
+	Mesh(const std::string name, void* vertices, VkDeviceSize verticesSize, const std::vector<uint32_t> indices, const bool filled = true);
+	// Mesh(const std::string name, void* vertices, VkDeviceSize verticesSize, const std::vector<uint32_t> indices,
+	// 											std::vector<VkVertexInputBindingDescription> bindDescr,
+	// 											std::vector<VkVertexInputAttributeDescription> attrDescr,
+	// 											std::vector<VkDescriptorSetLayoutBinding> layoutBind,
+	// 											std::string vertexShader,
+	// 											std::string fragmentShader,
+	// 											const bool filled = true);
 
 	static Mesh getDefaultRectangleMesh(const std::string name, const bool filld = true);
 	static Mesh getDefaultTriangleMesh(const std::string name, const bool filld = true);
@@ -71,6 +74,8 @@ public:
 	glm::vec2 getTextureBindPoint();
 
 	bool isCorrect();
+
+	const std::string getName() { return _name; }
 
 protected:
 	virtual void generateInstanceData(GameObject* go, void* data);
