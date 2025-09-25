@@ -123,6 +123,12 @@ void changeCamera(int key, int scancode, int action, int mods)
 	}
 }
 
+
+void pickObject(GameObjectBase* pickedObj)
+{
+	printf("\nPicked object is %s", pickedObj->getName().c_str());
+}
+
 int main()
 {
     SGE& sgeObject = SGE::get();
@@ -224,6 +230,8 @@ int main()
 	sgeObject.keyEventSubscribe(GLFW_KEY_L, GLFW_PRESS, soldierMove);
 	sgeObject.keyEventSubscribe(GLFW_KEY_ENTER, GLFW_PRESS, soldierMove);
 	sgeObject.keyEventSubscribe(GLFW_KEY_K, GLFW_PRESS, soldierMove);
+
+	sgeObject.objectPickSubscribe(pickObject);
 
 	// render objects
 	// sgeObject.setMaxInstanceNumber(4);

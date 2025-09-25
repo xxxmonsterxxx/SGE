@@ -16,6 +16,7 @@ class SGE {
 friend class Mesh;
 friend class GameObject;
 friend class TextObject;
+friend class EventManager;
 
 private:
 
@@ -90,8 +91,9 @@ public:
 
 	bool keyEventSubscribe(int key, int action, sgeKeyEventFunction func) { return eventManager.addKeySubscriber(key, action, func); }
 	bool mouseEventSubscribe(int key, int action, sgeMouseEventFunction func) { return eventManager.addMouseSubscriber(key, action, func); }
+	bool objectPickSubscribe(sgePickGameObjectFunction func) { return eventManager.addPickObjectSubscriber(func); }
 
-	glm::vec2 getCursorPos();
+	static glm::vec2 getCursorPos();
 
 	static std::string getExecPath();
 

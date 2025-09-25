@@ -129,3 +129,8 @@ void GameObjectBase::bindCoordSystem(CoordinateSystem *cs)
 	_cs = cs;
 	updateModel();
 }
+
+bool GameObjectBase::checkPointInside(glm::vec2 point)
+{
+	return false;
+}

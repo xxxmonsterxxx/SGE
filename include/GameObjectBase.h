@@ -48,4 +48,6 @@ public:
 	void additionalTransform(glm::mat4 trans); // don't affect on pos rot scale only for drawing model, so be carefully
 
 	void bindCoordSystem(CoordinateSystem* cs);
+
+	bool checkPointInside(glm::vec2 point);
 };

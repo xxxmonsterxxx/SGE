@@ -1,3 +1,5 @@
+#include "SGE.h"
+
 #include "EventManager.h"
 
 EventManager* EventManager::_singleton = nullptr;
@@ -68,10 +70,34 @@ void EventManager::mouseCallback(int button, int action, int mods)
 	for (auto func : mouseSubscribers[button][action]) {
 		func(button, action, mods);
 	}
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		pickObjFunc();
+	}
 }
 
 bool EventManager::addMouseSubscriber(int button, int action, sgeMouseEventFunction func)
 {
 	mouseSubscribers[button][action].push_back(func);
 	return true;
+}
+
+bool EventManager::addPickObjectSubscriber(sgePickGameObjectFunction func)
+{
+	pickGOSubscribers.push_back(func);
+	return true;
+}
+
+void EventManager::pickObjFunc()
+{
+	glm::vec2 cpos = SGE::getCursorPos();
+
+	for (auto go : SGE::get().gameObjects) {
+		if (go->checkPointInside(cpos)) {
+			for (auto func : pickGOSubscribers) {
+				func(go);		
+			}
+			return;
+		}
+	}
 }

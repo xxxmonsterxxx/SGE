@@ -3,8 +3,11 @@
 #include <map>
 #include <vector>
 
+class GameObjectBase;
+
 using sgeKeyEventFunction = void(*)(int, int, int, int);
 using sgeMouseEventFunction = void(*)(int, int, int);
+using sgePickGameObjectFunction = void(*)(GameObjectBase*);
 
 class EventManager {
 
@@ -21,6 +24,10 @@ private:
 
 	std::map<int, std::map<int, std::vector<sgeKeyEventFunction>>> keySubscribers;
 	std::map<int, std::map<int, std::vector<sgeMouseEventFunction>>> mouseSubscribers;
+	std::vector<sgePickGameObjectFunction> pickGOSubscribers;
+
+
+	void pickObjFunc();
 
 public:
 
@@ -30,4 +37,5 @@ public:
 
 	bool addKeySubscriber(int key, int action, sgeKeyEventFunction func);
 	bool addMouseSubscriber(int key, int action, sgeMouseEventFunction func);
+	bool addPickObjectSubscriber(sgePickGameObjectFunction func);
 };
