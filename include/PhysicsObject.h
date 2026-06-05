@@ -9,6 +9,7 @@ friend class PhysicsEngine;
 public:
 
     PhysicsObject();
+    bool physics_enabled = false;
     float mass;
     glm::vec3 appliedForce;
     glm::vec3 acceleration;
@@ -29,7 +30,7 @@ public:
 
     void update(float dt);
 
-    bool collidable = true;
+    bool collidable = false;
 
 private:
 

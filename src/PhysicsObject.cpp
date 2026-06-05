@@ -5,6 +5,9 @@ PhysicsObject::PhysicsObject() : mass(0), appliedForce(0), acceleration(0), velo
 
 void PhysicsObject::update(float dt)
 {
+    if (!physics_enabled)
+        return;
+
     glm::vec3 appliedForceAccel(0);
     if (mass > 0)
         appliedForceAccel = appliedForce / mass;
@@ -58,13 +61,14 @@ void PhysicsEngine::update()
         return;
     float dt = getTimeDuration(lastUpdate, SgrTime::now());
 
+    if (!physObjects)
+        return;
+
     collisionsUpdate();
 
-    if (physObjects) {
-        for (auto phOb : *physObjects) {
-            phOb->gravity = gravity;
-            phOb->update(dt);
-        }
+    for (auto phOb : *physObjects) {
+        phOb->gravity = gravity;
+        phOb->update(dt);
     }
 
     lastUpdate = SgrTime::now();
@@ -72,12 +76,10 @@ void PhysicsEngine::update()
 
 void PhysicsEngine::collisionsUpdate()
 {
-    if (physObjects) {
-        for (size_t i = 0; i < physObjects->size(); i++) {
-            for (size_t j = i + 1; j < physObjects->size(); j++) {
-                if ((*physObjects)[i]->collidable && (*physObjects)[j]->collidable)
-                    (*physObjects)[i]->checkCollision((*physObjects)[j]);
-            }
+    for (size_t i = 0; i < physObjects->size(); i++) {
+        for (size_t j = i + 1; j < physObjects->size(); j++) {
+            if ((*physObjects)[i]->collidable && (*physObjects)[j]->collidable)
+                (*physObjects)[i]->checkCollision((*physObjects)[j]);
         }
     }
 }

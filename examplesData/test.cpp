@@ -151,6 +151,20 @@ int main()
 	Mesh rectMesh("rectangle", rectVertices, rectIndices);
 
     // create new object
+	GameObject floor("floor", rectMesh, "/Textures/floor.jpg");
+	floor.move({ 0,-3,0 });
+	int floor_scale = 100;
+	floor.scale(floor_scale);
+	floor.setTextureMapping({ floor_scale,floor_scale }, floor.getMeshStart(), floor.getTextureStart());
+	floor.rotate({ 90,0,0 });
+	floor.collidable = true;
+
+	GameObject wall("wall", rectMesh, "/Textures/wall.jpg");
+	wall.move({ 0,0,10 });
+	wall.scale(100);
+	wall.setTextureMapping({ 5,5 }, wall.getMeshStart(), wall.getTextureStart());
+	wall.rotate({ 0,0,0 });
+
     GameObject man("man",rectMesh,true);
 	// change gameobject parameters
 	man.scale(2);
@@ -162,6 +176,8 @@ int main()
 	man2.scale(3);
 	man2.move({2,0.5,0});
 	man2.rotate({180,0,0});
+	man2.collidable = true;
+
 	AnimationSheet soldIdle("Soldier idle", "/Textures/Soldier/Idle.png", 7, 1);
 	AnimationSheet soldRun("Soldier run", "/Textures/Soldier/Run.png", 8, 1);
 	AnimationSheet soldShot("Soldier shot", "/Textures/Soldier/Shot_2.png", 4, 1);
@@ -227,6 +243,10 @@ int main()
 
 	// render objects
 	// sgeObject.setMaxInstanceNumber(4);
+	if (!sgeObject.registerGameObject(wall))
+		return 1;
+	if (!sgeObject.registerGameObject(floor))
+		return 11;
     if (!sgeObject.registerGameObject(man))
 		return 111;
 	if (!sgeObject.registerGameObject(man2))
@@ -298,6 +318,7 @@ int main()
 		} else if (moveDirection == 2) {
 			man.doAnimation("Walk left", 60);
 			man.velocity={-0.3,0,0};
+			man2.physics_enabled = true;
 		} else if (moveDirection == 3) {
 			man.doAnimation("Walk back", 60);
 			man.velocity={0,0,-0.3};
