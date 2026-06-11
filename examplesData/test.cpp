@@ -150,6 +150,18 @@ int main()
     const std::vector<uint32_t> rectIndices{0,1,2,2,3,0};
 	Mesh rectMesh("rectangle", rectVertices, rectIndices);
 
+	const std::vector<glm::vec3> rectBoundary{
+		{-0.51f,-0.51f,0.01f},
+		{0.51f,-0.51f,0.01f},
+		{0.51f,0.51f,0.01f},
+		{-0.51f,0.51f,0.01f},
+
+		{-0.51f,-0.51f,-0.01f},
+		{0.51f,-0.51f,-0.01f},
+		{0.51f,0.51f,-0.01f},
+		{-0.51f,0.51f,-0.01f}
+	};
+
     // create new object
 	GameObject floor("floor", rectMesh, "/Textures/floor.jpg");
 	floor.move({ 0,-3,0 });
@@ -158,6 +170,7 @@ int main()
 	floor.setTextureMapping({ floor_scale,floor_scale }, floor.getMeshStart(), floor.getTextureStart());
 	floor.rotate({ 90,0,0 });
 	floor.collidable = true;
+	floor.boundary.setVertices(rectBoundary);
 
 	GameObject wall("wall", rectMesh, "/Textures/wall.jpg");
 	wall.move({ 0,0,10 });
@@ -169,6 +182,9 @@ int main()
 	// change gameobject parameters
 	man.scale(2);
 	man.rotate({180,0,0});
+	man.collidable = true;
+	man.boundary.setVertices(rectBoundary);
+
 	AnimationSheet torchMan("TorchMan", "/Textures/manTex.png", 9, 4);
 
 	// default geometry mesh
@@ -176,7 +192,6 @@ int main()
 	man2.scale(3);
 	man2.move({2,0.5,0});
 	man2.rotate({180,0,0});
-	man2.collidable = true;
 
 	AnimationSheet soldIdle("Soldier idle", "/Textures/Soldier/Idle.png", 7, 1);
 	AnimationSheet soldRun("Soldier run", "/Textures/Soldier/Run.png", 8, 1);
@@ -249,20 +264,20 @@ int main()
 		return 11;
     if (!sgeObject.registerGameObject(man))
 		return 111;
-	if (!sgeObject.registerGameObject(man2))
-		return 222;
-	if (!sgeObject.registerGameObject(man3))
-		return 333;
-	if (!sgeObject.registerGameObject(helloSGE))
-		return 444;
-	if (!sgeObject.registerGameObject(ship))
-		return 555;
-	if (!sgeObject.registerGameObject(car))
-		return 666;
-	if (!sgeObject.registerGameObject(man4))
-		return 777;
-	if (!sgeObject.registerGameObject(helmet))
-		return 888;
+	//if (!sgeObject.registerGameObject(man2))
+	//	return 222;
+	//if (!sgeObject.registerGameObject(man3))
+	//	return 333;
+	//if (!sgeObject.registerGameObject(helloSGE))
+	//	return 444;
+	//if (!sgeObject.registerGameObject(ship))
+	//	return 555;
+	//if (!sgeObject.registerGameObject(car))
+	//	return 666;
+	//if (!sgeObject.registerGameObject(man4))
+	//	return 777;
+	//if (!sgeObject.registerGameObject(helmet))
+	//	return 888;
 
 	UIButton exitButt("Exit",{0.8,0.1},{50,20}, "Exit!", exitFunction);
 	UIText sgetext("Sgetext",{0.09,0.3},{50,50},"Welcome to SGE example application!");
@@ -282,10 +297,10 @@ int main()
 	man.addAnimation("Walk back", 	torchMan, 3);
 	man.addAnimation("Walk right", 	torchMan, 4);
 
-	man2.addAnimation("Idle", soldIdle, 1);
-	man2.addAnimation("Run", soldRun, 1);
-	man2.addAnimation("Shot", soldShot, 1);
-	man2.addAnimation("Recharge", soldRech, 1);
+	//man2.addAnimation("Idle", soldIdle, 1);
+	//man2.addAnimation("Run", soldRun, 1);
+	//man2.addAnimation("Shot", soldShot, 1);
+	//man2.addAnimation("Recharge", soldRech, 1);
 
 
 	sgeObject.getCameraObject().setDefaultPos({0,0,5});
@@ -318,17 +333,17 @@ int main()
 		} else if (moveDirection == 2) {
 			man.doAnimation("Walk left", 60);
 			man.velocity={-0.3,0,0};
-			man2.physics_enabled = true;
 		} else if (moveDirection == 3) {
 			man.doAnimation("Walk back", 60);
 			man.velocity={0,0,-0.3};
 		} else if (moveDirection == 4) {
 			man.doAnimation("Walk right", 60);
 			man.velocity={0.3,0,0};
+			man.physics_enabled = true;
 		}
 
 
-		if (soldierAction == 1) {
+		/*if (soldierAction == 1) {
 			man2.doAnimation("Idle",60);
 			man2.velocity = {0,0,0};
 		} else if (soldierAction == 2) {
@@ -347,7 +362,7 @@ int main()
 		helloSGE.rotate({0,1,0});
 		ship.rotate({0,0.1,0});
 		car.rotate({ 0,0.1,0 });
-		helmet.rotate({0,0.2,0});
+		helmet.rotate({0,0.2,0});*/
     }
 
     return 0;

@@ -103,6 +103,7 @@ void GameObjectBase::setRotation(glm::vec3 angle)
 void GameObjectBase::setScale(glm::vec3 newScale)
 {
 	glm::mat4 scaleM(1);
+	_scale = newScale;
 	scaleM = glm::scale(scaleM, newScale);
 	_scaleM = scaleM;
 	updateModel();
@@ -110,6 +111,7 @@ void GameObjectBase::setScale(glm::vec3 newScale)
 
 void GameObjectBase::scale(glm::vec3 sc)
 {
+	_scale = _scale * sc;
 	_scaleM = glm::scale(_scaleM, sc);
 	updateModel();
 }

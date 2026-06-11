@@ -23,6 +23,8 @@ protected:
 
 	glm::mat4 _model{1};
 
+	glm::vec3 _scale{1};
+
 	CoordinateSystem* _cs = nullptr;
 
 	void updateModel();
@@ -43,7 +45,9 @@ public:
 
 	virtual SGEPosition getPosition();
 	glm::vec3 getRotation();
-	glm::vec3 getScale();
+	glm::vec3 getScale() override { return _scale; }
+
+	glm::mat4 getModel() override { return _model; }
 
 	void additionalTransform(glm::mat4 trans); // don't affect on pos rot scale only for drawing model, so be carefully
 

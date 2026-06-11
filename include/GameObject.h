@@ -25,7 +25,6 @@ public:
 	bool addAnimation(const std::string name, AnimationSheet& animSheet, uint8_t animationNumberInVertical);
 	bool doAnimation(std::string name, uint8_t speed, int waitFrame = -1, int8_t singleFrameMode = -1);
 
-	glm::mat4 getModel() const { return _model; }
 	glm::vec2 getDeltaTexture() const { return _deltaTexture; }
 	glm::vec2 getMeshStart() const { return _meshStart; }
 	glm::vec2 getTextureStart() const { return _textureStart; }

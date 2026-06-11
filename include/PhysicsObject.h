@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BoundaryVolume.h"
 #include "sge_utils.h"
 
 class PhysicsObject {
@@ -19,7 +20,7 @@ public:
     float angularAccel;
     float angularRate;
 
-    std::vector <glm::vec3> boundary;
+    BoundaryVolume boundary;
 
     void setVelocity(glm::vec3 newVel);
     void setAccel(glm::vec3 newAcc);
@@ -32,11 +33,17 @@ public:
 
     bool collidable = false;
 
+    virtual glm::vec3 getScale() = 0;
+
 private:
 
     float gravity = 0;
 
     void checkCollision(PhysicsObject* obj);
+
+protected:
+
+    virtual glm::mat4 getModel() = 0;
 
 };
 

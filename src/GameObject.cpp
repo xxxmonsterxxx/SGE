@@ -33,8 +33,9 @@ GameObject::GameObject(const std::string name, Mesh& mesh, const unsigned char* 
 		_SRGBMode(SRGBMode)
 {
 	_name = name;
-	if (_mesh.isCorrect())
+	if (_mesh.isCorrect()) {
 		_isMeshCorrect = true;
+	}
 }
 
 GameObject::GameObject(const std::string name, Mesh& mesh, std::vector<std::string> textures, bool SRGBMode) :
